@@ -1,8 +1,13 @@
 import React from 'react'
+import Nav from './components/Nav'
+import Body from './components/Body'
 
 const App = () => {
   return (
-    <div>Saurabh Thakulla</div>
+    <div>
+      <Nav/>
+      <Body/>
+    </div>
   )
 }
 
