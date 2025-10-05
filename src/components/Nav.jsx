@@ -10,7 +10,7 @@ const Nav = () => {
         </div>
 
         <div>
-            <h1 className='text-2xl '>Areo</h1>
+            <h1 className='text-2xl '>AegisFlow</h1>
         </div>
     </div>
   )
