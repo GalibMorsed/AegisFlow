@@ -1,14 +1,19 @@
-import React from 'react'
-import Nav from './components/Nav'
-import Body from './components/Body'
+import React from 'react';
+import Logins from './authComponents/Login';
+import SignIn from './authComponents/Sign';
+import ResetPassword from './authComponents/ResetPassword';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 const App = () => {
   return (
-    <div>
-      <Nav/>
-      <Body/>
-    </div>
-  )
+    <Router>
+      <Routes>
+        <Route path="/" element={<Logins />} />
+        <Route path="/signup" element={<SignIn />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;

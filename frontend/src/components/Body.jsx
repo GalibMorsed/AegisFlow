@@ -1,4 +1,6 @@
 import React from "react";
+import Nav from 'Nav'
+import Body from 'Body'
 
 export default function Body() {
   return (
@@ -25,8 +27,8 @@ export default function Body() {
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4">Welcome to AegisFlow</h1>
           <p className="text-lg mb-8">
-            Your gateway to seamless workflow management, Created by Galib 🛐 &
-            Saurabh Thakulla 🏳️‍🌈
+            Your gateway to seamless workflow management, Created by Galib Aditya Chakka  🛐 &
+            Saurabh Thakulla 
           </p>
           <button className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300">
             Get Started
