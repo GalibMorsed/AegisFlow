@@ -1,8 +1,8 @@
-import React from 'react';
-import Logins from './authComponents/Login';
-import SignIn from './authComponents/Sign';
-import Nav from './components/Nav';
-import ResetPassword from './authComponents/ResetPassword';
+import React from "react";
+import Logins from "./authComponents/login";
+import SignIn from "./authComponents/Sign";
+import Nav from "./components/Nav";
+import ResetPassword from "./authComponents/resetPassword";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 const App = () => {
@@ -16,6 +16,6 @@ const App = () => {
       </Routes>
     </Router>
   );
-}
+};
 
 export default App;

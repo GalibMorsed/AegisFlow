@@ -53,7 +53,10 @@ export default function Login() {
           </p>
           <p className="text-sm text-center text-gray-500 mt-2">
             Forgot your password?{" "}
-            <Link to="/reset-password" className="text-blue-500 hover:underline">
+            <Link
+              to="/reset-password"
+              className="text-blue-500 hover:underline"
+            >
               Reset
             </Link>
           </p>
