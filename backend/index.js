@@ -7,11 +7,10 @@ const jwt = require("jsonwebtoken");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static(__dirname('public')));
 
 app.post("/signup", async (req, res) => {
     const { name, age, email, password } = req.body;
-    let user = usermodel.findOne({ email: email });
+    let user = await usermodel.findOne({ email: email });
     if (user) {
         return res.status(400).json({ message: "User already exists" });
     }
@@ -22,7 +21,7 @@ app.post("/signup", async (req, res) => {
 
 })
 
-app.post('./login',async(req,res)=>{
+app.post('/login',async(req,res)=>{
     const {email,password} = req.body;
     let user = await usermodel.findOne({email:email});
     if(!user){
