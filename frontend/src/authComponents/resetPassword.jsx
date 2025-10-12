@@ -1,16 +1,39 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-export default function ResetPassword() {
+export default function Login() {
   return (
-    <div>
-      <h2>Reset Password</h2>
-      <form>
-        <label>
-          Email:
-          <input type="email" name="email" required />
-        </label>
-        <button type="submit">Send Reset Link</button>
-      </form>
+    <div className="login-container">
+      <div
+        className="login-image"
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1000&q=80')",
+        }}
+      ></div>
+
+      <div className="login-form-section">
+        <div className="login-box">
+          <h2 className="login-title">Password Reset</h2>
+
+          <form className="login-form">
+
+            <div className="form-group">
+              <label>Email</label>
+              <input type="email" name="email" required placeholder="Enter your email" />
+            </div>
+
+            <div className="form-group">
+              <label>Password</label>
+              <input type="password" name="password" required placeholder="Enter your password" />
+            </div>
+
+            <button type="submit" className="login-btn">
+              Login
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }

@@ -9,7 +9,6 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/nav" element={<Nav />} />
         <Route path="/" element={<Logins />} />
         <Route path="/signup" element={<SignIn />} />
         <Route path="/reset-password" element={<ResetPassword />} />

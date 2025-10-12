@@ -1,12 +1,16 @@
 const express = require("express");
 const app = express();
-const usermodel = require("./model");
+const usermodel = require("./model/model");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+app.get("/", (req, res) => {
+    res.send("Hello World");
+});
 
 app.post("/signup", async (req, res) => {
     const { name, age, email, password } = req.body;
@@ -35,7 +39,7 @@ app.post('/login',async(req,res)=>{
     res.status(200).json({message:"Login successful",user});
 
 })
-
-app.listen(5000, () => {
-    console.log("Server is running on port 5000");
+const PORT = process.env.PORT || 8000;
+app.listen(3000, () => {
+    console.log("Server is running on ${PORT}");
 })
