@@ -1,8 +1,13 @@
 import React from 'react'
-
+import Nav from '../components/Nav'
+import Body from '../components/Body'
 const Home = () => {
   return (
-    <div>Galib Loves Aditya</div>
+    <div>
+      <Nav/>
+      <Body/>
+
+    </div>
   )
 }
 

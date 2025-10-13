@@ -1,29 +1,11 @@
 import React from "react";
-import Nav from 'Nav'
-import Body from 'Body'
 
-export default function Body() {
+const  Body=()=> {
   return (
     <>
       <div>
-        <button>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            className="w-6 h-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-        </button>
       </div>
-      <section className="homecoming">
+      <section className="homecoming bg-blue-100 flex flex-col items-center justify-center min-h-screen">
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4">Welcome to AegisFlow</h1>
           <p className="text-lg mb-8">
@@ -38,3 +20,5 @@ export default function Body() {
     </>
   );
 }
+
+export default Body;
