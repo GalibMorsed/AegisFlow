@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
 dotenv.config();
-const mongoose = require("mongoose");  // <- ADD THIS
+const mongoose = require("mongoose");
 const usermodel = require("./model/model");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
