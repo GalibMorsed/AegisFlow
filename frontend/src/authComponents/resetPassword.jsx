@@ -31,7 +31,13 @@ export default function Login() {
             <button type="submit" className="login-btn">
               Login
             </button>
+            
           </form>
+                    <p className="login-text">
+                      <Link to="/" className="link">
+                        go back
+                      </Link>
+                    </p>
         </div>
       </div>
     </div>

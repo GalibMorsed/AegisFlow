@@ -1,7 +1,9 @@
 const express = require("express");
 const app = express();
-const cors = require("cors");
-const bodyParser = require("body-parser");
+const dotenv = require("dotenv");
+dotenv.config();
+const mongoose = require("mongoose");  // <- ADD THIS
+const usermodel = require("./model/model");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
 
