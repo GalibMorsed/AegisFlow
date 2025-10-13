@@ -1,5 +1,8 @@
 const express = require("express");
 const app = express();
+const dotenv = require("dotenv");
+dotenv.config();
+const client = new MongoClient(process.env.URI);
 const usermodel = require("./model/model");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
