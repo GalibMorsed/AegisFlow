@@ -13,25 +13,41 @@ export default function Login() {
       ></div>
 
       <div className="login-form-section flex flex-col gap-20 text-2xl to-blue-500 justify-center items-center">
-        <div><h1>GALib loves aditya</h1></div>
+        <div>
+          <h1>GALib</h1>
+        </div>
         <div className="login-box">
           <h2 className="login-title">Sign In</h2>
 
           <form className="login-form">
-
             <div className="form-group">
               <label>Name</label>
-              <input type="text" name="name" required placeholder="Enter your Username" />
+              <input
+                type="text"
+                name="name"
+                required
+                placeholder="Enter your Username"
+              />
             </div>
 
             <div className="form-group">
               <label>Email</label>
-              <input type="email" name="email" required placeholder="Enter your email" />
+              <input
+                type="email"
+                name="email"
+                required
+                placeholder="Enter your email"
+              />
             </div>
 
             <div className="form-group">
               <label>Password</label>
-              <input type="password" name="password" required placeholder="Enter your password" />
+              <input
+                type="password"
+                name="password"
+                required
+                placeholder="Enter your password"
+              />
             </div>
 
             <button type="submit" className="login-btn">
@@ -40,7 +56,7 @@ export default function Login() {
           </form>
 
           <p className="login-text">
-           Already have an account?{" "}
+            Already have an account?{" "}
             <Link to="/" className="link">
               Signup
             </Link>
