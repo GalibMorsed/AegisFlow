@@ -12,7 +12,8 @@ export default function Login() {
         }}
       ></div>
 
-      <div className="login-form-section">
+      <div className="login-form-section flex flex-col gap-20 text-2xl to-blue-500 justify-center items-center">
+        <div><h1>GALib loves aditya</h1></div>
         <div className="login-box">
           <h2 className="login-title">Sign In</h2>
 
