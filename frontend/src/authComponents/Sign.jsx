@@ -12,8 +12,8 @@ export default function Login() {
         }}
       ></div>
 
-      <div className="login-form-section flex flex-col gap-20 text-2xl to-blue-500 justify-center items-center">
-        <div><h1>GALib loves aditya</h1></div>
+      <div className="login-form-section flex flex-col justify-between items-center ">
+        <div className="ml-auto mr-2 text-2xl font-semibold"><h1>Aegios</h1></div>
         <div className="login-box">
           <h2 className="login-title">Sign In</h2>
 
@@ -42,7 +42,7 @@ export default function Login() {
           <p className="login-text">
            Already have an account?{" "}
             <Link to="/" className="link">
-              Signup
+              Login
             </Link>
           </p>
 
