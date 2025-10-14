@@ -1,47 +1,71 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 export default function Login() {
+  const [showPassword, setShowPassword] = useState(false);
+
   return (
-    <div className="login-container">
-      <div
-        className="login-image"
-        style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1000&q=80')",
-        }}
-      ></div>
+    <div className="flex min-h-screen">
+      <div className="hidden md:block w-1/2">
+        <img
+          src="/imgs/bg.jpg"
+          alt="Login visual"
+          className="object-cover w-full h-full"
+        />
+      </div>
 
-      <div className="login-form-section">
-        <div className="login-box">
-          <h2 className="login-title">Login</h2>
+      <div className="flex flex-col justify-center w-full md:w-1/2 bg-gray-50 px-8 sm:px-12 md:px-24">
+        <h2 className="text-3xl font-semibold mb-10 text-left">Welcome Back</h2>
 
-          <form className="login-form">
-            <div className="form-group">
-              <label>Email</label>
-              <input type="email" name="email" required placeholder="Enter your email" />
-            </div>
+        <form className="flex flex-col gap-6 text-left">
+          <div>
+            <label className="block text-gray-700 mb-1">Email</label>
+            <input
+              type="email"
+              name="email"
+              required
+              placeholder="Enter your email"
+              className="w-full border-b-2 border-gray-300 focus:border-violet-600 outline-none py-2 bg-transparent"
+            />
+          </div>
 
-            <div className="form-group">
-              <label>Password</label>
-              <input type="password" name="password" required placeholder="Enter your password" />
-            </div>
-
-            <button type="submit" className="login-btn">
-              Login
+          <div className="relative">
+            <label className="block text-gray-700 mb-1">Password</label>
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              required
+              placeholder="Enter your password"
+              className="w-full border-b-2 border-gray-300 focus:border-violet-600 outline-none py-2 bg-transparent pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 text-gray-500 px-2"
+            >
+              {showPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
             </button>
-          </form>
+          </div>
 
-          <p className="login-text">
+          <button
+            type="submit"
+            className="bg-violet-600 text-white px-4 py-2 rounded mt-6 hover:bg-violet-700 w-full"
+          >
+            Login
+          </button>
+        </form>
+
+        <div className="mt-6 text-sm text-gray-600 text-left">
+          <p>
             Don’t have an account?{" "}
-            <Link to="/signup" className="link">
+            <Link to="/signup" className="text-violet-600 hover:underline">
               Signup
             </Link>
           </p>
-
-          <p className="login-text">
+          <p className="mt-2">
             Forgot your password?{" "}
-            <Link to="/reset-password" className="link">
+            <Link to="/reset-password" className="text-violet-600 hover:underline">
               Reset
             </Link>
           </p>
