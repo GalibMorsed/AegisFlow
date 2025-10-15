@@ -7,24 +7,19 @@ const Nav = () => {
   return (
     <div className="relative">
       {/* Top Nav Bar */}
-      <nav className="flex justify-between bg-blue-600 p-4 items-center text-white shadow-md">
-        {/* Left: User Info */}
+      <nav className="flex justify-between items-center bg-blue-600 p-4 text-white shadow-md">
+        {/* Left: Website Name */}
+        <h1 className="text-2xl font-bold tracking-wide">AegisFlow</h1>
+
+        {/* Right: Hi User + Photo */}
         <div className="flex items-center gap-3">
+          <h1 className="text-lg font-medium">Hi, User</h1>
           <img
             src="/imgs/userImg.avif"
             alt="UserHome"
             className="w-10 h-10 rounded-full border-2 border-white shadow-sm"
           />
-          <h1 className="text-lg font-medium">Hi, User</h1>
         </div>
-
-        {/* Center: Logo */}
-        <div className="flex items-center">
-          <h1 className="text-2xl font-bold tracking-wide">AegisFlow</h1>
-        </div>
-
-        {/* Right: Placeholder for alignment */}
-        <div className="w-10 h-10" />
       </nav>
 
       {/* Hamburger below Navbar (Left Corner) */}
