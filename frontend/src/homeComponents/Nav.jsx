@@ -16,6 +16,7 @@ const Nav = () => {
     setTimeout(() => {
       navigate("/login");
     }, 1000);
+    // Redirect to login page
   };
 
   return (
@@ -127,6 +128,17 @@ const Nav = () => {
                 setMenuOpen(false);
               }}
               className="block w-22 bg-red-500 text-center text-white py-3 px-6 text-lg font-semibold hover:bg-red-100 hover:text-red-700 transition-all rounded-md"
+            >
+              Logout
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => {
+                handleLogout();
+                setMenuOpen(false);
+              }}
+              className="block w-full text-center hover:text-red-600 transition-colors"
             >
               Logout
             </button>
