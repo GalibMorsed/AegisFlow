@@ -132,17 +132,6 @@ const Nav = () => {
               Logout
             </button>
           </li>
-          <li>
-            <button
-              onClick={() => {
-                handleLogout();
-                setMenuOpen(false);
-              }}
-              className="block w-full text-center hover:text-red-600 transition-colors"
-            >
-              Logout
-            </button>
-          </li>
         </ul>
       </div>
     </div>
