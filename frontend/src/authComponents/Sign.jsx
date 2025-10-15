@@ -2,100 +2,106 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
-export default function Login() {
+export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="flex min-h-screen overflow-hidden">
-      <div className="hidden md:block w-1/2">
+    <div className="flex min-h-screen bg-white relative">
+      <div className="hidden md:flex w-1/2 bg-purple-100 justify-center items-center">
         <img
           src="/imgs/bg.jpg"
-          alt="Login visual"
-          className="object-cover w-full h-full"
+          alt="Illustration"
+          className="object-contain h-4/5"
         />
       </div>
 
-      <div className="flex flex-col justify-center w-full md:w-1/2 bg-gray-50 relative px-8 sm:px-12 md:px-24">
-        <div className="absolute top-6 right-8 text-2xl font-semibold">
+      <div className="flex flex-col justify-center items-center w-full md:w-1/2 px-10 md:px-20 relative">
+        <div className="absolute top-6 right-8 text-3xl font-bold text-purple-700">
           Aegios
         </div>
 
-        <div className="w-full max-w-sm">
-          <h2 className="text-3xl font-semibold mb-10 text-left">Sign In</h2>
+        <div className="w-full max-w-md text-center md:text-left text-[1.1rem]">
+          <h2 className="text-4xl font-semibold mb-7">Create your account</h2>
+          <p className="text-gray-600 mb-7 text-[1.05rem]">
+            Please fill in your details to sign up
+          </p>
 
-          <form className="flex flex-col gap-6 text-left">
-            <div>
-              <label htmlFor="name" className="block text-gray-700 mb-1">
-                Username
+          <form className="flex flex-col gap-6 items-center">
+            <div className="w-[99%]">
+              <label htmlFor="name" className="block text-gray-700 mb-2 text-left text-[1rem]">
+                Full Name
               </label>
               <input
-                id="name"
                 type="text"
+                id="name"
                 name="name"
                 required
-                className="w-full border-b-2 border-gray-300 focus:border-violet-600 outline-none py-2 bg-transparent"
+                placeholder="Enter your full name"
+                className="w-full border-b border-gray-300 focus:border-purple-600 outline-none py-3 text-[1rem] bg-transparent"
               />
             </div>
 
-            <div>
-              <label htmlFor="email" className="block text-gray-700 mb-1">
+            <div className="w-[99%]">
+              <label htmlFor="email" className="block text-gray-700 mb-2 text-left text-[1rem]">
                 Email
               </label>
               <input
-                id="email"
                 type="email"
+                id="email"
                 name="email"
                 required
-                className="w-full border-b-2 border-gray-300 focus:border-violet-600 outline-none py-2 bg-transparent"
+                placeholder="Enter your email"
+                className="w-full border-b border-gray-300 focus:border-purple-600 outline-none py-3 text-[1rem] bg-transparent"
               />
             </div>
 
-            <div className="relative">
-              <label htmlFor="password" className="block text-gray-700 mb-1">
+            <div className="relative w-[99%]">
+              <label htmlFor="password" className="block text-gray-700 mb-2 text-left text-[1rem]">
                 Password
               </label>
               <input
-                id="password"
                 type={showPassword ? "text" : "password"}
+                id="password"
                 name="password"
                 required
-                className="w-full border-b-2 border-gray-300 focus:border-violet-600 outline-none py-2 bg-transparent pr-10"
+                placeholder="Create a password"
+                className="w-full border-b border-gray-300 focus:border-purple-600 outline-none py-3 pr-10 text-[1rem] bg-transparent"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-0 top-1/2 transform -translate-y-1/2 text-gray-500 px-2"
+                className="absolute right-0 bottom-3 text-gray-500"
               >
                 {showPassword ? (
-                  <AiOutlineEyeInvisible size={20} />
+                  <AiOutlineEyeInvisible size={22} />
                 ) : (
-                  <AiOutlineEye size={20} />
+                  <AiOutlineEye size={22} />
                 )}
               </button>
             </div>
 
             <button
               type="submit"
-              className="bg-violet-600 text-white px-4 py-2 rounded mt-6 hover:bg-violet-700 transition-colors w-full"
+              className="bg-purple-600 text-white rounded py-3 mt-3 hover:bg-purple-700 transition-colors w-[99%] text-[1rem]"
             >
-              Sign In
+              Sign Up
             </button>
           </form>
+             <button
+              type="button"
+              className="border border-gray-300 rounded py-3 flex items-center justify-center mt-3 hover:bg-gray-100 transition-colors w-[99%] text-[1rem]"
+            >
+              <img src="/imgs/google-icon.png" alt="Google" className="w-6 h-6 mr-3" />
+              Sign in with Google
+            </button>
 
-          <div className="mt-6 text-sm text-gray-600 text-left">
-            <p>
-             Already have an account?{" "}
-              <Link to="/login" className="text-violet-600 hover:underline">
-                Login
-              </Link>
-            </p>
-            <p className="mt-2">
-              Forgot your password?{" "}
-              <Link to="/reset-password" className="text-violet-600 hover:underline">
-                Reset
-              </Link>
-            </p>
-          </div>
+
+          <p className="mt-8 text-sm text-gray-600 text-[1rem]">
+            Already have an account?{" "}
+            <Link to="/login" className="text-purple-600 hover:underline">
+              Log in
+            </Link>
+          </p>
         </div>
       </div>
     </div>

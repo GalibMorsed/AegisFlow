@@ -6,67 +6,91 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="flex min-h-screen">
-      <div className="hidden md:block w-1/2">
+    <div className="flex min-h-screen bg-white relative">
+      <div className="hidden md:flex w-1/2 bg-purple-100 justify-center items-center">
         <img
           src="/imgs/bg.jpg"
-          alt="Login visual"
-          className="object-cover w-full h-full"
+          alt="Illustration"
+          className="object-contain h-4/5"
         />
       </div>
 
-      <div className="flex flex-col justify-center w-full md:w-1/2 bg-gray-50 px-8 sm:px-12 md:px-24">
-        <h2 className="text-3xl font-semibold mb-10 text-left">Welcome Back</h2>
+      <div className="flex flex-col justify-center items-center w-full md:w-1/2 px-10 md:px-20 relative">
+        <div className="absolute top-6 right-8 text-3xl font-bold text-purple-700">
+          Aegios
+        </div>
 
-        <form className="flex flex-col gap-6 text-left">
-          <div>
-            <label className="block text-gray-700 mb-1">Email</label>
-            <input
-              type="email"
-              name="email"
-              required
-              placeholder="Enter your email"
-              className="w-full border-b-2 border-gray-300 focus:border-violet-600 outline-none py-2 bg-transparent"
-            />
-          </div>
+        <div className="w-full max-w-md text-center md:text-left text-[1.1rem]">
+          <h2 className="text-4xl font-semibold mb-7">Welcome back</h2>
+          <p className="text-gray-600 mb-7 text-[1.05rem]">
+            Please enter your details
+          </p>
 
-          <div className="relative">
-            <label className="block text-gray-700 mb-1">Password</label>
-            <input
-              type={showPassword ? "text" : "password"}
-              name="password"
-              required
-              placeholder="Enter your password"
-              className="w-full border-b-2 border-gray-300 focus:border-violet-600 outline-none py-2 bg-transparent pr-10"
-            />
+          <form className="flex flex-col gap-6 items-center">
+            <div className="w-[99%]">
+              <label htmlFor="email" className="block text-gray-700 mb-2 text-left text-[1rem]">
+                Email address
+              </label>
+              <input
+                type="email"
+                id="email"
+                required
+                className="w-full border-b border-gray-300 focus:outline-none focus:border-purple-600 py-3 text-[1rem]"
+              />
+            </div>
+
+            <div className="relative w-[99%]">
+              <label htmlFor="password" className="block text-gray-700 mb-2 text-left text-[1rem]">
+                Password
+              </label>
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                required
+                className="w-full border-b border-gray-300 focus:outline-none focus:border-purple-600 py-3 pr-10 text-[1rem]"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-0 bottom-3 text-gray-500"
+              >
+                {showPassword ? (
+                  <AiOutlineEyeInvisible size={22} />
+                ) : (
+                  <AiOutlineEye size={22} />
+                )}
+              </button>
+            </div>
+
+            <div className="flex justify-between items-center text-sm text-gray-600 w-[99%] text-[0.95rem]">
+              <label className="flex items-center gap-2">
+                <input type="checkbox" className="form-checkbox scale-110" /> Remember for 30 days
+              </label>
+              <Link to="/reset-password" className="text-purple-600 hover:underline">
+                Forgot password
+              </Link>
+            </div>
+
+            <button
+              type="submit"
+              className="bg-purple-600 text-white rounded py-3 mt-3 hover:bg-purple-700 transition-colors w-[99%] text-[1rem]"
+            >
+              Login
+            </button>
+
             <button
               type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-0 top-1/2 transform -translate-y-1/2 text-gray-500 px-2"
+              className="border border-gray-300 rounded py-3 flex items-center justify-center mt-3 hover:bg-gray-100 transition-colors w-[99%] text-[1rem]"
             >
-              {showPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
+              <img src="/imgs/google-icon.png" alt="Google" className="w-6 h-6 mr-3" />
+              Login with Google
             </button>
-          </div>
+          </form>
 
-          <button
-            type="submit"
-            className="bg-violet-600 text-white px-4 py-2 rounded mt-6 hover:bg-violet-700 w-full"
-          >
-            Login
-          </button>
-        </form>
-
-        <div className="mt-6 text-sm text-gray-600 text-left">
-          <p>
+          <p className="mt-8 text-sm text-gray-600 text-[1rem]">
             Don’t have an account?{" "}
-            <Link to="/signup" className="text-violet-600 hover:underline">
-              Signup
-            </Link>
-          </p>
-          <p className="mt-2">
-            Forgot your password?{" "}
-            <Link to="/reset-password" className="text-violet-600 hover:underline">
-              Reset
+            <Link to="/signup" className="text-purple-600 hover:underline">
+              Sign up
             </Link>
           </p>
         </div>
