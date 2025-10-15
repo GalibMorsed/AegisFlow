@@ -1,38 +1,66 @@
-const usermodel = require("../Models/Users");
+const UserModel = require("../Models/Users");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const signup = async (req, res) => {
   try {
-    const { name, age, email, password } = req.body;
-    let user = await usermodel.findOne({ email: email });
+    const { name, email, password } = req.body;
+    const user = await UserModel.findOne({ email });
     if (user) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(409).json({
+        message: "User already exists, please login",
+        success: false,
+      });
     }
-    let users = await usermodel.create({ name, age, email, password });
-    let token = jwt.sign({ id: users._id }, "secretkey");
-    res.cookie("token", token, { httpOnly: true });
-    res.status(201).json({ message: "User created successfully", users });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Server error during signup", error: error.message });
+    const userModel = new UserModel({ name, email, password });
+    userModel.password = await bcrypt.hash(password, 10);
+    await userModel.save();
+    res.status(201).json({
+      message: "Signup successful",
+      success: true,
+    });
+  } catch (err) {
+    console.error("Signup error:", err);
+    res.status(500).json({
+      message: "Internal server error",
+      error: err.message,
+      success: false,
+    });
   }
 };
 
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    let user = await usermodel.findOne({ email: email });
-    if (!user || user.password !== password) {
-      return res.status(400).json({ message: "Invalid credentials" });
+    const user = await UserModel.findOne({ email });
+    const errorMsg = "Authentication failed: email or password is incorrect";
+    if (!user) {
+      return res.status(403).json({ message: errorMsg, success: false });
     }
-    let token = jwt.sign({ id: user._id }, "secretkey");
-    res.cookie("token", token, { httpOnly: true });
-    res.status(200).json({ message: "Login successful", user });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Server error during login", error: error.message });
+    const isPassEqual = await bcrypt.compare(password, user.password);
+    if (!isPassEqual) {
+      return res.status(403).json({ message: errorMsg, success: false });
+    }
+    const jwtToken = jwt.sign(
+      { email: user.email, _id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+
+    res.status(200).json({
+      message: "Login successful",
+      success: true,
+      jwtToken,
+      email,
+      name: user.name,
+    });
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({
+      message: "Internal server error",
+      error: err.message,
+      success: false,
+    });
   }
 };
 
