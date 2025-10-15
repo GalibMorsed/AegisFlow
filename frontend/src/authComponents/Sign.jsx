@@ -1,9 +1,66 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { handleError, handleSuccess } from "../utils";
 
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const [signupInfo, setSignupInfo] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  // Handle input change
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSignupInfo((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Handle form submit
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    const { name, email, password } = signupInfo;
+
+    // Validation
+    if (!name || !email || !password) {
+      return handleError("All fields are required");
+    }
+
+    try {
+      setLoading(true);
+      const url = "http://localhost:8000/auth/signup"; // your backend route
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(signupInfo),
+      });
+
+      const result = await response.json();
+      const { success, message, error } = result;
+
+      if (success) {
+        handleSuccess(message || "Signup successful!");
+        setTimeout(() => navigate("/login"), 1000);
+      } else {
+        handleError(error?.details?.[0]?.message || message);
+      }
+    } catch (err) {
+      handleError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex min-h-screen bg-white relative">
@@ -26,15 +83,23 @@ export default function Signup() {
             Please fill in your details to sign up
           </p>
 
-          <form className="flex flex-col gap-6 items-center">
+          <form
+            onSubmit={handleSignup}
+            className="flex flex-col gap-6 items-center"
+          >
             <div className="w-[99%]">
-              <label htmlFor="name" className="block text-gray-700 mb-2 text-left text-[1rem]">
+              <label
+                htmlFor="name"
+                className="block text-gray-700 mb-2 text-left text-[1rem]"
+              >
                 Full Name
               </label>
               <input
+                onChange={handleChange}
                 type="text"
                 id="name"
                 name="name"
+                value={signupInfo.name}
                 required
                 placeholder="Enter your full name"
                 className="w-full border-b border-gray-300 focus:border-purple-600 outline-none py-3 text-[1rem] bg-transparent"
@@ -42,13 +107,18 @@ export default function Signup() {
             </div>
 
             <div className="w-[99%]">
-              <label htmlFor="email" className="block text-gray-700 mb-2 text-left text-[1rem]">
+              <label
+                htmlFor="email"
+                className="block text-gray-700 mb-2 text-left text-[1rem]"
+              >
                 Email
               </label>
               <input
+                onChange={handleChange}
                 type="email"
                 id="email"
                 name="email"
+                value={signupInfo.email}
                 required
                 placeholder="Enter your email"
                 className="w-full border-b border-gray-300 focus:border-purple-600 outline-none py-3 text-[1rem] bg-transparent"
@@ -56,13 +126,18 @@ export default function Signup() {
             </div>
 
             <div className="relative w-[99%]">
-              <label htmlFor="password" className="block text-gray-700 mb-2 text-left text-[1rem]">
+              <label
+                htmlFor="password"
+                className="block text-gray-700 mb-2 text-left text-[1rem]"
+              >
                 Password
               </label>
               <input
+                onChange={handleChange}
                 type={showPassword ? "text" : "password"}
                 id="password"
                 name="password"
+                value={signupInfo.password}
                 required
                 placeholder="Create a password"
                 className="w-full border-b border-gray-300 focus:border-purple-600 outline-none py-3 pr-10 text-[1rem] bg-transparent"
@@ -82,19 +157,24 @@ export default function Signup() {
 
             <button
               type="submit"
+              disabled={loading}
               className="bg-purple-600 text-white rounded py-3 mt-3 hover:bg-purple-700 transition-colors w-[99%] text-[1rem]"
             >
-              Sign Up
+              {loading ? "Signing up..." : "Sign Up"}
             </button>
           </form>
-             <button
-              type="button"
-              className="border border-gray-300 rounded py-3 flex items-center justify-center mt-3 hover:bg-gray-100 transition-colors w-[99%] text-[1rem]"
-            >
-              <img src="/imgs/google-icon.png" alt="Google" className="w-6 h-6 mr-3" />
-              Sign in with Google
-            </button>
 
+          <button
+            type="button"
+            className="border border-gray-300 rounded py-3 flex items-center justify-center mt-3 hover:bg-gray-100 transition-colors w-[99%] text-[1rem]"
+          >
+            <img
+              src="/imgs/google-icon.png"
+              alt="Google"
+              className="w-6 h-6 mr-3"
+            />
+            Sign in with Google
+          </button>
 
           <p className="mt-8 text-sm text-gray-600 text-[1rem]">
             Already have an account?{" "}
@@ -104,6 +184,7 @@ export default function Signup() {
           </p>
         </div>
       </div>
+      <ToastContainer position="top-right" autoClose={3000} theme="colored" />
     </div>
   );
 }
