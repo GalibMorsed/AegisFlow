@@ -1,24 +1,68 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Nav = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setLoggedInUser(localStorage.getItem("loggedInUser"));
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("loggedInUser");
+    setTimeout(() => {
+      navigate("/login");
+    }, 1000);
+    // Redirect to login page
+  };
 
   return (
     <div className="relative">
       {/* Top Nav Bar */}
-      <nav className="flex justify-between bg-blue-500 p-4 items-center text-white">
-        <div className="flex items-center justify-center gap-4">
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="focus:outline-none hover:text-blue-200 transition-colors"
-          >
+      <nav className="flex justify-between items-center bg-blue-600 p-4 text-white shadow-md">
+        {/* Left: Website Name */}
+        <h1 className="text-2xl font-bold tracking-wide">AegisFlow</h1>
+
+        {/* Right: Hi User + Photo */}
+        <div className="flex items-center gap-3">
+          <h1 className="text-lg font-medium">Hi, {loggedInUser}</h1>
+          <img
+            src="/imgs/userImg.avif"
+            alt="UserHome"
+            className="w-10 h-10 rounded-full border-2 border-white shadow-sm"
+          />
+        </div>
+      </nav>
+
+      {/* Hamburger below Navbar (Left Corner) */}
+      <div className="absolute left-4 top-full mt-2">
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="focus:outline-none text-blue-600 hover:text-blue-800 transition-colors bg-white p-2 rounded-md shadow-md"
+        >
+          {menuOpen ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-6 h-6"
+            >
+              <path d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              className="w-7 h-7"
+              className="w-6 h-6"
             >
               <path
                 strokeLinecap="round"
@@ -27,24 +71,13 @@ const Nav = () => {
                 d="M4 6h16M4 12h16M4 18h16"
               />
             </svg>
-          </button>
+          )}
+        </button>
+      </div>
 
-          <img
-            src="/imgs/userImg.avif"
-            alt="UserHome"
-            className="w-10 h-10 rounded-2xl"
-          />
-          <h1 className="text-2xl ml-2">Hi, User</h1>
-        </div>
-
-        <div>
-          <h1 className="text-2xl font-semibold">AegisFlow</h1>
-        </div>
-      </nav>
-
- 
+      {/* Dropdown Menu */}
       <div
-        className={`absolute left-0 top-full bg-blue-200 w-full overflow-hidden transition-all duration-500 ease-in-out ${
+        className={`absolute left-0 top-[calc(100%+3rem)] bg-blue-100 w-full sm:w-64 overflow-hidden transition-all duration-500 ease-in-out shadow-lg rounded-b-lg ${
           menuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
         }`}
       >
@@ -56,15 +89,6 @@ const Nav = () => {
               className="block w-full text-center hover:text-blue-600 transition-colors"
             >
               Home
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/main"
-              onClick={() => setMenuOpen(false)}
-              className="block w-full text-center hover:text-blue-600 transition-colors"
-            >
-              Main
             </Link>
           </li>
           <li>
@@ -111,6 +135,17 @@ const Nav = () => {
             >
               Veterans
             </Link>
+          </li>
+          <li>
+            <button
+              onClick={() => {
+                handleLogout();
+                setMenuOpen(false);
+              }}
+              className="block w-full text-center hover:text-red-600 transition-colors"
+            >
+              Logout
+            </button>
           </li>
         </ul>
       </div>
