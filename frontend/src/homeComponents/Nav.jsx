@@ -22,41 +22,12 @@ const Nav = () => {
   return (
     <div className="relative">
       {/* Top Nav Bar */}
-      <nav className="flex justify-between items-center bg-blue-600 p-4 text-white shadow-md">
-        {/* Left: Website Name */}
-        <h1 className="text-2xl font-bold tracking-wide">AegisFlow</h1>
-
-        {/* Right: Hi User + Photo */}
-        <div className="flex items-center gap-3">
-          <h1 className="text-lg font-medium">Hi, {loggedInUser}</h1>
-          <img
-            src="/imgs/userImg.avif"
-            alt="UserHome"
-            className="w-10 h-10 rounded-full border-2 border-white shadow-sm"
-          />
-        </div>
-      </nav>
-
-      {/* Hamburger below Navbar (Left Corner) */}
-      <div className="absolute left-4 top-full mt-2">
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="focus:outline-none text-blue-600 hover:text-blue-800 transition-colors bg-white p-2 rounded-md shadow-md"
-        >
-          {menuOpen ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-6 h-6"
-            >
-              <path d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          ) : (
+      <nav className="flex justify-between bg-blue-500 p-4 items-center text-white">
+        <div className="flex items-center justify-center gap-4">
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="focus:outline-none hover:text-blue-200 transition-colors"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
