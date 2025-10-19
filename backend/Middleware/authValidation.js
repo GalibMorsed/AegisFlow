@@ -24,4 +24,18 @@ const loginValidation = (req, res, next) => {
   next();
 };
 
-module.exports = { signupValidation, loginValidation };
+const resetPasswordValidation = (req, res, next) => {
+  const schema = Joi.object({
+    email: Joi.string().email().required(),
+    newPassword: Joi.string().min(4).max(100).required(),
+  });
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res
+      .status(400)
+      .json({ message: "Invalid reset password data", error });
+  }
+  next();
+};
+
+module.exports = { signupValidation, loginValidation, resetPasswordValidation };
