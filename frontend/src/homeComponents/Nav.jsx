@@ -93,12 +93,11 @@ const Nav = () => {
 
         <ul className="flex flex-col items-start py-5 text-gray-700 font-medium space-y-2 transition-all duration-500">
           {[
-            { name: "Home", link: "/home" },
-            { name: "Solution", link: "/solution" },
-            { name: "About Us", link: "/about-us" },
-            { name: "Resources", link: "/resources" },
-            { name: "Career", link: "/career" },
-            { name: "Veterans", link: "/veterans" },
+            { name: "Home", link: "/" },
+            { name: "Solution", link: "/" },
+            { name: "About Us", link: "/" },
+            { name: "Resources", link: "/" },
+            { name: "Career", link: "/" },
           ].map((item) => (
             <li key={item.name} className="w-full">
               <Link

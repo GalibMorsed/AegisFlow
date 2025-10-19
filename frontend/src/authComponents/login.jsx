@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import {
+  AiOutlineEye,
+  AiOutlineEyeInvisible,
+  AiOutlineGoogle,
+} from "react-icons/ai";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { handleError, handleSuccess } from "../utils";
@@ -143,7 +147,7 @@ export default function Login() {
                 Remember for 30 days
               </label>
               <Link
-                to="/forgotPassword"
+                to="/reset-password"
                 className="text-purple-600 hover:underline"
               >
                 Forgot password
@@ -162,11 +166,7 @@ export default function Login() {
               type="button"
               className="border border-gray-300 rounded py-3 flex items-center justify-center mt-3 hover:bg-gray-100 transition-colors w-[99%] text-[1rem]"
             >
-              <img
-                src="/imgs/google-icon.png"
-                alt="Google"
-                className="w-6 h-6 mr-3"
-              />
+              <AiOutlineGoogle className="w-6 h-6 mr-3" />
               Login with Google
             </button>
           </form>

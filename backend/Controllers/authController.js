@@ -64,4 +64,31 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { signup, login };
+const resetPassword = async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false,
+      });
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    res.status(200).json({
+      message: "Password updated successfully",
+      success: true,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
+  }
+};
+
+module.exports = { signup, login, resetPassword };
