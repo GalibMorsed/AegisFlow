@@ -4,9 +4,8 @@ import RefrshHandler from "./refreshHandler";
 import Login from "./authComponents/login";
 import SignIn from "./authComponents/Sign";
 import ResetPassword from "./authComponents/resetPassword";
-import WelcomePage from "./sourcePages/Home"; // Welcome page
-import Dashboard from "./homeComponents/Body"; // Dashboard page
-
+import Body from "./homeComponents/Body";
+import Home from "./sourcePages/Home";
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return localStorage.getItem("user") ? true : false;
@@ -24,11 +23,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignIn />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/welcome" element={<WelcomePage />} />
-        <Route
-          path="/home"
-          element={<PrivateRoute element={<Dashboard />} />}
-        />
+        <Route path="/body" element={<Body />} />
+        <Route path="/home" element={<PrivateRoute element={<Home />} />} />
       </Routes>
     </BrowserRouter>
   );
