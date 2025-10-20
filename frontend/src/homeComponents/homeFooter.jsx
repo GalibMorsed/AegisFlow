@@ -1,22 +1,25 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-const Footer = () => {
+const HomeFooter = () => {
   return (
-    <footer className="bg-blue-900 text-white py-8 mt-6 flex flex-col sm:flex-row justify-around items-center gap-4">
-      <p>© 2025 AegisFlow. All rights reserved.</p>
-      <div className="flex gap-6">
-        <button className="hover:text-yellow-300 transition-colors">
-          Help
-        </button>
-        <button className="hover:text-yellow-300 transition-colors">
-          Contact
-        </button>
-        <button className="hover:text-yellow-300 transition-colors">
-          Privacy
-        </button>
+    <footer className="bg-blue-900 text-blue-100 py-4 px-8 mt-auto text-sm">
+      <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+        <p>&copy; {new Date().getFullYear()} AegisFlow. All rights reserved.</p>
+        <div className="flex gap-6">
+          <Link to="/" className="hover:text-white transition-colors">
+            Help
+          </Link>
+          <Link to="/" className="hover:text-white transition-colors">
+            Contact
+          </Link>
+          <Link to="/" className="hover:text-white transition-colors">
+            Privacy
+          </Link>
+        </div>
       </div>
     </footer>
   );
 };
 
-export default Footer;
+export default HomeFooter;

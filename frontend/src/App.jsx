@@ -4,7 +4,7 @@ import RefrshHandler from "./refreshHandler";
 import Login from "./authComponents/login";
 import SignIn from "./authComponents/Sign";
 import ResetPassword from "./authComponents/resetPassword";
-import Body from "./homeComponents/Body";
+import Body from "./homeComponents/bodyComponents/Body";
 import Home from "./sourcePages/Home";
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
@@ -23,7 +23,10 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignIn />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/body" element={<Body />} />
+        <Route
+          path="/dashboard"
+          element={<PrivateRoute element={<Body />} />}
+        />
         <Route path="/home" element={<PrivateRoute element={<Home />} />} />
       </Routes>
     </BrowserRouter>
