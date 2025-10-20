@@ -37,7 +37,7 @@ export default function Login() {
 
     try {
       setLoading(true);
-      const url = "http://localhost:8000/auth/login"; // Change if needed
+      const url = "http://localhost:8000/auth/login";
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -54,7 +54,7 @@ export default function Login() {
         localStorage.setItem("token", jwtToken);
         localStorage.setItem("loggedInUser", name);
         localStorage.setItem("userEmail", email);
-        setTimeout(() => navigate("/home"), 1000);
+        setTimeout(() => navigate("/dashboard"), 1000);
       } else {
         handleError(error?.details?.[0]?.message || message);
       }
