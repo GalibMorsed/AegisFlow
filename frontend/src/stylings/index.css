@@ -1,5 +1,6 @@
 /*Auth Component Styling */
 @import url(authCompStyling/authPage.css);
+@import "leaflet/dist/leaflet.css";
 
 /* Home Component Styling */
 
