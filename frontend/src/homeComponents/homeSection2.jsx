@@ -1,56 +1,73 @@
 import React, { useRef, useEffect } from "react";
 
-const CameraView = ({ stream, index, onDisconnect }) => {
+const CameraCard = ({ cam, onDisconnect }) => {
   const videoRef = useRef(null);
 
   useEffect(() => {
-    if (videoRef.current && stream) {
-      videoRef.current.srcObject = stream;
+    if (cam.type === "Device Camera" && cam.stream instanceof MediaStream) {
+      if (videoRef.current) videoRef.current.srcObject = cam.stream;
     }
-  }, [stream]);
+  }, [cam]);
 
   return (
-    <div className="relative bg-black border border-blue-200 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 h-56 flex justify-center items-center text-white font-semibold text-xl hover:scale-[1.03] overflow-hidden">
-      <video
-        ref={videoRef}
-        autoPlay
-        playsInline
-        className="w-full h-full object-cover"
-      ></video>
-      <div className="absolute bottom-2 left-3 bg-black bg-opacity-50 text-white text-sm px-2 py-1 rounded">
-        Camera {index + 1}
+    <div className="relative bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200 hover:shadow-2xl transition-all duration-300">
+      {/* VIDEO AREA */}
+      <div className="w-full h-56 bg-black flex items-center justify-center">
+        {cam.type === "Device Camera" ? (
+          cam.stream ? (
+            <video
+              ref={videoRef}
+              autoPlay
+              muted
+              playsInline
+              className="w-full h-full object-cover"
+            ></video>
+          ) : (
+            <p className="text-white">Loading camera...</p>
+          )
+        ) : (
+          <p className="text-white">CCTV / IP Camera (No live feed)</p>
+        )}
       </div>
-      <button
-        onClick={onDisconnect}
-        className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-1.5 hover:bg-red-700 transition-all focus:outline-none focus:ring-2 focus:ring-red-500"
-        aria-label="Disconnect camera"
-      >
-        ✖
-      </button>
+
+      {/* INFO SECTION */}
+      <div className="p-4 flex justify-between items-center text-sm">
+        <div>
+          <p className="font-semibold text-gray-800">{cam.name}</p>
+          <p className="text-gray-500">{cam.location}</p>
+        </div>
+
+        <button
+          onClick={onDisconnect}
+          className="bg-red-500 hover:bg-red-600 text-white w-8 h-8 flex items-center justify-center rounded-full shadow-md"
+        >
+          ✕
+        </button>
+      </div>
     </div>
   );
 };
 
-// HomeSection2 component
 const HomeSection2 = ({ cameras, onDisconnect }) => {
   return (
-    <section className="home-section2 px-[16%] py-10 bg-blue-100">
-      <h2 className="text-3xl font-bold text-blue-900 mb-6 text-center">
+    <section className="px-[12%] py-12 bg-blue-300">
+      <h2 className="text-3xl font-extrabold text-white text-center mb-10">
         Camera Footages
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+
+      {/* GRID */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {cameras.length > 0 ? (
-          cameras.map((stream, i) => (
-            <CameraView
-              key={i}
-              stream={stream}
-              index={i}
-              onDisconnect={() => onDisconnect(i)}
+          cameras.map((cam, idx) => (
+            <CameraCard
+              key={idx}
+              cam={cam}
+              onDisconnect={() => onDisconnect(idx)}
             />
           ))
         ) : (
-          <div className="col-span-1 sm:col-span-2 text-center py-16 bg-blue-100/50 rounded-2xl border-2 border-dashed border-blue-300">
-            <p className="text-gray-500">No cameras added yet.</p>
+          <div className="col-span-full text-center py-16 bg-white border border-dashed border-blue-500 rounded-xl">
+            <p className="text-gray-700 text-lg">No cameras available</p>
           </div>
         )}
       </div>
