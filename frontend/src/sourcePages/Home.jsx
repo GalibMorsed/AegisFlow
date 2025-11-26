@@ -1,39 +1,74 @@
 import React, { useState } from "react";
-import "leaflet/dist/leaflet.css";
-
-import HomeSection1 from "../homeComponents/homeSection1";
+import HomeSection1 from "../homeComponents/HomeSection1";
 import HomeSection2 from "../homeComponents/homeSection2";
-import HomeSection3 from "../homeComponents/homeSection3";
 import HomeSection4 from "../homeComponents/Homesection4";
 import HomeFooter from "../homeComponents/homeFooter";
+import HomeSection3 from "../homeComponents/homeSection3";
 import Nav from "../homeComponents/Nav";
 
 const Home = () => {
   const [cameras, setCameras] = useState([]);
   const [selectedCoords, setSelectedCoords] = useState(null);
+  const [editingIndex, setEditingIndex] = useState(null);
 
-  const handleAddCamera = (cam) => {
+  const addCamera = (cam) => {
+    if (editingIndex !== null) {
+      const updated = [...cameras];
+      updated[editingIndex] = cam;
+      setCameras(updated);
+      setEditingIndex(null);
+      return;
+    }
     setCameras((prev) => [...prev, cam]);
-    setSelectedCoords(null);
+  };
+
+  const removeCamera = (index) => {
+    const cam = cameras[index];
+    if (cam?.stream) cam.stream.getTracks().forEach((t) => t.stop());
+    setCameras((prev) => prev.filter((_, i) => i !== index));
   };
 
   return (
-    <div className="dashboard-page">
-      <Nav />
+    <div className="flex flex-col w-full overflow-x-hidden gap-10">
+      {/* NAV */}
+      <div className="relative z-[5]">
+        <Nav />
+      </div>
 
-      <HomeSection1
-        onAddCamera={handleAddCamera}
-        selectedCoords={selectedCoords}
-      />
+      {/* FORM POPUP */}
+      <div className="relative z-[50]">
+        <HomeSection1
+          onAddCamera={addCamera}
+          selectedCoords={selectedCoords}
+          resetCoords={() => setSelectedCoords(null)}
+          editingCamera={editingIndex !== null ? cameras[editingIndex] : null}
+          closeEdit={() => setEditingIndex(null)}
+        />
+      </div>
 
-      <HomeSection2 cameras={cameras} />
+      {/* MAP */}
+      <div className="relative z-[1]">
+        <HomeSection4 onMapClick={(coords) => setSelectedCoords(coords)} />
+      </div>
 
-      <HomeSection4
-        cameras={cameras}
-        onMapClick={(coords) => setSelectedCoords(coords)}
-      />
+      {/* CAMERA FOOTAGES */}
+      <div className="relative z-[10]">
+        <HomeSection2
+          cameras={cameras}
+          onDisconnect={removeCamera}
+          onEdit={(i) => setEditingIndex(i)}
+        />
+      </div>
 
-      <HomeFooter />
+      {/* ALERTS */}
+      <div className="relative z-[5]">
+        <HomeSection3 />
+      </div>
+
+      {/* FOOTER */}
+      <div className="relative z-[5]">
+        <HomeFooter />
+      </div>
     </div>
   );
 };

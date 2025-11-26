@@ -1,75 +1,80 @@
 import React, { useRef, useEffect } from "react";
 
-const CameraCard = ({ cam, onDisconnect }) => {
+const CameraCard = ({ cam, index, onDisconnect, onEdit }) => {
   const videoRef = useRef(null);
 
   useEffect(() => {
-    if (cam.type === "Device Camera" && cam.stream instanceof MediaStream) {
-      if (videoRef.current) videoRef.current.srcObject = cam.stream;
+    // attach stream for device cameras
+    if (cam.stream && videoRef.current) {
+      videoRef.current.srcObject = cam.stream;
     }
-  }, [cam]);
+  }, [cam.stream]);
 
   return (
-    <div className="relative bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200 hover:shadow-2xl transition-all duration-300">
-      {/* VIDEO AREA */}
-      <div className="w-full h-56 bg-black flex items-center justify-center">
-        {cam.type === "Device Camera" ? (
-          cam.stream ? (
-            <video
-              ref={videoRef}
-              autoPlay
-              muted
-              playsInline
-              className="w-full h-full object-cover"
-            ></video>
-          ) : (
-            <p className="text-white">Loading camera...</p>
-          )
-        ) : (
-          <p className="text-white">CCTV / IP Camera (No live feed)</p>
-        )}
+    <div className="bg-white rounded-xl shadow-lg p-4">
+      {/* Preview */}
+      {cam.stream ? (
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          className="w-full h-48 object-cover rounded-lg"
+        ></video>
+      ) : (
+        <div className="w-full h-48 bg-black text-white flex items-center justify-center rounded-lg">
+          No Camera Preview
+        </div>
+      )}
+
+      {/* Info */}
+      <div className="mt-3 text-gray-900">
+        <div className="font-semibold">{cam.name}</div>
+        <div className="text-sm opacity-70">{cam.location}</div>
       </div>
 
-      {/* INFO SECTION */}
-      <div className="p-4 flex justify-between items-center text-sm">
-        <div>
-          <p className="font-semibold text-gray-800">{cam.name}</p>
-          <p className="text-gray-500">{cam.location}</p>
-        </div>
+      {/* Buttons */}
+      <div className="mt-4 flex gap-3">
+        <button
+          onClick={() => onEdit(index)}
+          className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-lg"
+        >
+          ✏ Edit
+        </button>
 
         <button
-          onClick={onDisconnect}
-          className="bg-red-500 hover:bg-red-600 text-white w-8 h-8 flex items-center justify-center rounded-full shadow-md"
+          onClick={() => onDisconnect(index)}
+          className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg"
         >
-          ✕
+          ❌ Remove
         </button>
       </div>
     </div>
   );
 };
 
-const HomeSection2 = ({ cameras, onDisconnect }) => {
+const HomeSection2 = ({ cameras, onDisconnect, onEdit }) => {
   return (
-    <section className="px-[12%] py-12 bg-blue-300">
-      <h2 className="text-3xl font-extrabold text-white text-center mb-10">
+    <section className="px-[16%] py-12 bg-blue-300">
+      <h2 className="text-3xl font-bold text-white text-center mb-6">
         Camera Footages
       </h2>
 
-      {/* GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {cameras.length > 0 ? (
-          cameras.map((cam, idx) => (
-            <CameraCard
-              key={idx}
-              cam={cam}
-              onDisconnect={() => onDisconnect(idx)}
-            />
-          ))
-        ) : (
-          <div className="col-span-full text-center py-16 bg-white border border-dashed border-blue-500 rounded-xl">
-            <p className="text-gray-700 text-lg">No cameras available</p>
-          </div>
-        )}
+      {cameras.length === 0 && (
+        <p className="text-center text-white opacity-75 text-lg py-10">
+          No cameras added yet. Click on the map to add one.
+        </p>
+      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {cameras.map((cam, index) => (
+          <CameraCard
+            key={index}
+            cam={cam}
+            index={index}
+            onDisconnect={onDisconnect}
+            onEdit={onEdit}
+          />
+        ))}
       </div>
     </section>
   );
