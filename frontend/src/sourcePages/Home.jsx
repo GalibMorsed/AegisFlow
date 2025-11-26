@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+
 import HomeSection1 from "../homeComponents/homeSection1";
 import HomeSection2 from "../homeComponents/homeSection2";
 import HomeSection4 from "../homeComponents/Homesection4";
@@ -11,64 +13,83 @@ const Home = () => {
   const [selectedCoords, setSelectedCoords] = useState(null);
   const [editingIndex, setEditingIndex] = useState(null);
 
-  const addCamera = (cam) => {
-    if (editingIndex !== null) {
-      const updated = [...cameras];
-      updated[editingIndex] = cam;
-      setCameras(updated);
-      setEditingIndex(null);
-      return;
+  // LOAD CAMERAS
+  useEffect(() => {
+    axios
+      .get("http://localhost:8000/camera")
+      .then((res) => setCameras(res.data))
+      .catch((err) => console.log(err));
+  }, []);
+
+  const addCamera = async (cam) => {
+    try {
+      // UPDATE CAMERA
+      if (editingIndex !== null) {
+        const id = cameras[editingIndex]._id;
+
+        const res = await axios.put(`http://localhost:8000/camera/${id}`, cam);
+
+        const updatedList = [...cameras];
+        updatedList[editingIndex] = res.data.camera;
+
+        setCameras(updatedList);
+        setEditingIndex(null); // <-- Reset AFTER setting list
+        return;
+      }
+
+      // ADD CAMERA
+      const res = await axios.post("http://localhost:8000/camera/add", cam);
+
+      setCameras((prev) => [...prev, res.data.camera]);
+    } catch (err) {
+      console.log("Add/Edit failed:", err);
     }
-    setCameras((prev) => [...prev, cam]);
   };
 
-  const removeCamera = (index) => {
-    const cam = cameras[index];
-    if (cam?.stream) cam.stream.getTracks().forEach((t) => t.stop());
-    setCameras((prev) => prev.filter((_, i) => i !== index));
+  // DELETE CAMERA
+  const removeCamera = async (index) => {
+    try {
+      const id = cameras[index]._id;
+
+      await axios.delete(`http://localhost:8000/camera/${id}`);
+
+      if (cameras[index]?.stream) {
+        cameras[index].stream.getTracks().forEach((t) => t.stop());
+      }
+
+      setCameras((prev) => prev.filter((_, i) => i !== index));
+    } catch (err) {
+      console.log("Delete failed:", err);
+    }
   };
 
   return (
     <div className="flex flex-col w-full overflow-x-hidden gap-10">
-      {/* NAV */}
-      <div className="relative z-[5]">
-        <Nav />
-      </div>
+      <Nav />
 
-      {/* FORM POPUP */}
-      <div className="relative z-[50]">
-        <HomeSection1
-          onAddCamera={addCamera}
-          selectedCoords={selectedCoords}
-          resetCoords={() => setSelectedCoords(null)}
-          editingCamera={editingIndex !== null ? cameras[editingIndex] : null}
-          closeEdit={() => setEditingIndex(null)}
-        />
-      </div>
+      <HomeSection1
+        onAddCamera={addCamera}
+        selectedCoords={selectedCoords}
+        resetCoords={() => setSelectedCoords(null)}
+        // FINAL FIX (prevents blank page crash)
+        editingCamera={
+          editingIndex !== null && cameras[editingIndex]
+            ? cameras[editingIndex]
+            : null
+        }
+        closeEdit={() => setEditingIndex(null)}
+      />
 
-      {/* MAP */}
-      <div className="relative z-[1]">
-        <HomeSection4 onMapClick={(coords) => setSelectedCoords(coords)} />
-      </div>
+      <HomeSection4 onMapClick={(coords) => setSelectedCoords(coords)} />
 
-      {/* CAMERA FOOTAGES */}
-      <div className="relative z-[10]">
-        <HomeSection2
-          cameras={cameras}
-          onDisconnect={removeCamera}
-          onEdit={(i) => setEditingIndex(i)}
-        />
-      </div>
+      <HomeSection2
+        cameras={cameras}
+        onDisconnect={removeCamera}
+        onEdit={(i) => setEditingIndex(i)}
+      />
 
-      {/* ALERTS */}
-      <div className="relative z-[5]">
-        <HomeSection3 />
-      </div>
-
-      {/* FOOTER */}
-      <div className="relative z-[5]">
-        <HomeFooter />
-      </div>
+      <HomeSection3 />
+      <HomeFooter />
     </div>
   );
 };

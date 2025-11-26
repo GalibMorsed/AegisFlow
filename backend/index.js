@@ -4,6 +4,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
+const cameraRoutes = require("./Routes/cameraRoutes");
 
 require("dotenv").config();
 require("./Models/db.js");
@@ -17,6 +18,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(cors());
 app.use("/auth", authRoutes);
+app.use("/camera", cameraRoutes);
 
 app.listen(PORT, (error) => {
   if (error) {

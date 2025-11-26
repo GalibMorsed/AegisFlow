@@ -14,19 +14,23 @@ const HomeSection1 = ({
     name: "",
     location: "",
     ip: "",
-    type: "",
+    type: "IP Camera",
     lat: "",
     lng: "",
     stream: null,
   });
 
-  // OPEN when clicking map OR editing
+  // ------ EDIT MODE LOAD ------
   useEffect(() => {
     if (editingCamera) {
-      setCamera(editingCamera);
+      const { stream, ...rest } = editingCamera;
+      setCamera(rest);
       setShowForm(true);
-      return;
     }
+  }, [editingCamera]);
+
+  // ------ OPEN WHEN CLICKED FROM MAP ------
+  useEffect(() => {
     if (selectedCoords) {
       setCamera((prev) => ({
         ...prev,
@@ -37,44 +41,54 @@ const HomeSection1 = ({
       setShowForm(true);
       resetCoords();
     }
-  }, [selectedCoords, editingCamera]);
+  }, [selectedCoords]);
 
-  // WebCam Preview
+  // ------ CAMERA STREAM AUTO START ------
   useEffect(() => {
-    if (camera.type === "Device Camera" && camera.stream && videoRef.current) {
-      videoRef.current.srcObject = camera.stream;
-    }
-  }, [camera, showForm]);
+    if (showForm && camera.type === "Device Camera") {
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then((stream) => {
+          setCamera((prev) => ({ ...prev, stream }));
 
-  const startDeviceCamera = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    setCamera((prev) => ({ ...prev, stream }));
-  };
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+          }
+        })
+        .catch((err) => console.log(err));
+    }
+
+    return () => {
+      if (camera.stream) {
+        camera.stream.getTracks().forEach((t) => t.stop());
+      }
+    };
+  }, [showForm, camera.type]);
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault(); // <<< VERY IMPORTANT
+
+    if (camera.stream) {
+      camera.stream.getTracks().forEach((t) => t.stop());
+    }
+
     onAddCamera(camera);
     setShowForm(false);
     closeEdit?.();
-
-    setCamera({
-      name: "",
-      location: "",
-      ip: "",
-      type: "",
-      lat: "",
-      lng: "",
-      stream: null,
-    });
   };
 
   if (!showForm) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex justify-center items-center">
-      <div className="bg-white p-6 rounded w-[380px] relative">
+    <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-[9999]">
+      <div className="bg-white p-6 rounded-xl w-[380px] relative">
+        {/* CLOSE BUTTON - MUST NOT SUBMIT */}
         <button
+          type="button"
           onClick={() => {
+            if (camera.stream) {
+              camera.stream.getTracks().forEach((t) => t.stop());
+            }
             setShowForm(false);
             closeEdit?.();
           }}
@@ -90,7 +104,7 @@ const HomeSection1 = ({
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <input
             name="name"
-            placeholder="Name"
+            placeholder="Camera Name"
             className="border p-2 rounded"
             value={camera.name}
             onChange={(e) => setCamera({ ...camera, name: e.target.value })}
@@ -107,29 +121,37 @@ const HomeSection1 = ({
           />
 
           <select
-            name="type"
             className="border p-2 rounded"
             value={camera.type}
-            onChange={(e) => {
-              setCamera({ ...camera, type: e.target.value });
-              if (e.target.value === "Device Camera") startDeviceCamera();
-            }}
+            onChange={(e) =>
+              setCamera({ ...camera, type: e.target.value, stream: null })
+            }
           >
-            <option value="">Select Type</option>
+            <option value="IP Camera">IP Camera</option>
             <option value="Device Camera">Device Camera</option>
             <option value="CCTV">CCTV</option>
-            <option value="IP Camera">IP Camera</option>
           </select>
 
+          {camera.type === "IP Camera" && (
+            <input
+              name="ip"
+              placeholder="Camera IP"
+              className="border p-2 rounded"
+              value={camera.ip}
+              onChange={(e) => setCamera({ ...camera, ip: e.target.value })}
+              required
+            />
+          )}
+
           <input
+            className="border p-2 bg-gray-100"
             value={camera.lat}
             readOnly
-            className="border p-2 rounded bg-gray-100"
           />
           <input
+            className="border p-2 bg-gray-100"
             value={camera.lng}
             readOnly
-            className="border p-2 rounded bg-gray-100"
           />
 
           {camera.type === "Device Camera" && camera.stream && (
@@ -138,11 +160,12 @@ const HomeSection1 = ({
               autoPlay
               muted
               className="w-full h-40 bg-black rounded"
-            ></video>
+            />
           )}
 
-          <button className="bg-blue-600 text-white rounded p-2">
-            {editingCamera ? "Save Changes" : "Save Camera"}
+          {/* THIS MUST BE TYPE SUBMIT */}
+          <button type="submit" className="bg-blue-600 text-white rounded p-2">
+            {editingCamera ? "Update Camera" : "Save Camera"}
           </button>
         </form>
       </div>
