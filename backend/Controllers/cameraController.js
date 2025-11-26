@@ -1,4 +1,3 @@
-// controllers/cameraController.js
 const Camera = require("../Models/camera");
 const User = require("../Models/Users");
 

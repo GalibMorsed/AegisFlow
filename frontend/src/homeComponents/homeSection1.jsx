@@ -13,7 +13,7 @@ const HomeSection1 = ({
   const [camera, setCamera] = useState({
     name: "",
     location: "",
-    ip: "",
+    ip: "1010",
     type: "IP Camera",
     lat: "",
     lng: "",
