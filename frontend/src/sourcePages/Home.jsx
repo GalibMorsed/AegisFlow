@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import HomeSection1 from "../homeComponents/HomeSection1";
+import HomeSection1 from "../homeComponents/homeSection1";
 import HomeSection2 from "../homeComponents/homeSection2";
 import HomeSection4 from "../homeComponents/Homesection4";
 import HomeFooter from "../homeComponents/homeFooter";
