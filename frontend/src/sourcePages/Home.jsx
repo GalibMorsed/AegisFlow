@@ -15,19 +15,33 @@ const Home = () => {
 
   // LOAD CAMERAS
   useEffect(() => {
+    const userEmail = localStorage.getItem("userEmail"); // Get user email
+    if (!userEmail) {
+      console.log("User email not found. Please log in.");
+      return;
+    }
+
     axios
-      .get("http://localhost:8000/camera")
-      .then((res) => setCameras(res.data))
+      .post("http://localhost:8000/camera/get", { email: userEmail }) // Use POST to send email
+      .then((res) => setCameras(res.data.cameras)) // Access the 'cameras' array from response
       .catch((err) => console.log(err));
   }, []);
 
   const addCamera = async (cam) => {
     try {
+      const userEmail = localStorage.getItem("userEmail");
+      if (!userEmail) {
+        throw new Error("User email not found. Please log in.");
+      }
       // UPDATE CAMERA
       if (editingIndex !== null) {
         const id = cameras[editingIndex]._id;
 
-        const res = await axios.put(`http://localhost:8000/camera/${id}`, cam);
+        // Send camera data and email
+        const res = await axios.put(`http://localhost:8000/camera/${id}`, {
+          ...cam,
+          email: userEmail,
+        });
 
         const updatedList = [...cameras];
         updatedList[editingIndex] = res.data.camera;
@@ -38,7 +52,11 @@ const Home = () => {
       }
 
       // ADD CAMERA
-      const res = await axios.post("http://localhost:8000/camera/add", cam);
+      // Send camera data and email
+      const res = await axios.post("http://localhost:8000/camera/add", {
+        ...cam,
+        email: userEmail,
+      });
 
       setCameras((prev) => [...prev, res.data.camera]);
     } catch (err) {
@@ -49,9 +67,17 @@ const Home = () => {
   // DELETE CAMERA
   const removeCamera = async (index) => {
     try {
+      const userEmail = localStorage.getItem("userEmail");
+      if (!userEmail) {
+        throw new Error("User email not found. Please log in.");
+      }
+
       const id = cameras[index]._id;
 
-      await axios.delete(`http://localhost:8000/camera/${id}`);
+      // Axios delete with a request body
+      await axios.delete(`http://localhost:8000/camera/${id}`, {
+        data: { email: userEmail },
+      });
 
       if (cameras[index]?.stream) {
         cameras[index].stream.getTracks().forEach((t) => t.stop());
