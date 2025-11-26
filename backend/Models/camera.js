@@ -7,7 +7,22 @@ const CameraSchema = new mongoose.Schema({
   ip: String,
   lat: Number,
   lng: Number,
-  userEmail: String,
+
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "logUsers",
+    required: true,
+  },
+
+  videos: [
+    {
+      url: String,
+      recordedAt: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
 });
 
 module.exports = mongoose.model("Camera", CameraSchema);
