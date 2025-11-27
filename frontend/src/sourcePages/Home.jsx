@@ -15,15 +15,15 @@ const Home = () => {
 
   // LOAD CAMERAS
   useEffect(() => {
-    const userEmail = localStorage.getItem("userEmail"); // Get user email
-    if (!userEmail) {
-      console.log("User email not found. Please log in.");
-      return;
-    }
+    const userEmail = localStorage.getItem("userEmail");
+    if (!userEmail) return;
 
     axios
-      .post("http://localhost:8000/camera/get", { email: userEmail }) // Use POST to send email
-      .then((res) => setCameras(res.data.cameras)) // Access the 'cameras' array from response
+      .post("http://localhost:8000/camera/get", { email: userEmail })
+      .then((res) => {
+        console.log("CAMERAS:", res.data);
+        setCameras(res.data.cameras);
+      })
       .catch((err) => console.log(err));
   }, []);
 
