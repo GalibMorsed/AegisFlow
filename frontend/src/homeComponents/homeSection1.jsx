@@ -8,19 +8,23 @@ const HomeSection1 = ({
   closeEdit,
 }) => {
   const [showForm, setShowForm] = useState(false);
+  const [deviceList, setDeviceList] = useState([]);
   const videoRef = useRef(null);
 
   const [camera, setCamera] = useState({
     name: "",
     location: "",
-    ip: "",
     type: "IP Camera",
+    deviceId: "",
+    label: "",
+    groupId: "",
+    kind: "",
     lat: "",
     lng: "",
     stream: null,
   });
 
-  // ------ EDIT MODE LOAD ------
+  // ------------------ EDIT MODE LOADING ------------------
   useEffect(() => {
     if (editingCamera) {
       const { stream, ...rest } = editingCamera;
@@ -29,7 +33,7 @@ const HomeSection1 = ({
     }
   }, [editingCamera]);
 
-  // ------ OPEN WHEN CLICKED FROM MAP ------
+  // ------------------ FROM MAP CLICK ------------------
   useEffect(() => {
     if (selectedCoords) {
       setCamera((prev) => ({
@@ -43,13 +47,29 @@ const HomeSection1 = ({
     }
   }, [selectedCoords]);
 
-  // ------ CAMERA STREAM AUTO START ------
+  // ------------------ START CAMERA STREAM ------------------
   useEffect(() => {
     if (showForm && camera.type === "Device Camera") {
       navigator.mediaDevices
         .getUserMedia({ video: true })
-        .then((stream) => {
-          setCamera((prev) => ({ ...prev, stream }));
+        .then(async (stream) => {
+          const devices = await navigator.mediaDevices.enumerateDevices();
+          const cams = devices.filter((d) => d.kind === "videoinput");
+
+          setDeviceList(cams);
+
+          // set default camera info
+          const d = cams[0];
+          if (d) {
+            setCamera((prev) => ({
+              ...prev,
+              deviceId: d.deviceId,
+              label: d.label,
+              groupId: d.groupId,
+              kind: d.kind,
+              stream,
+            }));
+          }
 
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
@@ -65,8 +85,9 @@ const HomeSection1 = ({
     };
   }, [showForm, camera.type]);
 
+  // ------------------ SUBMIT ------------------
   const handleSubmit = (e) => {
-    e.preventDefault(); // <<< VERY IMPORTANT
+    e.preventDefault();
 
     if (camera.stream) {
       camera.stream.getTracks().forEach((t) => t.stop());
@@ -82,7 +103,6 @@ const HomeSection1 = ({
   return (
     <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-[9999]">
       <div className="bg-white p-6 rounded-xl w-[380px] relative">
-        {/* CLOSE BUTTON - MUST NOT SUBMIT */}
         <button
           type="button"
           onClick={() => {
@@ -132,17 +152,56 @@ const HomeSection1 = ({
             <option value="CCTV">CCTV</option>
           </select>
 
+          {/* ------------------ IP CAMERA ------------------ */}
           {camera.type === "IP Camera" && (
             <input
               name="ip"
-              placeholder="Camera IP"
+              placeholder="Camera URL / IP"
               className="border p-2 rounded"
-              value={camera.ip}
+              value={camera.ip || ""}
               onChange={(e) => setCamera({ ...camera, ip: e.target.value })}
               required
             />
           )}
 
+          {/* ------------------ DEVICE CAMERA ------------------ */}
+          {camera.type === "Device Camera" && (
+            <>
+              <select
+                className="border p-2 rounded"
+                value={camera.deviceId}
+                onChange={(e) => {
+                  const d = deviceList.find(
+                    (dev) => dev.deviceId === e.target.value
+                  );
+                  setCamera({
+                    ...camera,
+                    deviceId: d.deviceId,
+                    label: d.label,
+                    groupId: d.groupId,
+                    kind: d.kind,
+                  });
+                }}
+              >
+                {deviceList.map((d) => (
+                  <option key={d.deviceId} value={d.deviceId}>
+                    {d.label || "Unknown Camera"}
+                  </option>
+                ))}
+              </select>
+
+              {camera.stream && (
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  muted
+                  className="w-full h-40 bg-black rounded"
+                />
+              )}
+            </>
+          )}
+
+          {/* ------------------ COORDS ------------------ */}
           <input
             className="border p-2 bg-gray-100"
             value={camera.lat}
@@ -154,16 +213,6 @@ const HomeSection1 = ({
             readOnly
           />
 
-          {camera.type === "Device Camera" && camera.stream && (
-            <video
-              ref={videoRef}
-              autoPlay
-              muted
-              className="w-full h-40 bg-black rounded"
-            />
-          )}
-
-          {/* THIS MUST BE TYPE SUBMIT */}
           <button type="submit" className="bg-blue-600 text-white rounded p-2">
             {editingCamera ? "Update Camera" : "Save Camera"}
           </button>
