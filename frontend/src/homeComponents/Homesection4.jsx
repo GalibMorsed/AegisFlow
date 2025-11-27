@@ -6,8 +6,17 @@ import {
   Marker,
   Popup,
 } from "react-leaflet";
+import L from "leaflet";
 
 const defaultCenter = [20.5937, 78.9629];
+
+// LOCATION PIN ICON
+const pinIcon = new L.Icon({
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+  iconSize: [40, 40],
+  iconAnchor: [20, 40],
+  popupAnchor: [0, -40],
+});
 
 const MapClickHandler = ({ onSelect }) => {
   const map = useMapEvents({
@@ -21,10 +30,7 @@ const MapClickHandler = ({ onSelect }) => {
         );
         const data = await res.json();
 
-        map.flyTo([lat, lng], 13, {
-          animate: true,
-          duration: 1.5,
-        });
+        map.flyTo([lat, lng], 13, { animate: true, duration: 1.5 });
 
         onSelect({
           lat,
@@ -44,7 +50,7 @@ const MapClickHandler = ({ onSelect }) => {
   return null;
 };
 
-const HomeSection4 = ({ onMapClick }) => {
+const HomeSection4 = ({ onMapClick, cameras }) => {
   const [cameraLocation, setCameraLocation] = useState(null);
 
   return (
@@ -53,11 +59,11 @@ const HomeSection4 = ({ onMapClick }) => {
         Click Anywhere on the Map to Add Camera
       </h2>
 
-      <div className="rounded-xl overflow-hidden shadow-lg relative">
+      <div className="rounded-xl overflow-hidden shadow-lg">
         <MapContainer
           center={defaultCenter}
           zoom={5}
-          className="w-full h-[450px] rounded-xl z-0"
+          className="w-full h-[450px] rounded-xl"
         >
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
@@ -68,8 +74,22 @@ const HomeSection4 = ({ onMapClick }) => {
             }}
           />
 
+          {/* SHOW SAVED DB CAMERAS */}
+          {cameras.map((cam, i) => (
+            <Marker key={i} position={[cam.lat, cam.lng]} icon={pinIcon}>
+              <Popup>
+                <b>{cam.name}</b> <br />
+                {cam.location}
+              </Popup>
+            </Marker>
+          ))}
+
+          {/* SHOW NEW CAMERA PIN */}
           {cameraLocation && (
-            <Marker position={[cameraLocation.lat, cameraLocation.lng]}>
+            <Marker
+              position={[cameraLocation.lat, cameraLocation.lng]}
+              icon={pinIcon}
+            >
               <Popup>{cameraLocation.locationName}</Popup>
             </Marker>
           )}

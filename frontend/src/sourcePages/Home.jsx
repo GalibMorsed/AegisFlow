@@ -106,7 +106,10 @@ const Home = () => {
         closeEdit={() => setEditingIndex(null)}
       />
 
-      <HomeSection4 onMapClick={(coords) => setSelectedCoords(coords)} />
+      <HomeSection4
+        onMapClick={(coords) => setSelectedCoords(coords)}
+        cameras={cameras}
+      />
 
       <HomeSection2
         cameras={cameras}
