@@ -7,8 +7,18 @@ import HomeSection4 from "../homeComponents/Homesection4";
 import HomeFooter from "../homeComponents/homeFooter";
 import HomeSection3 from "../homeComponents/homeSection3";
 import Nav from "../homeComponents/Nav";
+import ConfirmBox from "../homeComponents/ConfirmBox";
 
 const Home = () => {
+  const [confirmBox, setConfirmBox] = useState(null);
+
+  const confirmAction = (msg, action) => {
+    setConfirmBox({
+      msg,
+      action,
+    });
+  };
+
   const [cameras, setCameras] = useState([]);
   const [selectedCoords, setSelectedCoords] = useState(null);
   const [editingIndex, setEditingIndex] = useState(null);
@@ -30,14 +40,12 @@ const Home = () => {
   const addCamera = async (cam) => {
     try {
       const userEmail = localStorage.getItem("userEmail");
-      if (!userEmail) {
-        throw new Error("User email not found. Please log in.");
-      }
+      if (!userEmail) return;
+
       // UPDATE CAMERA
       if (editingIndex !== null) {
         const id = cameras[editingIndex]._id;
 
-        // Send camera data and email
         const res = await axios.put(`http://localhost:8000/camera/${id}`, {
           ...cam,
           email: userEmail,
@@ -47,12 +55,11 @@ const Home = () => {
         updatedList[editingIndex] = res.data.camera;
 
         setCameras(updatedList);
-        setEditingIndex(null); // <-- Reset AFTER setting list
+        setEditingIndex(null);
         return;
       }
 
       // ADD CAMERA
-      // Send camera data and email
       const res = await axios.post("http://localhost:8000/camera/add", {
         ...cam,
         email: userEmail,
@@ -68,13 +75,10 @@ const Home = () => {
   const removeCamera = async (index) => {
     try {
       const userEmail = localStorage.getItem("userEmail");
-      if (!userEmail) {
-        throw new Error("User email not found. Please log in.");
-      }
+      if (!userEmail) return;
 
       const id = cameras[index]._id;
 
-      // Axios delete with a request body
       await axios.delete(`http://localhost:8000/camera/${id}`, {
         data: { email: userEmail },
       });
@@ -94,10 +98,16 @@ const Home = () => {
       <Nav />
 
       <HomeSection1
-        onAddCamera={addCamera}
+        onAddCamera={(cam) =>
+          confirmAction(
+            editingIndex !== null
+              ? "Are you sure you want to update this camera?"
+              : "Are you sure you want to save this camera?",
+            () => addCamera(cam)
+          )
+        }
         selectedCoords={selectedCoords}
         resetCoords={() => setSelectedCoords(null)}
-        // FINAL FIX (prevents blank page crash)
         editingCamera={
           editingIndex !== null && cameras[editingIndex]
             ? cameras[editingIndex]
@@ -106,16 +116,32 @@ const Home = () => {
         closeEdit={() => setEditingIndex(null)}
       />
 
-      <HomeSection4 onMapClick={(coords) => setSelectedCoords(coords)} />
+      <HomeSection4
+        onMapClick={(coords) => setSelectedCoords(coords)}
+        cameras={cameras}
+      />
 
       <HomeSection2
         cameras={cameras}
-        onDisconnect={removeCamera}
+        onDisconnect={(i) =>
+          confirmAction("Delete this camera?", () => removeCamera(i))
+        }
         onEdit={(i) => setEditingIndex(i)}
       />
 
       <HomeSection3 />
       <HomeFooter />
+
+      {confirmBox && (
+        <ConfirmBox
+          text={confirmBox.msg}
+          onCancel={() => setConfirmBox(null)}
+          onConfirm={() => {
+            confirmBox.action();
+            setConfirmBox(null);
+          }}
+        />
+      )}
     </div>
   );
 };
