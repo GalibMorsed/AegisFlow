@@ -1,6 +1,9 @@
 /*Auth Component Styling */
 @import url(authCompStyling/authPage.css);
 @import "leaflet/dist/leaflet.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* Home Component Styling */
 
