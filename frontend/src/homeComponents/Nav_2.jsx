@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { MdSpaceDashboard } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import {
   FiMenu,
@@ -51,19 +52,12 @@ const Nav = () => {
             </div>
 
             {/* Improved Logo */}
-            <Link to="/home" className="flex items-center gap-2 group relative">
-              <div className="relative flex items-center justify-center">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-yellow-400 to-orange-500 blur-md opacity-40 group-hover:opacity-70 transition-all duration-300" />
-                <FiShield className="h-9 w-9 text-yellow-400 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" />
-              </div>
-              <div className="flex flex-col leading-tight">
-                <span className="text-2xl tracking-wide font-extrabold bg-gradient-to-r from-yellow-300 to-white bg-clip-text text-transparent">
-                  AegisFlow
-                </span>
-                <span className="text-[0.7rem] font-light text-blue-200 italic tracking-widest">
-                  Empower • Secure • Simplify
-                </span>
-              </div>
+            <Link
+              to="/home"
+              className="flex items-center gap-2 px-3 py-2 text-white hover:text-blue-400 transition-all duration-200 font-semibold"
+            >
+              <MdSpaceDashboard className="text-xl" />
+              Home
             </Link>
           </div>
 

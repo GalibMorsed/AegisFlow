@@ -6,6 +6,7 @@ import SignIn from "./authComponents/Sign";
 import ResetPassword from "./authComponents/resetPassword";
 import Body from "./homeComponents/bodyComponents/Body";
 import Home from "./sourcePages/Home";
+import Suggest from "./sourcePages/Suggestion";
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return localStorage.getItem("user") ? true : false;
@@ -28,6 +29,10 @@ function App() {
           element={<PrivateRoute element={<Body />} />}
         />
         <Route path="/home" element={<PrivateRoute element={<Home />} />} />
+        <Route
+          path="/suggest"
+          element={<PrivateRoute element={<Suggest />} />}
+        />
       </Routes>
     </BrowserRouter>
   );
