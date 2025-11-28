@@ -23,7 +23,7 @@ const Nav = () => {
     setLoggedInUser(localStorage.getItem("loggedInUser"));
 
     const checkUpdates = async () => {
-      const res = await fetch("http://localhost:5000/suggestions/unread");
+      const res = await fetch("http://localhost:8000/suggestions/unread");
       const data = await res.json();
 
       if (data.unread === true) {
