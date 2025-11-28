@@ -14,12 +14,27 @@ import {
 
 const Nav = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [hasSuggestion, setHasSuggestion] = useState(true);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     setLoggedInUser(localStorage.getItem("loggedInUser"));
+
+    const checkUpdates = async () => {
+      const res = await fetch("http://localhost:5000/suggestions/unread");
+      const data = await res.json();
+
+      if (data.unread === true) {
+        setHasSuggestion(true);
+      }
+    };
+
+    checkUpdates();
+
+    const interval = setInterval(checkUpdates, 8000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleLogout = () => {
@@ -73,9 +88,16 @@ const Nav = () => {
               <Link
                 key={item.name}
                 to={item.link}
-                className="text-blue-100 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                onClick={() => {
+                  if (item.name === "Suggestions") setHasSuggestion(false);
+                }}
+                className="relative text-blue-100 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 {item.name}
+
+                {item.name === "Suggestions" && hasSuggestion && (
+                  <span className="absolute top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
+                )}
               </Link>
             ))}
           </div>
@@ -144,10 +166,14 @@ const Nav = () => {
               key={item.name}
               to={item.link}
               onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-3 text-blue-100 hover:bg-blue-900 hover:text-white px-3 py-2 rounded-md text-base font-medium"
+              className="relative flex items-center gap-3 text-blue-100 hover:bg-blue-900 hover:text-white px-3 py-2 rounded-md text-base font-medium"
             >
               <item.icon />
               {item.name}
+
+              {item.name === "Suggestions" && hasSuggestion && (
+                <span className="absolute right-2 top-2 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
+              )}
             </Link>
           ))}
         </div>
