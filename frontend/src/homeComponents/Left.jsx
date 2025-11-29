@@ -1,52 +1,149 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
 
-const LeftSide = ({ user, tasks }) => {
+const Left = ({ user, tasks, refresh }) => {
+  const [showAdd, setShowAdd] = useState(false);
+  const [form, setForm] = useState({
+    camera: "",
+    status: "",
+    startTime: "",
+    endTime: "",
+  });
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const addTask = async () => {
+    try {
+      await axios.post(
+        "http://localhost:8000/api/add-task",
+        {
+          ...form,
+          user: user.name, // IMPORTANT FIX
+        },
+        { withCredentials: true }
+      );
+
+      setShowAdd(false);
+      refresh(); // reload all data
+    } catch (err) {
+      console.log(err.response?.data || err.message);
+    }
+  };
+
   return (
-    <div className="border rounded-lg p-4 space-y-4 w-[380px]">
+    <div className="border rounded-lg p-4 space-y-6 w-[360px]">
       {/* Profile */}
-      <div className="border p-4 rounded-lg space-y-2 bg-gray-50">
-        <div className="w-20 h-20 border rounded-full mx-auto bg-gray-200"></div>
+      <div className="border p-6 rounded-lg bg-gray-50 space-y-3 shadow-sm">
+        <div className="w-24 h-24 border rounded-full mx-auto bg-gray-200"></div>
 
-        <p className="text-xl font-bold text-center">{user?.name}</p>
-        <p className="text-center text-gray-600">Email: {user?.email}</p>
+        <p className="text-base text-center text-gray-800 font-semibold">
+          {user?.name}
+        </p>
 
-        <button className="border px-4 py-1 rounded w-full bg-green-300 hover:bg-green-400 transition">
+        <p className="text-center text-gray-500 text-sm">
+          Email: {user?.email}
+        </p>
+
+        <button className="border px-4 py-2 rounded w-full bg-green-300 hover:bg-green-400 transition">
           Edit Profile
         </button>
       </div>
 
       {/* Tasks */}
-      <div className="border p-4 rounded-lg bg-gray-50">
-        <div className="flex justify-between items-center">
+      <div className="border p-5 rounded-lg bg-gray-50 shadow-sm">
+        <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-bold">Tasks</h2>
-          <button className="border px-3 rounded text-xl bg-green-200 hover:bg-green-300 transition">
+          <button
+            onClick={() => setShowAdd(true)}
+            className="border px-3 rounded bg-green-200 hover:bg-green-300 transition text-xl"
+          >
             +
           </button>
         </div>
 
-        <div className="mt-4 space-y-3">
-          {tasks?.length === 0 && (
-            <p className="text-gray-500">No tasks yet...</p>
+        <div className="space-y-3">
+          {tasks.length === 0 && (
+            <div className="text-gray-500 text-sm">
+              No tasks available yet...
+            </div>
           )}
 
-          {tasks?.map((t) => (
+          {tasks.map((t) => (
             <div
               key={t._id}
-              className="flex justify-between bg-white border px-3 py-2 rounded shadow-sm"
+              className="flex justify-between items-center border px-4 py-3 rounded-lg bg-white shadow-sm"
             >
               <div>
-                <p className="font-semibold">{t.status}</p>
-                <p className="text-sm text-gray-500">Cam {t.camera}</p>
+                <p className="font-semibold text-gray-800">{t.status}</p>
+                <p className="text-xs text-gray-500">Cam {t.camera}</p>
               </div>
-              <p className="text-sm">
-                {t.startTime} - {t.endTime}
-              </p>
+
+              <span className="text-sm font-medium text-gray-600">
+                {t.startTime} – {t.endTime}
+              </span>
             </div>
           ))}
         </div>
       </div>
+
+      {/* POPUP FORM */}
+      {showAdd && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-md w-72 space-y-3 shadow-xl animate-fade">
+            <h3 className="font-bold text-lg">Add Task</h3>
+
+            <input
+              name="camera"
+              onChange={handleChange}
+              placeholder="Camera Number"
+              className="border w-full px-2 py-1 rounded"
+            />
+
+            <select
+              name="status"
+              onChange={handleChange}
+              className="border w-full px-2 py-1 rounded"
+            >
+              <option value="">Select Type</option>
+              <option>High Alert</option>
+              <option>Maintenance</option>
+              <option>Normal</option>
+            </select>
+
+            <input
+              name="startTime"
+              onChange={handleChange}
+              placeholder="Start Time"
+              className="border w-full px-2 py-1 rounded"
+            />
+
+            <input
+              name="endTime"
+              onChange={handleChange}
+              placeholder="End Time"
+              className="border w-full px-2 py-1 rounded"
+            />
+
+            <button
+              onClick={addTask}
+              className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition"
+            >
+              Save
+            </button>
+
+            <button
+              onClick={() => setShowAdd(false)}
+              className="w-full bg-gray-300 py-2 rounded hover:bg-gray-400 transition"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default LeftSide;
+export default Left;

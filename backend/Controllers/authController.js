@@ -47,6 +47,11 @@ const login = async (req, res) => {
       { expiresIn: "24h" }
     );
 
+    res.cookie("token", jwtToken, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: false, // use true only in https
+    });
     res.status(200).json({
       message: "Login successful",
       success: true,

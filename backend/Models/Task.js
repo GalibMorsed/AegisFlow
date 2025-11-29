@@ -1,11 +1,15 @@
 const mongoose = require("mongoose");
 
 const taskSchema = new mongoose.Schema({
-  user: String,
   camera: Number,
-  status: String, // <-- this!
+  status: String,
   startTime: String,
   endTime: String,
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("Task", taskSchema);

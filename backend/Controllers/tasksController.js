@@ -6,11 +6,11 @@ exports.addTask = async (req, res) => {
     const { user, camera, status, startTime, endTime } = req.body;
 
     const task = await Task.create({
-      user,
       camera,
       status,
       startTime,
       endTime,
+      userId: req.user._id,
     });
 
     res.status(201).json({
@@ -25,7 +25,7 @@ exports.addTask = async (req, res) => {
 // GET ALL TASKS
 exports.getTasks = async (req, res) => {
   try {
-    const tasks = await Task.find();
+    const tasks = await Task.find({ userId: req.user._id });
     res.json(tasks);
   } catch (error) {
     res.status(500).json({ error: error.message });

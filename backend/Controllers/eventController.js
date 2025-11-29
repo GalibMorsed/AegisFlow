@@ -8,6 +8,7 @@ exports.addEvent = async (req, res) => {
     const event = await Event.create({
       title,
       description,
+      userId: req.user._id,
     });
 
     res.status(201).json({
@@ -19,10 +20,10 @@ exports.addEvent = async (req, res) => {
   }
 };
 
-// GET ALL EVENTS
+// GET ALL EVENTS ONLY FOR USER
 exports.getEvents = async (req, res) => {
   try {
-    const events = await Event.find();
+    const events = await Event.find({ userId: req.user._id });
     res.json(events);
   } catch (error) {
     res.status(500).json({ error: error.message });

@@ -10,6 +10,7 @@ exports.addStaff = async (req, res) => {
       cameraName,
       staffId,
       staffName,
+      userId: req.user._id,
     });
 
     res.status(201).json({
@@ -24,7 +25,7 @@ exports.addStaff = async (req, res) => {
 // GET ALL STAFF
 exports.getStaffs = async (req, res) => {
   try {
-    const staffs = await Staff.find();
+    const staffs = await Staff.find({ userId: req.user._id });
     res.json(staffs);
   } catch (error) {
     res.status(500).json({ error: error.message });
