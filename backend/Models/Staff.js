@@ -1,14 +1,22 @@
 const mongoose = require("mongoose");
 
-const StaffSchema = new mongoose.Schema(
-  {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    location: String,
-    camera: String,
-    staffId: String,
-    staffName: String,
+const staffSchema = new mongoose.Schema({
+  location: {
+    type: String,
+    required: true,
   },
-  { timestamps: true }
-);
+  cameraName: {
+    type: String,
+    required: true,
+  },
+  staffId: {
+    type: String,
+    required: true,
+  },
+  staffName: {
+    type: String,
+    required: true,
+  },
+});
 
-module.exports = mongoose.model("Staff", StaffSchema);
+module.exports = mongoose.model("Staff", staffSchema);

@@ -5,9 +5,9 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./Routes/authRoutes.js");
 const cameraRoutes = require("./Routes/cameraRoutes");
-const taskRoutes = require("./Routes/taskRoutes");
-const eventRoutes = require("./Routes/eventRoutes.js");
-const staffRoutes = require("./Routes/staffRoutes.js");
+const taskRoutes = require("./Routes/taskRoutes.js");
+const eventRoutes = require("./Routes/eventRoutes");
+const staffRoutes = require("./Routes/staffRoutes");
 
 require("dotenv").config();
 require("./Models/db.js");
@@ -18,10 +18,9 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use("/auth", authRoutes);
 app.use("/camera", cameraRoutes);
-app.use("/tasks", taskRoutes);
-app.use("/events", eventRoutes);
-app.use("/staff", staffRoutes);
-
+app.use("/api", taskRoutes);
+app.use("/api", eventRoutes);
+app.use("/api", staffRoutes);
 app.get("/hii", (req, res) => {
   res.send("Hello World");
 });

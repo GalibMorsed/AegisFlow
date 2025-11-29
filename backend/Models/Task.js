@@ -1,12 +1,11 @@
 const mongoose = require("mongoose");
 
-const TaskSchema = new mongoose.Schema(
-  {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    title: { type: String, required: true },
-    time: { type: String },
-  },
-  { timestamps: true }
-);
+const taskSchema = new mongoose.Schema({
+  user: String,
+  camera: Number,
+  status: String, // <-- this!
+  startTime: String,
+  endTime: String,
+});
 
-module.exports = mongoose.model("Task", TaskSchema);
+module.exports = mongoose.model("Task", taskSchema);
