@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Left from "../homeComponents/Left";
 import Right from "../homeComponents/RigthSide";
-import Nav from "../homeComponents/Nav";
+import Nav from "../homeComponents/Profile_Nav";
 
 const Profile = () => {
   const [tasks, setTasks] = useState([]);

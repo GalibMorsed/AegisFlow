@@ -49,9 +49,15 @@ const Left = ({ user, tasks, cameras, refresh }) => {
   return (
     <div className="border rounded-lg p-4 space-y-6 w-[360px]">
       {/* PROFILE */}
-      <div className="border p-6 rounded-lg bg-gray-50">
-        <h2 className="text-center text-xl font-bold">{user?.name}</h2>
-        <p className="text-center text-gray-500">{user?.email}</p>
+      <div className="border p-6 rounded-lg bg-gray-50 flex flex-col items-center">
+        <img
+          src="/imgs/userImg.avif"
+          alt="User"
+          className="w-20 h-20 rounded-full border-2 border-blue-600 mb-3"
+        />
+
+        <h2 className="text-xl font-bold">{user?.name}</h2>
+        <p className="text-gray-500">{user?.email}</p>
       </div>
 
       {/* TASKS */}
@@ -60,7 +66,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
           <h2 className="font-bold">Tasks</h2>
           <button
             onClick={() => setShowAdd(true)}
-            className="bg-green-200 px-3 rounded"
+            className="bg-green-200 px-4 py-2 rounded-xl"
           >
             +
           </button>
