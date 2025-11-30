@@ -4,12 +4,11 @@ import Left from "../homeComponents/Left";
 import Right from "../homeComponents/RigthSide";
 import Nav from "../homeComponents/Nav";
 
-axios.defaults.withCredentials = true;
-
 const Profile = () => {
   const [tasks, setTasks] = useState([]);
   const [events, setEvents] = useState([]);
   const [staffs, setStaffs] = useState([]);
+  const [cameras, setCameras] = useState([]);
 
   const [user, setUser] = useState({
     name: localStorage.getItem("loggedInUser"),
@@ -21,26 +20,50 @@ const Profile = () => {
   }, []);
 
   const fetchAll = async () => {
+    const email = localStorage.getItem("userEmail");
+
     try {
       const userRes = await axios.get("http://localhost:8000/auth/me");
       if (userRes.data) {
-        setUser(userRes.data); // only update on success
+        setUser(userRes.data);
       }
     } catch {}
 
     try {
-      const taskRes = await axios.get("http://localhost:8000/api/tasks");
-      setTasks(taskRes.data);
+      const camsRes = await axios.post("http://localhost:8000/camera/get", {
+        email,
+      });
+      setCameras(camsRes.data.cameras);
     } catch {}
 
     try {
-      const eventRes = await axios.get("http://localhost:8000/api/events");
-      setEvents(eventRes.data);
+      const taskRes = await axios.post(
+        "http://localhost:8000/profile/gettasks",
+        {
+          email,
+        }
+      );
+      setTasks(taskRes.data.tasks);
     } catch {}
 
     try {
-      const staffRes = await axios.get("http://localhost:8000/api/staffs");
-      setStaffs(staffRes.data);
+      const eventRes = await axios.post(
+        "http://localhost:8000/profile/getevents",
+        {
+          email,
+        }
+      );
+      setEvents(eventRes.data.events);
+    } catch {}
+
+    try {
+      const staffRes = await axios.post(
+        "http://localhost:8000/profile/getstaffs",
+        {
+          email,
+        }
+      );
+      setStaffs(staffRes.data.staffs);
     } catch {}
   };
 
@@ -48,8 +71,19 @@ const Profile = () => {
     <div>
       <Nav />
       <div className="flex gap-4 justify-center mt-6">
-        <Left user={user} tasks={tasks} refresh={fetchAll} />
-        <Right events={events} staffs={staffs} />
+        <Left
+          user={user}
+          tasks={tasks}
+          cameras={cameras} // <---- THE FIX
+          refresh={fetchAll}
+        />
+
+        <Right
+          events={events}
+          staffs={staffs}
+          cameras={cameras}
+          refresh={fetchAll}
+        />
       </div>
     </div>
   );
