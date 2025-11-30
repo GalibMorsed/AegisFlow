@@ -23,42 +23,66 @@ const Profile = () => {
     const email = localStorage.getItem("userEmail");
 
     try {
-      const camsRes = await axios.post("http://localhost:8000/camera/get", {
+      const resUser = await axios.get("http://localhost:8000/auth/me");
+      setUser(resUser.data);
+    } catch (err) {}
+
+    // CAMERAS
+    try {
+      const camRes = await axios.post("http://localhost:8000/camera/get", {
         email,
       });
-      setCameras(camsRes.data.cameras);
-    } catch {}
+      setCameras(camRes.data.cameras);
+    } catch (err) {}
 
+    // TASKS
+    // TASKS
     try {
-      const taskRes = await axios.post(
+      const res = await axios.post(
         "http://localhost:8000/profile/gettasks",
-        { email }
+        { email: email },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
-      setTasks(taskRes.data.tasks);
-    } catch {}
 
+      console.log("TASK RESPONSE:", res.data);
+      setTasks(res.data.tasks);
+    } catch (err) {
+      console.log("TASK ERROR:", err);
+    }
+
+    // EVENTS
     try {
       const eventRes = await axios.post(
         "http://localhost:8000/profile/getevents",
-        { email }
+        {
+          email,
+        }
       );
       setEvents(eventRes.data.events);
-    } catch {}
+    } catch (err) {}
 
+    // STAFF
     try {
       const staffRes = await axios.post(
         "http://localhost:8000/profile/getstaffs",
-        { email }
+        {
+          email,
+        }
       );
       setStaffs(staffRes.data.staffs);
-    } catch {}
+    } catch (err) {}
   };
 
   return (
     <div>
       <Nav />
-      <div className="flex gap-4 justify-center mt-6">
+      <div className="flex gap-5 justify-center mt-6">
         <Left user={user} tasks={tasks} cameras={cameras} refresh={fetchAll} />
+
         <Right events={events} staffs={staffs} />
       </div>
     </div>
