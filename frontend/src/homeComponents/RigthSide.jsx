@@ -16,31 +16,72 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
 
   const userEmail = localStorage.getItem("userEmail");
 
-  const addEvent = async () => {
-    await axios.post("http://localhost:8000/profile/addevents", {
-      email: userEmail,
-      title: eventForm.title,
-      description: eventForm.description,
-    });
+  // ========== EVENTS ==========
 
-    setEventForm({ title: "", description: "" });
-    refresh();
+  const addEvent = async () => {
+    try {
+      await axios.post("http://localhost:8000/profile/addevents", {
+        email: userEmail,
+        title: eventForm.title,
+        description: eventForm.description,
+      });
+
+      setEventForm({ title: "", description: "" });
+      refresh();
+    } catch (err) {
+      console.log("EVENT ADD ERROR:", err.response?.data || err.message);
+    }
   };
 
+  const deleteEvent = async (id) => {
+    const ok = window.confirm("Delete this event?");
+    if (!ok) return;
+
+    try {
+      await axios.delete(`http://localhost:8000/profile/deleteevent/${id}`, {
+        data: { email: userEmail },
+      });
+      refresh();
+    } catch (err) {
+      console.log("EVENT DELETE ERROR:", err.response?.data || err.message);
+    }
+  };
+
+  // ========== STAFF ==========
+
   const addStaff = async () => {
-    await axios.post("http://localhost:8000/profile/addstaffs", {
-      email: userEmail,
-      ...staffForm,
-    });
+    try {
+      await axios.post("http://localhost:8000/profile/addstaffs", {
+        email: userEmail,
+        ...staffForm,
+      });
 
-    setStaffForm({
-      location: "",
-      cameraName: "",
-      staffId: "",
-      staffName: "",
-    });
+      setStaffForm({
+        location: "",
+        cameraName: "",
+        staffId: "",
+        staffName: "",
+      });
 
-    refresh();
+      refresh();
+    } catch (err) {
+      console.log("STAFF ADD ERROR:", err.response?.data || err.message);
+    }
+  };
+
+  const deleteStaff = async (id) => {
+    const ok = window.confirm("Delete this staff?");
+    if (!ok) return;
+
+    try {
+      await axios.delete(`http://localhost:8000/profile/deletestaff/${id}`, {
+        data: { email: userEmail },
+      });
+
+      refresh();
+    } catch (err) {
+      console.log("STAFF DELETE ERROR:", err.response?.data || err.message);
+    }
   };
 
   return (
@@ -57,6 +98,7 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
             setEventForm({ ...eventForm, title: e.target.value })
           }
         />
+
         <textarea
           className="border p-2 w-full mb-2"
           placeholder="Description"
@@ -68,17 +110,30 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
 
         <button
           onClick={addEvent}
-          className="bg-purple-500 px-4 py-2 text-white rounded"
+          className="bg-purple-500 px-4 py-2 text-white rounded w-full"
         >
           Save Event
         </button>
 
         <div className="mt-4 space-y-2">
           {events?.length === 0 && <p>No events yet...</p>}
+
           {events?.map((ev) => (
-            <div key={ev._id} className="border p-2 rounded">
-              <p className="font-bold">{ev.title}</p>
-              <p className="text-gray-600 text-sm">{ev.description}</p>
+            <div
+              key={ev._id}
+              className="border p-2 rounded flex justify-between items-start"
+            >
+              <div>
+                <p className="font-bold">{ev.title}</p>
+                <p className="text-gray-600 text-sm">{ev.description}</p>
+              </div>
+
+              <button
+                onClick={() => deleteEvent(ev._id)}
+                className="text-red-600 hover:text-red-800 font-bold text-lg"
+              >
+                ✕
+              </button>
             </div>
           ))}
         </div>
@@ -88,27 +143,33 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
       <div className="border rounded-lg p-5 bg-white">
         <h2 className="font-bold mb-3 text-lg">Staffs</h2>
 
-        <input
-          placeholder="Location"
-          className="border p-2 w-full mb-2"
-          value={staffForm.location}
-          onChange={(e) =>
-            setStaffForm({ ...staffForm, location: e.target.value })
-          }
-        />
-
+        {/* Camera select → auto-fill location */}
         <select
           className="border p-2 w-full mb-2"
           value={staffForm.cameraName}
-          onChange={(e) =>
-            setStaffForm({ ...staffForm, cameraName: e.target.value })
-          }
+          onChange={(e) => {
+            const selectedName = e.target.value;
+            const cam = cameras.find((c) => c.name === selectedName);
+
+            setStaffForm({
+              ...staffForm,
+              cameraName: selectedName,
+              location: cam ? cam.location : "",
+            });
+          }}
         >
           <option>Select Camera</option>
           {cameras?.map((cam) => (
             <option key={cam._id}>{cam.name}</option>
           ))}
         </select>
+
+        <input
+          placeholder="Location (auto-filled)"
+          className="border p-2 w-full mb-2 bg-gray-100"
+          value={staffForm.location}
+          readOnly
+        />
 
         <input
           placeholder="Staff ID"
@@ -130,19 +191,33 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
 
         <button
           onClick={addStaff}
-          className="bg-blue-500 px-4 py-2 text-white rounded"
+          className="bg-blue-500 px-4 py-2 text-white rounded w-full"
         >
           Save Staff
         </button>
 
         <div className="mt-4 space-y-2">
           {staffs?.length === 0 && <p>No staff added yet…</p>}
+
           {staffs?.map((s) => (
-            <div key={s._id} className="border p-2 rounded">
-              <p>
-                {s.staffName} ({s.staffId})
-              </p>
-              <p className="text-gray-600 text-sm">{s.cameraName}</p>
+            <div
+              key={s._id}
+              className="border p-2 rounded flex justify-between items-center"
+            >
+              <div>
+                <p>
+                  {s.staffName} ({s.staffId})
+                </p>
+                <p className="text-gray-600 text-sm">{s.cameraName}</p>
+                <p className="text-gray-500 text-xs">{s.location}</p>
+              </div>
+
+              <button
+                onClick={() => deleteStaff(s._id)}
+                className="text-red-500 hover:text-red-700 font-bold text-lg"
+              >
+                ✕
+              </button>
             </div>
           ))}
         </div>

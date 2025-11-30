@@ -174,12 +174,21 @@ exports.getStaffs = async (req, res) => {
   }
 };
 exports.deleteStaff = async (req, res) => {
-  const { email, id } = req.body;
+  try {
+    const { email } = req.body;
+    const { id } = req.params;
 
-  const user = await User.findOne({ email });
-  await Staff.deleteOne({ _id: id, userId: user._id });
+    const user = await User.findOne({ email });
 
-  res.json({ success: true });
+    await Staff.findOneAndDelete({
+      _id: id,
+      userId: user._id,
+    });
+
+    return res.json({ success: true, message: "Staff removed" });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
 };
 
 /* ==========================
