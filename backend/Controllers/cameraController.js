@@ -129,3 +129,25 @@ exports.updateCamera = async (req, res) => {
     return sendServerError(res, err);
   }
 };
+
+exports.getCameraNames = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email)
+      return res
+        .status(400)
+        .json({ success: false, message: "Email is required." });
+
+    const user = await User.findOne({ email }).select("_id email");
+    if (!user)
+      return res
+        .status(44)
+        .json({ success: false, message: "User not found." });
+
+    const cameras = await Camera.find({ user: user._id }).select("name");
+    const cameraNames = cameras.map((camera) => camera.name);
+    return res.json({ success: true, cameraNames, userEmail: user.email });
+  } catch (err) {
+    return sendServerError(res, err);
+  }
+};

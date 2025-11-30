@@ -1,36 +1,177 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
 
-const RigthSide = () => {
+const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
+  const [eventForm, setEventForm] = useState({
+    title: "",
+    description: "",
+  });
+
+  const [staffForm, setStaffForm] = useState({
+    location: "",
+    cameraName: "",
+    staffId: "",
+    staffName: "",
+  });
+  const deleteEvent = async (id) => {
+    const ok = window.confirm("Delete this event?");
+    if (!ok) return;
+
+    await axios.delete(`http://localhost:8000/profile/deleteevent/${id}`, {
+      data: { email: userEmail },
+    });
+
+    refresh();
+  };
+
+  const userEmail = localStorage.getItem("userEmail");
+
+  const addEvent = async () => {
+    await axios.post("http://localhost:8000/profile/addevents", {
+      email: userEmail,
+      title: eventForm.title,
+      description: eventForm.description,
+    });
+
+    setEventForm({ title: "", description: "" });
+    refresh();
+  };
+
+  const addStaff = async () => {
+    await axios.post("http://localhost:8000/profile/addstaffs", {
+      email: userEmail,
+      ...staffForm,
+    });
+
+    setStaffForm({
+      location: "",
+      cameraName: "",
+      staffId: "",
+      staffName: "",
+    });
+
+    refresh();
+  };
+
   return (
-    <div className="border rounded-lg p-4 space-y-4">
-      {/* Add Events */}
-      <div className="border p-4 rounded-lg space-y-3">
-        <div className="flex justify-between">
-          <h2 className="font-bold text-lg">Add Events</h2>
-          <button className="border bg-purple-200 px-4 rounded">Add</button>
-        </div>
+    <div className="space-y-8">
+      {/* EVENTS */}
+      <div className="border rounded-lg p-5 bg-white">
+        <h2 className="font-bold mb-3 text-lg">Events</h2>
 
-        {/* two text areas */}
-        <textarea className="border w-full h-20"></textarea>
-        <textarea className="border w-full h-20"></textarea>
+        <input
+          className="border p-2 w-full mb-2"
+          placeholder="Title"
+          value={eventForm.title}
+          onChange={(e) =>
+            setEventForm({ ...eventForm, title: e.target.value })
+          }
+        />
+        <textarea
+          className="border p-2 w-full mb-2"
+          placeholder="Description"
+          value={eventForm.description}
+          onChange={(e) =>
+            setEventForm({ ...eventForm, description: e.target.value })
+          }
+        />
+
+        <button
+          onClick={addEvent}
+          className="bg-purple-500 px-4 py-2 text-white rounded"
+        >
+          Save Event
+        </button>
+
+        <div className="mt-4 space-y-2">
+          {events?.length === 0 && <p>No events yet...</p>}
+
+          {events?.map((ev) => (
+            <div
+              key={ev._id}
+              className="border p-2 rounded flex justify-between items-start"
+            >
+              <div>
+                <p className="font-bold">{ev.title}</p>
+                <p className="text-gray-600 text-sm">{ev.description}</p>
+              </div>
+
+              <button
+                onClick={() => deleteEvent(ev._id)}
+                className="text-red-600 hover:text-red-800 font-bold text-lg"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Add Staff */}
-      <div className="border p-4 rounded-lg space-y-3">
-        <div className="flex justify-between">
-          <h2 className="font-bold text-lg">Add Staffs</h2>
-          <button className="border px-3 rounded text-xl">+</button>
+      {/* STAFF */}
+      <div className="border rounded-lg p-5 bg-white">
+        <h2 className="font-bold mb-3 text-lg">Staffs</h2>
+
+        <input
+          placeholder="Location"
+          className="border p-2 w-full mb-2"
+          value={staffForm.location}
+          onChange={(e) =>
+            setStaffForm({ ...staffForm, location: e.target.value })
+          }
+        />
+
+        <select
+          className="border p-2 w-full mb-2"
+          value={staffForm.cameraName}
+          onChange={(e) =>
+            setStaffForm({ ...staffForm, cameraName: e.target.value })
+          }
+        >
+          <option>Select Camera</option>
+          {cameras?.map((cam) => (
+            <option key={cam._id}>{cam.name}</option>
+          ))}
+        </select>
+
+        <input
+          placeholder="Staff ID"
+          className="border p-2 w-full mb-2"
+          value={staffForm.staffId}
+          onChange={(e) =>
+            setStaffForm({ ...staffForm, staffId: e.target.value })
+          }
+        />
+
+        <input
+          placeholder="Staff Name"
+          className="border p-2 w-full mb-2"
+          value={staffForm.staffName}
+          onChange={(e) =>
+            setStaffForm({ ...staffForm, staffName: e.target.value })
+          }
+        />
+
+        <button
+          onClick={addStaff}
+          className="bg-blue-500 px-4 py-2 text-white rounded"
+        >
+          Save Staff
+        </button>
+
+        <div className="mt-4 space-y-2">
+          {staffs?.length === 0 && <p>No staff added yet…</p>}
+          {staffs?.map((s) => (
+            <div key={s._id} className="border p-2 rounded">
+              <p>
+                {s.staffName} ({s.staffId})
+              </p>
+              <p className="text-gray-600 text-sm">{s.cameraName}</p>
+            </div>
+          ))}
         </div>
-
-        <input className="border w-full" placeholder="Location :" />
-        <input className="border w-full" placeholder="Camera Name :" />
-        <input className="border w-full" placeholder="Staff ID :" />
-        <input className="border w-full" placeholder="Staff Name :" />
-
-        <div className="h-20 border rounded"></div>
       </div>
     </div>
   );
 };
 
-export default RigthSide;
+export default RightSide;

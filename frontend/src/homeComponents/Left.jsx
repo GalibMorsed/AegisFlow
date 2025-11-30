@@ -1,14 +1,28 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const Left = ({ user, tasks, refresh }) => {
+const Left = ({ user, tasks, cameras, refresh }) => {
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({
-    camera: "",
-    status: "",
+    cameraName: "",
+    taskType: "",
     startTime: "",
     endTime: "",
   });
+  const deleteTask = async (id) => {
+    const ok = window.confirm("Delete this task?");
+    if (!ok) return;
+
+    try {
+      await axios.delete(`http://localhost:8000/profile/deletetask/${id}`, {
+        data: { email: user.email },
+      });
+
+      refresh();
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -16,126 +30,124 @@ const Left = ({ user, tasks, refresh }) => {
 
   const addTask = async () => {
     try {
-      await axios.post(
-        "http://localhost:8000/api/add-task",
-        {
-          ...form,
-          user: user.name, // IMPORTANT FIX
-        },
-        { withCredentials: true }
-      );
+      await axios.post("http://localhost:8000/profile/addtasks", {
+        email: user.email,
+        cameraName: form.cameraName,
+        taskType: form.taskType,
+        startTime: form.startTime,
+        endTime: form.endTime,
+        status: "Pending",
+      });
 
       setShowAdd(false);
-      refresh(); // reload all data
+      refresh();
     } catch (err) {
-      console.log(err.response?.data || err.message);
+      console.log(err);
     }
   };
 
   return (
     <div className="border rounded-lg p-4 space-y-6 w-[360px]">
-      {/* Profile */}
-      <div className="border p-6 rounded-lg bg-gray-50 space-y-3 shadow-sm">
-        <div className="w-24 h-24 border rounded-full mx-auto bg-gray-200"></div>
-
-        <p className="text-base text-center text-gray-800 font-semibold">
-          {user?.name}
-        </p>
-
-        <p className="text-center text-gray-500 text-sm">
-          Email: {user?.email}
-        </p>
-
-        <button className="border px-4 py-2 rounded w-full bg-green-300 hover:bg-green-400 transition">
-          Edit Profile
-        </button>
+      {/* PROFILE */}
+      <div className="border p-6 rounded-lg bg-gray-50">
+        <h2 className="text-center text-xl font-bold">{user?.name}</h2>
+        <p className="text-center text-gray-500">{user?.email}</p>
       </div>
 
-      {/* Tasks */}
-      <div className="border p-5 rounded-lg bg-gray-50 shadow-sm">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-bold">Tasks</h2>
+      {/* TASKS */}
+      <div className="border p-5 rounded-lg bg-gray-50">
+        <div className="flex justify-between">
+          <h2 className="font-bold">Tasks</h2>
           <button
             onClick={() => setShowAdd(true)}
-            className="border px-3 rounded bg-green-200 hover:bg-green-300 transition text-xl"
+            className="bg-green-200 px-3 rounded"
           >
             +
           </button>
         </div>
 
-        <div className="space-y-3">
-          {tasks.length === 0 && (
-            <div className="text-gray-500 text-sm">
-              No tasks available yet...
-            </div>
-          )}
+        {/* SHOW TASKS */}
+        {tasks.length === 0 && (
+          <p className="text-gray-400 mt-2">No tasks yet...</p>
+        )}
 
-          {tasks.map((t) => (
-            <div
-              key={t._id}
-              className="flex justify-between items-center border px-4 py-3 rounded-lg bg-white shadow-sm"
-            >
-              <div>
-                <p className="font-semibold text-gray-800">{t.status}</p>
-                <p className="text-xs text-gray-500">Cam {t.camera}</p>
-              </div>
-
-              <span className="text-sm font-medium text-gray-600">
-                {t.startTime} – {t.endTime}
-              </span>
+        {tasks.map((t) => (
+          <div
+            key={t._id}
+            className="border p-2 rounded mt-3 flex justify-between items-center"
+          >
+            <div>
+              <p className="font-semibold">{t.taskType}</p>
+              <small className="text-gray-500">{t.cameraName}</small>
+              <br />
+              <small>
+                {t.startTime} - {t.endTime}
+              </small>
+              <p>Status : {t.status || "Pending"}</p>
             </div>
-          ))}
-        </div>
+
+            {t.status !== "Pending" && (
+              <input
+                type="checkbox"
+                className="w-5 h-5 cursor-pointer"
+                onChange={() => deleteTask(t._id)}
+              />
+            )}
+          </div>
+        ))}
       </div>
 
-      {/* POPUP FORM */}
+      {/* POPUP */}
       {showAdd && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-md w-72 space-y-3 shadow-xl animate-fade">
+        <div className="fixed inset-0 bg-black/30 flex justify-center items-center">
+          <div className="bg-white p-6 rounded space-y-3">
             <h3 className="font-bold text-lg">Add Task</h3>
 
-            <input
-              name="camera"
+            <select
+              name="cameraName"
               onChange={handleChange}
-              placeholder="Camera Number"
-              className="border w-full px-2 py-1 rounded"
-            />
+              className="border w-full p-2"
+            >
+              <option>Select Camera</option>
+              {cameras?.map((cam) => (
+                <option key={cam._id}>{cam.name}</option>
+              ))}
+            </select>
 
             <select
-              name="status"
+              name="taskType"
               onChange={handleChange}
-              className="border w-full px-2 py-1 rounded"
+              className="border w-full p-2"
             >
-              <option value="">Select Type</option>
               <option>High Alert</option>
               <option>Maintenance</option>
-              <option>Normal</option>
+              <option>Normal Check</option>
             </select>
 
             <input
               name="startTime"
               onChange={handleChange}
               placeholder="Start Time"
-              className="border w-full px-2 py-1 rounded"
+              className="border w-full p-2"
             />
 
             <input
               name="endTime"
               onChange={handleChange}
               placeholder="End Time"
-              className="border w-full px-2 py-1 rounded"
+              className="border w-full p-2"
             />
 
             <button
               onClick={addTask}
-              className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition"
+              className="bg-green-500 text-white w-full p-2"
             >
               Save
             </button>
 
             <button
               onClick={() => setShowAdd(false)}
-              className="w-full bg-gray-300 py-2 rounded hover:bg-gray-400 transition"
+              className="bg-gray-300 w-full p-2"
             >
               Cancel
             </button>

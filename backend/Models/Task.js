@@ -1,15 +1,39 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const taskSchema = new mongoose.Schema({
-  camera: Number,
-  status: String,
-  startTime: String,
-  endTime: String,
+const taskSchema = new Schema({
   userId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
+  tasks: [
+    {
+      cameraName: {
+        type: String,
+        required: true,
+      },
+      taskType: {
+        type: String,
+        required: true,
+      },
+      status: {
+        type: String,
+        required: true,
+      },
+      startTime: {
+        type: String,
+      },
+      endTime: {
+        type: String,
+      },
+    },
+  ],
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-module.exports = mongoose.model("Task", taskSchema);
+const TaskModel = mongoose.model("Task", taskSchema);
+module.exports = TaskModel;

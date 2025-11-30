@@ -4,12 +4,11 @@ import Left from "../homeComponents/Left";
 import Right from "../homeComponents/RigthSide";
 import Nav from "../homeComponents/Nav";
 
-axios.defaults.withCredentials = true;
-
 const Profile = () => {
   const [tasks, setTasks] = useState([]);
   const [events, setEvents] = useState([]);
   const [staffs, setStaffs] = useState([]);
+  const [cameras, setCameras] = useState([]);
 
   const [user, setUser] = useState({
     name: localStorage.getItem("loggedInUser"),
@@ -21,35 +20,77 @@ const Profile = () => {
   }, []);
 
   const fetchAll = async () => {
-    try {
-      const userRes = await axios.get("http://localhost:8000/auth/me");
-      if (userRes.data) {
-        setUser(userRes.data); // only update on success
-      }
-    } catch {}
+    const email = localStorage.getItem("userEmail");
 
     try {
-      const taskRes = await axios.get("http://localhost:8000/api/tasks");
-      setTasks(taskRes.data);
-    } catch {}
+      const resUser = await axios.get("http://localhost:8000/auth/me");
+      setUser(resUser.data);
+    } catch (err) {}
 
+    // CAMERAS
     try {
-      const eventRes = await axios.get("http://localhost:8000/api/events");
-      setEvents(eventRes.data);
-    } catch {}
+      const camRes = await axios.post("http://localhost:8000/camera/get", {
+        email,
+      });
+      setCameras(camRes.data.cameras);
+    } catch (err) {}
 
+    // TASKS
     try {
-      const staffRes = await axios.get("http://localhost:8000/api/staffs");
-      setStaffs(staffRes.data);
-    } catch {}
+      const res = await axios.post(
+        "http://localhost:8000/profile/gettasks",
+        { email: email },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("TASK RESPONSE:", res.data);
+      setTasks(res.data.tasks);
+    } catch (err) {
+      console.log("TASK ERROR:", err);
+    }
+
+    // EVENTS
+    try {
+      const eventRes = await axios.post(
+        "http://localhost:8000/profile/getevents",
+        { email }
+      );
+
+      console.log("📢 EVENTS RESPONSE:", eventRes.data);
+      setEvents(eventRes.data.events);
+    } catch (err) {
+      console.log("❌ EVENTS ERROR:", err.response?.data || err);
+    }
+
+    // STAFF
+    try {
+      const staffRes = await axios.post(
+        "http://localhost:8000/profile/getstaffs",
+        {
+          email,
+        }
+      );
+      setStaffs(staffRes.data.staffs);
+    } catch (err) {}
   };
 
   return (
     <div>
       <Nav />
-      <div className="flex gap-4 justify-center mt-6">
-        <Left user={user} tasks={tasks} refresh={fetchAll} />
-        <Right events={events} staffs={staffs} />
+      <div className="flex gap-5 justify-center mt-6">
+        <Left user={user} tasks={tasks} cameras={cameras} refresh={fetchAll} />
+        <div className="w-3/4">
+          <Right
+            events={events}
+            staffs={staffs}
+            cameras={cameras}
+            refresh={fetchAll}
+          />
+        </div>
       </div>
     </div>
   );
