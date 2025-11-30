@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const auth = require("../Middleware/auth");
 const controller = require("../Controllers/cameraController");
 
 router.post("/add", controller.addCamera);
