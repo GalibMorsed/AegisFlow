@@ -36,7 +36,6 @@ const Profile = () => {
     } catch (err) {}
 
     // TASKS
-    // TASKS
     try {
       const res = await axios.post(
         "http://localhost:8000/profile/gettasks",
@@ -58,12 +57,14 @@ const Profile = () => {
     try {
       const eventRes = await axios.post(
         "http://localhost:8000/profile/getevents",
-        {
-          email,
-        }
+        { email }
       );
+
+      console.log("📢 EVENTS RESPONSE:", eventRes.data);
       setEvents(eventRes.data.events);
-    } catch (err) {}
+    } catch (err) {
+      console.log("❌ EVENTS ERROR:", err.response?.data || err);
+    }
 
     // STAFF
     try {
@@ -82,8 +83,14 @@ const Profile = () => {
       <Nav />
       <div className="flex gap-5 justify-center mt-6">
         <Left user={user} tasks={tasks} cameras={cameras} refresh={fetchAll} />
-
-        <Right events={events} staffs={staffs} />
+        <div className="w-3/4">
+          <Right
+            events={events}
+            staffs={staffs}
+            cameras={cameras}
+            refresh={fetchAll}
+          />
+        </div>
       </div>
     </div>
   );

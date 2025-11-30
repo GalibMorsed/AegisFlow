@@ -32,37 +32,20 @@ exports.addEvent = async (req, res) => {
   try {
     const { email, title, description } = req.body;
 
-    if (!email)
-      return res
-        .status(400)
-        .json({ success: false, message: "Email is required." });
-
-    const user = await User.findOne({ email }).select("_id email");
-    if (!user)
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found." });
-
-    const cleanedTitle = sanitizeString(title);
-    const cleanedDescription = sanitizeString(description);
-
-    if (!cleanedTitle)
-      return res
-        .status(400)
-        .json({ success: false, message: "Title is required." });
+    const user = await User.findOne({ email });
 
     const event = await Event.create({
-      title: cleanedTitle,
-      description: cleanedDescription,
       userId: user._id,
-      userEmail: user.email, // optional audit
+      title,
+      description,
     });
 
-    return res
-      .status(201)
-      .json({ success: true, event, userEmail: user.email });
+    return res.status(201).json({
+      success: true,
+      event,
+    });
   } catch (err) {
-    return sendServerError(res, err);
+    return res.json({ success: false, error: err.message });
   }
 };
 
@@ -70,26 +53,21 @@ exports.getEvents = async (req, res) => {
   try {
     const { email } = req.body;
 
-    if (!email)
-      return res
-        .status(400)
-        .json({ success: false, message: "Email is required." });
-
-    const user = await User.findOne({ email }).select("_id email");
-    if (!user)
+    const user = await User.findOne({ email }).select("_id");
+    if (!user) {
       return res
         .status(404)
-        .json({ success: false, message: "User not found." });
+        .json({ success: false, message: "User not found" });
+    }
 
-    const events = await Event.find({ userId: user._id })
-      .lean()
-      .sort({ createdAt: -1 });
+    const events = await Event.find({ userId: user._id }).sort({
+      createdAt: -1,
+    });
 
     return res.json({
       success: true,
       events,
       count: events.length,
-      userEmail: user.email,
     });
   } catch (err) {
     return sendServerError(res, err);

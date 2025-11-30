@@ -83,13 +83,16 @@ const Left = ({ user, tasks, cameras, refresh }) => {
               <small>
                 {t.startTime} - {t.endTime}
               </small>
+              <p>Status : {t.status || "Pending"}</p>
             </div>
 
-            <input
-              type="checkbox"
-              className="w-5 h-5 cursor-pointer"
-              onChange={() => deleteTask(t._id)}
-            />
+            {t.status !== "Pending" && (
+              <input
+                type="checkbox"
+                className="w-5 h-5 cursor-pointer"
+                onChange={() => deleteTask(t._id)}
+              />
+            )}
           </div>
         ))}
       </div>
