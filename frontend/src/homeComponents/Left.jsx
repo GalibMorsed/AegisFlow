@@ -15,29 +15,20 @@ const Left = ({ user, tasks, refresh }) => {
   };
 
   const addTask = async () => {
-    if (!form.camera || !form.status || !form.startTime || !form.endTime) {
-      alert("All fields are required");
-      return;
-    }
-
     try {
-      const data = {
-        camera: Number(form.camera),
-        status: form.status,
-        startTime: form.startTime,
-        endTime: form.endTime,
-        user: localStorage.getItem("loggedInUser"),
-      };
-
-      await axios.post("http://localhost:8000/api/add-task", data, {
-        withCredentials: true,
-      });
+      await axios.post(
+        "http://localhost:8000/api/add-task",
+        {
+          ...form,
+          user: user.name, // IMPORTANT FIX
+        },
+        { withCredentials: true }
+      );
 
       setShowAdd(false);
-      refresh();
+      refresh(); // reload all data
     } catch (err) {
       console.log(err.response?.data || err.message);
-      alert(err.response?.data.error || "Failed to add task");
     }
   };
 
@@ -97,7 +88,7 @@ const Left = ({ user, tasks, refresh }) => {
         </div>
       </div>
 
-      {/* POPUP */}
+      {/* POPUP FORM */}
       {showAdd && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
           <div className="bg-white p-6 rounded-md w-72 space-y-3 shadow-xl animate-fade">
@@ -105,7 +96,6 @@ const Left = ({ user, tasks, refresh }) => {
 
             <input
               name="camera"
-              type="number"
               onChange={handleChange}
               placeholder="Camera Number"
               className="border w-full px-2 py-1 rounded"

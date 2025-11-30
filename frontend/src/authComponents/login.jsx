@@ -43,6 +43,7 @@ export default function Login() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include", // <--- ADD THIS
         body: JSON.stringify(loginInfo),
       });
 
