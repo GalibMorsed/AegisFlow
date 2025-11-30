@@ -13,16 +13,6 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
     staffId: "",
     staffName: "",
   });
-  const deleteEvent = async (id) => {
-    const ok = window.confirm("Delete this event?");
-    if (!ok) return;
-
-    await axios.delete(`http://localhost:8000/profile/deleteevent/${id}`, {
-      data: { email: userEmail },
-    });
-
-    refresh();
-  };
 
   const userEmail = localStorage.getItem("userEmail");
 
@@ -85,23 +75,10 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
 
         <div className="mt-4 space-y-2">
           {events?.length === 0 && <p>No events yet...</p>}
-
           {events?.map((ev) => (
-            <div
-              key={ev._id}
-              className="border p-2 rounded flex justify-between items-start"
-            >
-              <div>
-                <p className="font-bold">{ev.title}</p>
-                <p className="text-gray-600 text-sm">{ev.description}</p>
-              </div>
-
-              <button
-                onClick={() => deleteEvent(ev._id)}
-                className="text-red-600 hover:text-red-800 font-bold text-lg"
-              >
-                ✕
-              </button>
+            <div key={ev._id} className="border p-2 rounded">
+              <p className="font-bold">{ev.title}</p>
+              <p className="text-gray-600 text-sm">{ev.description}</p>
             </div>
           ))}
         </div>

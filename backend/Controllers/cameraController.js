@@ -1,5 +1,7 @@
 const Camera = require("../Models/camera");
 const User = require("../Models/Users");
+const Task = require("../Models/Task");
+const Staff = require("../Models/Staff");
 
 const sendServerError = (res, err) => {
   console.error(err);
@@ -78,6 +80,11 @@ exports.deleteCamera = async (req, res) => {
       });
     }
 
+    // Delete associated tasks and staff
+    await Task.deleteMany({ cameraName: camera.name });
+    await Staff.deleteMany({ cameraName: camera.name });
+
+    // Delete the camera
     await Camera.findByIdAndDelete(req.params.id);
     return res.json({ success: true, userEmail: user.email });
   } catch (err) {

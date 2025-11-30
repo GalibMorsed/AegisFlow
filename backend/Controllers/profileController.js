@@ -130,114 +130,56 @@ exports.addStaff = async (req, res) => {
     if (!email)
       return res
         .status(400)
-        .json({ success: false, message: "Email is required." });
+        .json({ success: false, message: "Email required" });
 
-    const user = await User.findOne({ email }).select("_id email");
+    const user = await User.findOne({ email });
     if (!user)
       return res
         .status(404)
-        .json({ success: false, message: "User not found." });
-
-    const cLocation = sanitizeString(location);
-    const cCameraName = sanitizeString(cameraName);
-    const cStaffId = sanitizeString(staffId);
-    const cStaffName = sanitizeString(staffName);
-
-    if (!cCameraName || !cStaffId || !cStaffName)
-      return res.status(400).json({
-        success: false,
-        message: "cameraName, staffId and staffName are required.",
-      });
+        .json({ success: false, message: "User not found" });
 
     const staff = await Staff.create({
-      location: cLocation,
-      cameraName: cCameraName,
-      staffId: cStaffId,
-      staffName: cStaffName,
       userId: user._id,
-      userEmail: user.email,
+      cameraName,
+      location,
+      staffId,
+      staffName,
     });
 
-    return res
-      .status(201)
-      .json({ success: true, staff, userEmail: user.email });
+    return res.status(201).json({
+      success: true,
+      staff,
+      message: "Staff added",
+    });
   } catch (err) {
-    return sendServerError(res, err);
+    return res.json({ success: false, error: err.message });
   }
 };
 
 exports.getStaffs = async (req, res) => {
   try {
     const { email } = req.body;
+    const user = await User.findOne({ email });
 
-    if (!email)
-      return res
-        .status(400)
-        .json({ success: false, message: "Email is required." });
+    const staffs = await Staff.find({ userId: user._id }).sort({
+      createdAt: -1,
+    });
 
-    const user = await User.findOne({ email }).select("_id email");
-    if (!user)
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found." });
-
-    const staffs = await Staff.find({ userId: user._id })
-      .lean()
-      .sort({ createdAt: -1 });
     return res.json({
       success: true,
       staffs,
-      count: staffs.length,
-      userEmail: user.email,
     });
   } catch (err) {
-    return sendServerError(res, err);
+    return res.json({ success: false, error: err.message });
   }
 };
-
 exports.deleteStaff = async (req, res) => {
-  try {
-    const { email } = req.body;
-    const { id } = req.params;
+  const { email, id } = req.body;
 
-    if (!email)
-      return res
-        .status(400)
-        .json({ success: false, message: "Email is required." });
+  const user = await User.findOne({ email });
+  await Staff.deleteOne({ _id: id, userId: user._id });
 
-    if (!isValidObjectId(id))
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid staff id." });
-
-    const user = await User.findOne({ email }).select("_id email");
-    if (!user)
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found." });
-
-    const staff = await Staff.findById(id);
-    if (!staff)
-      return res
-        .status(404)
-        .json({ success: false, message: "Staff not found." });
-
-    if (!staff.userId || staff.userId.toString() !== user._id.toString()) {
-      return res.status(403).json({
-        success: false,
-        message: "Forbidden: Staff does not belong to user.",
-      });
-    }
-
-    await Staff.findByIdAndDelete(id);
-    return res.json({
-      success: true,
-      message: "Staff deleted.",
-      userEmail: user.email,
-    });
-  } catch (err) {
-    return sendServerError(res, err);
-  }
+  res.json({ success: true });
 };
 
 /* ==========================
