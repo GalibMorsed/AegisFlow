@@ -1,6 +1,7 @@
 const UserModel = require("../Models/Users");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const Camera = require("../Models/camera");
 
 const signup = async (req, res) => {
   try {
@@ -96,4 +97,86 @@ const resetPassword = async (req, res) => {
   }
 };
 
-module.exports = { signup, login, resetPassword };
+const updateUserDetails = async (req, res) => {
+  try {
+    const { email, newName, newEmail } = req.body;
+
+    if (!email) {
+      return res
+        .status(400)
+        .json({ message: "User email is required.", success: false });
+    }
+
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: "User not found", success: false });
+    }
+
+    if (newEmail && newEmail !== email) {
+      const existingUser = await UserModel.findOne({ email: newEmail });
+      if (existingUser) {
+        return res
+          .status(409)
+          .json({ message: "New email is already in use.", success: false });
+      }
+      user.email = newEmail;
+    }
+
+    if (newName) {
+      user.name = newName;
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      message: "User details updated successfully",
+      success: true,
+      user: { name: user.name, email: user.email },
+    });
+  } catch (err) {
+    console.error("Update user details error:", err);
+    res.status(500).json({
+      message: "Internal server error",
+      error: err.message,
+      success: false,
+    });
+  }
+};
+
+const deleteAccount = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res
+        .status(400)
+        .json({ message: "Email is required to delete an account." });
+    }
+
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // Delete all cameras associated with the user
+    await Camera.deleteMany({ user: user._id });
+
+    // Delete the user
+    await UserModel.findByIdAndDelete(user._id);
+
+    res.clearCookie("token");
+    res.status(200).json({ message: "Account deleted successfully." });
+  } catch (err) {
+    console.error("Delete account error:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = {
+  signup,
+  login,
+  resetPassword,
+  updateUserDetails,
+  deleteAccount,
+};

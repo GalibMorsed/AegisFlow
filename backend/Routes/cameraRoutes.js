@@ -6,5 +6,6 @@ router.post("/add", controller.addCamera);
 router.post("/get", controller.getCameras);
 router.delete("/:id", controller.deleteCamera);
 router.put("/:id", controller.updateCamera);
+router.post("/names", controller.getCameraNames);
 
 module.exports = router;
