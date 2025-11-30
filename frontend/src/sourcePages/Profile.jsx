@@ -23,13 +23,6 @@ const Profile = () => {
     const email = localStorage.getItem("userEmail");
 
     try {
-      const userRes = await axios.get("http://localhost:8000/auth/me");
-      if (userRes.data) {
-        setUser(userRes.data);
-      }
-    } catch {}
-
-    try {
       const camsRes = await axios.post("http://localhost:8000/camera/get", {
         email,
       });
@@ -39,9 +32,7 @@ const Profile = () => {
     try {
       const taskRes = await axios.post(
         "http://localhost:8000/profile/gettasks",
-        {
-          email,
-        }
+        { email }
       );
       setTasks(taskRes.data.tasks);
     } catch {}
@@ -49,9 +40,7 @@ const Profile = () => {
     try {
       const eventRes = await axios.post(
         "http://localhost:8000/profile/getevents",
-        {
-          email,
-        }
+        { email }
       );
       setEvents(eventRes.data.events);
     } catch {}
@@ -59,9 +48,7 @@ const Profile = () => {
     try {
       const staffRes = await axios.post(
         "http://localhost:8000/profile/getstaffs",
-        {
-          email,
-        }
+        { email }
       );
       setStaffs(staffRes.data.staffs);
     } catch {}
@@ -71,19 +58,8 @@ const Profile = () => {
     <div>
       <Nav />
       <div className="flex gap-4 justify-center mt-6">
-        <Left
-          user={user}
-          tasks={tasks}
-          cameras={cameras} // <---- THE FIX
-          refresh={fetchAll}
-        />
-
-        <Right
-          events={events}
-          staffs={staffs}
-          cameras={cameras}
-          refresh={fetchAll}
-        />
+        <Left user={user} tasks={tasks} cameras={cameras} refresh={fetchAll} />
+        <Right events={events} staffs={staffs} />
       </div>
     </div>
   );

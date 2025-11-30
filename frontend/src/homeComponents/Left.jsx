@@ -3,6 +3,7 @@ import axios from "axios";
 
 const Left = ({ user, tasks, cameras, refresh }) => {
   const [showAdd, setShowAdd] = useState(false);
+
   const [form, setForm] = useState({
     cameraName: "",
     taskType: "",
@@ -22,7 +23,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
         taskType: form.taskType,
         startTime: form.startTime,
         endTime: form.endTime,
-        status: "pending",
+        status: "Pending",
       });
 
       setShowAdd(false);
@@ -35,8 +36,6 @@ const Left = ({ user, tasks, cameras, refresh }) => {
   return (
     <div className="border rounded-lg p-4 space-y-6 w-[360px]">
       <div className="border p-6 rounded-lg bg-gray-50 space-y-3 shadow-sm">
-        <div className="w-24 h-24 border rounded-full mx-auto bg-gray-200"></div>
-
         <p className="text-center font-semibold">{user?.name}</p>
         <p className="text-center text-gray-500">{user?.email}</p>
       </div>
@@ -44,6 +43,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
       <div className="border p-5 rounded-lg bg-gray-50 shadow-sm">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-bold">Tasks</h2>
+
           <button
             onClick={() => setShowAdd(true)}
             className="border px-3 rounded bg-green-200 text-xl"
@@ -52,17 +52,15 @@ const Left = ({ user, tasks, cameras, refresh }) => {
           </button>
         </div>
 
+        {/* SHOW tasks */}
         {tasks.length === 0 && (
           <p className="text-gray-500 text-sm">No tasks yet...</p>
         )}
 
         {tasks.map((t) => (
-          <div
-            key={t._id}
-            className="border bg-white rounded px-3 py-2 shadow-sm"
-          >
-            <p className="font-bold">{t.taskType}</p>
-            <p className="text-gray-600 text-sm">{t.cameraName}</p>
+          <div key={t._id} className="bg-white p-2 border rounded shadow-sm">
+            <p className="font-semibold">{t.taskType}</p>
+            <p className="text-sm text-gray-600">{t.cameraName}</p>
             <p className="text-xs text-gray-400">
               {t.startTime} — {t.endTime}
             </p>
@@ -70,11 +68,13 @@ const Left = ({ user, tasks, cameras, refresh }) => {
         ))}
       </div>
 
+      {/* Popup */}
       {showAdd && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
           <div className="bg-white p-6 rounded-md w-72 space-y-3">
             <h3 className="font-bold text-lg">Add Task</h3>
 
+            {/* Camera dropdown */}
             <select
               name="cameraName"
               onChange={handleChange}
@@ -93,23 +93,22 @@ const Left = ({ user, tasks, cameras, refresh }) => {
               onChange={handleChange}
               className="border w-full px-2 py-1 rounded"
             >
-              <option>Select Type</option>
+              <option value="">Task Type</option>
               <option>High Alert</option>
               <option>Maintenance</option>
-              <option>Normal Check</option>
             </select>
 
             <input
               name="startTime"
-              onChange={handleChange}
               placeholder="Start Time"
+              onChange={handleChange}
               className="border w-full px-2 py-1 rounded"
             />
 
             <input
               name="endTime"
-              onChange={handleChange}
               placeholder="End Time"
+              onChange={handleChange}
               className="border w-full px-2 py-1 rounded"
             />
 

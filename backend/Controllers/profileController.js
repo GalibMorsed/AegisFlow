@@ -271,43 +271,31 @@ exports.addTask = async (req, res) => {
     const { email, cameraName, taskType, status, startTime, endTime } =
       req.body;
 
-    if (!email)
-      return res
-        .status(400)
-        .json({ success: false, message: "Email is required." });
+    const user = await User.findOne({ email });
 
-    const user = await User.findOne({ email }).select("_id email");
-    if (!user)
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found." });
+    const old = await Task.findOne({ userId: user._id });
 
-    const cCameraName = sanitizeString(cameraName);
-    const cTaskType = sanitizeString(taskType);
-    const cStatus = sanitizeString(status) || "pending";
-    const cStart = parseDateOrNull(startTime);
-    const cEnd = parseDateOrNull(endTime);
-
-    if (!cCameraName || !cTaskType)
-      return res.status(400).json({
-        success: false,
-        message: "cameraName and taskType are required.",
-      });
-
-    const payload = {
-      cameraName: cCameraName,
-      taskType: cTaskType,
-      status: cStatus,
-      userId: user._id,
-      userEmail: user.email,
+    const taskData = {
+      cameraName,
+      taskType,
+      status,
+      startTime,
+      endTime,
     };
-    if (cStart) payload.startTime = cStart;
-    if (cEnd) payload.endTime = cEnd;
 
-    const task = await Task.create(payload);
-    return res.status(201).json({ success: true, task, userEmail: user.email });
+    if (!old) {
+      await Task.create({
+        userId: user._id,
+        tasks: [taskData],
+      });
+    } else {
+      old.tasks.push(taskData);
+      await old.save();
+    }
+
+    return res.status(201).json({ success: true });
   } catch (err) {
-    return sendServerError(res, err);
+    return res.json({ success: false, error: err.message });
   }
 };
 
@@ -315,24 +303,13 @@ exports.getTasks = async (req, res) => {
   try {
     const { email } = req.body;
 
-    if (!email)
-      return res
-        .status(400)
-        .json({ success: false, message: "Email is required." });
-
     const user = await User.findOne({ email }).select("_id email");
-    if (!user)
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found." });
+    const tasks = await Task.find({ userId: user._id }).lean();
 
-    const tasks = await Task.find({ userId: user._id })
-      .lean()
-      .sort({ createdAt: -1 });
     return res.json({
       success: true,
-      tasks,
-      count: tasks.length,
+      tasks: tasks.length > 0 ? tasks[0].tasks : [],
+      count: tasks.length > 0 ? tasks[0].tasks.length : 0,
       userEmail: user.email,
     });
   } catch (err) {
@@ -345,40 +322,16 @@ exports.deleteTask = async (req, res) => {
     const { email } = req.body;
     const { id } = req.params;
 
-    if (!email)
-      return res
-        .status(400)
-        .json({ success: false, message: "Email is required." });
+    const user = await User.findOne({ email });
 
-    if (!isValidObjectId(id))
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid task id." });
+    const result = await Task.updateOne(
+      { userId: user._id },
+      { $pull: { tasks: { _id: id } } }
+    );
 
-    const user = await User.findOne({ email }).select("_id email");
-    if (!user)
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found." });
-
-    const task = await Task.findById(id);
-    if (!task)
-      return res
-        .status(404)
-        .json({ success: false, message: "Task not found." });
-
-    if (!task.userId || task.userId.toString() !== user._id.toString()) {
-      return res.status(403).json({
-        success: false,
-        message: "Forbidden: Task does not belong to user.",
-      });
-    }
-
-    await Task.findByIdAndDelete(id);
     return res.json({
       success: true,
-      message: "Task deleted.",
-      userEmail: user.email,
+      message: "Task removed successfully",
     });
   } catch (err) {
     return sendServerError(res, err);
