@@ -9,6 +9,20 @@ const Left = ({ user, tasks, cameras, refresh }) => {
     startTime: "",
     endTime: "",
   });
+  const deleteTask = async (id) => {
+    const ok = window.confirm("Delete this task?");
+    if (!ok) return;
+
+    try {
+      await axios.delete(`http://localhost:8000/profile/deletetask/${id}`, {
+        data: { email: user.email },
+      });
+
+      refresh();
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -58,13 +72,24 @@ const Left = ({ user, tasks, cameras, refresh }) => {
         )}
 
         {tasks.map((t) => (
-          <div key={t._id} className="border p-2 rounded mt-3">
-            <p>{t.taskType}</p>
-            <small className="text-gray-500">{t.cameraName}</small>
-            <br />
-            <small>
-              {t.startTime} - {t.endTime}
-            </small>
+          <div
+            key={t._id}
+            className="border p-2 rounded mt-3 flex justify-between items-center"
+          >
+            <div>
+              <p className="font-semibold">{t.taskType}</p>
+              <small className="text-gray-500">{t.cameraName}</small>
+              <br />
+              <small>
+                {t.startTime} - {t.endTime}
+              </small>
+            </div>
+
+            <input
+              type="checkbox"
+              className="w-5 h-5 cursor-pointer"
+              onChange={() => deleteTask(t._id)}
+            />
           </div>
         ))}
       </div>
