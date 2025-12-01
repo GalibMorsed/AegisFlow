@@ -300,19 +300,15 @@ exports.updateUser = async (req, res) => {
 };
 
 exports.updateTask = async (req, res) => {
-  try {
-    const { email, status } = req.body;
+  const { email, status } = req.body;
 
-    const user = await User.findOne({ email });
+  const user = await User.findOne({ email });
 
-    const task = await Task.findOneAndUpdate(
-      { _id: req.params.id, userId: user._id },
-      { status },
-      { new: true }
-    );
+  const task = await Task.findOneAndUpdate(
+    { userId: user._id, "tasks._id": req.params.id },
+    { $set: { "tasks.$.status": status } },
+    { new: true }
+  );
 
-    res.json({ success: true, task });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  res.json({ success: true, task });
 };

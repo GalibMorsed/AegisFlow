@@ -66,11 +66,15 @@ const Left = ({ user, tasks, cameras, refresh }) => {
 
   const finishTask = async (id) => {
     try {
-      await axios.put(`http://localhost:8000/profile/updatetask/${id}`, {
-        email: user.email,
-        status: "Finished",
-      });
+      const res = await axios.put(
+        `http://localhost:8000/profile/updatetask/${id}`,
+        {
+          email: user.email,
+          status: "Finished",
+        }
+      );
 
+      console.log("API RESPONSE:", res.data); // <-- add this
       refresh();
     } catch (err) {
       console.log(err);
