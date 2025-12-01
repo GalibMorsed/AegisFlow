@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../Middleware/auth.js");
+const authController = require("../Controllers/profileController.js");
+
 const {
   signup,
   login,
@@ -17,4 +19,6 @@ router.get("/me", auth, async (req, res) => {
 router.post("/signup", signupValidation, signup);
 router.post("/login", loginValidation, login);
 router.post("/reset-password", resetPasswordValidation, resetPassword);
+router.put("/update", authController.updateUser);
+
 module.exports = router;

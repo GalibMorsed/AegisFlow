@@ -266,3 +266,53 @@ exports.deleteTask = async (req, res) => {
     return sendServerError(res, err);
   }
 };
+
+/* ==========================
+   Edit Profile
+   ========================== */
+
+exports.updateUser = async (req, res) => {
+  try {
+    const { email, name, password } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user)
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+
+    if (name) user.name = name;
+    if (password) user.password = password;
+
+    await user.save();
+
+    return res.json({
+      success: true,
+      message: "Profile updated",
+      user,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      error: err.message,
+    });
+  }
+};
+
+exports.updateTask = async (req, res) => {
+  try {
+    const { email, status } = req.body;
+
+    const user = await User.findOne({ email });
+
+    const task = await Task.findOneAndUpdate(
+      { _id: req.params.id, userId: user._id },
+      { status },
+      { new: true }
+    );
+
+    res.json({ success: true, task });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
