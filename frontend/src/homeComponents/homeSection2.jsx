@@ -59,6 +59,32 @@ const CameraCard = ({ cam, index, onDisconnect, onEdit, isEditing }) => {
         <div className="text-sm text-slate-500 mt-1">{cam.label}</div>
       </div>
 
+      {cam.tasks && cam.tasks.length > 0 && (
+        <div className="mt-4">
+          <h4 className="font-semibold text-sm text-slate-700">Tasks</h4>
+          <ul className="mt-1 text-xs text-slate-600 list-disc list-inside">
+            {cam.tasks.map((task) => (
+              <li key={task._id}>{task.name}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {cam.staff && cam.staff.length > 0 && (
+        <div className="mt-4">
+          <h4 className="font-semibold text-sm text-slate-700">
+            Assigned Staff
+          </h4>
+          <ul className="mt-1 text-xs text-slate-600 list-disc list-inside">
+            {cam.staff.map((person) => (
+              <li key={person._id}>
+                {person.staffName} ({person.staffId})
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {isEditing && (
         <div className="mt-4 flex justify-end">
           <button
