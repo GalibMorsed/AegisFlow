@@ -58,20 +58,21 @@ const Nav = () => {
                 onClick={toggleDark}
                 className="w-20 h-8 bg-gray-300 dark:bg-gray-700 rounded-full px-1 flex items-center relative transition-colors duration-300"
               >
-                {/* Text on empty side */}
+                {/* SUN when light mode */}
                 {!dark && (
-                  <span className="absolute right-2 text-[10px] font-semibold text-white select-none">
-                    OFF
+                  <span className="absolute right-2 text-lg select-none">
+                    ☀️
                   </span>
                 )}
 
+                {/* MOON when dark mode */}
                 {dark && (
-                  <span className="absolute left-2 text-[10px] font-semibold text-white select-none">
-                    ON
+                  <span className="absolute left-2 text-lg select-none">
+                    🌙
                   </span>
                 )}
 
-                {/* Sliding circle */}
+                {/* Slide circle */}
                 <div
                   className={`w-6 h-6 bg-white rounded-full shadow-md transition-transform duration-300 ${
                     dark ? "translate-x-12" : "translate-x-0"
