@@ -1,0 +1,14 @@
+html {
+  background: white;
+  color: black;
+}
+
+html.dark {
+  background: black;
+  color: white;
+}
+
+/* smooth transition */
+* {
+  transition: background 0.3s ease, color 0.3s ease;
+}
