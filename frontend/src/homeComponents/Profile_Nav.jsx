@@ -38,16 +38,6 @@ const Nav = () => {
         <div className="flex items-center justify-between h-16">
           {/* LEFT */}
           <div className="flex items-center gap-4">
-            {/* Hamburger */}
-            <div className="md:hidden">
-              <button
-                onClick={() => setMenuOpen(!menuOpen)}
-                className="p-2 text-white"
-              >
-                {menuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
-              </button>
-            </div>
-
             {/* Home + Icon */}
             <Link
               to="/home"
@@ -59,63 +49,34 @@ const Nav = () => {
           </div>
 
           {/* RIGHT */}
-          <div className="hidden md:flex items-center gap-4 relative">
-            {/* DARK MODE SWITCH */}
-            <button
-              onClick={toggleDark}
-              className="w-14 h-7 bg-gray-300 dark:bg-gray-700 rounded-full p-1 flex items-center transition"
-            >
-              <div
-                className={`w-5 h-5 bg-white rounded-full shadow-md transform transition ${
-                  dark ? "translate-x-7" : ""
-                }`}
-              ></div>
-            </button>
+          <div className="flex items-center gap-4 relative">
+            <div className="flex items-center gap-3">
+              <span className="text-lg font-semibold">Dark Mode</span>
 
-            <button
-              onClick={() => setUserMenuOpen(!userMenuOpen)}
-              className="flex items-center gap-2 text-sm"
-            >
-              <img
-                src="/imgs/userImg.avif"
-                alt="User Avatar"
-                className="w-9 h-9 rounded-full border-2 border-white/80"
-              />
-              <span className="font-medium hidden lg:block">
-                {loggedInUser}
-              </span>
-              <FiChevronDown
-                className={`${userMenuOpen ? "rotate-180" : ""}`}
-              />
-            </button>
-
-            {/* DROPDOWN */}
-            <div
-              className={`absolute right-0 mt-12 w-48 rounded-md shadow-lg bg-white dark:bg-gray-900 ring-1 ring-black ring-opacity-5 transition ${
-                userMenuOpen
-                  ? "opacity-100 scale-100"
-                  : "opacity-0 scale-95 pointer-events-none"
-              }`}
-            >
-              <div className="px-4 py-2 text-sm text-gray-500 dark:text-gray-200 border-b">
-                Signed in as <br />
-                <strong className="text-gray-800 dark:text-white">
-                  {loggedInUser}
-                </strong>
-              </div>
-
-              <Link
-                to="/profile"
-                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                <FiUser /> Profile
-              </Link>
-
+              {/* DARK MODE SWITCH */}
               <button
-                onClick={handleLogout}
-                className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                onClick={toggleDark}
+                className="w-20 h-8 bg-gray-300 dark:bg-gray-700 rounded-full px-1 flex items-center relative transition-colors duration-300"
               >
-                <FiLogOut className="text-red-500" /> Logout
+                {/* Text on empty side */}
+                {!dark && (
+                  <span className="absolute right-2 text-[10px] font-semibold text-white select-none">
+                    OFF
+                  </span>
+                )}
+
+                {dark && (
+                  <span className="absolute left-2 text-[10px] font-semibold text-white select-none">
+                    ON
+                  </span>
+                )}
+
+                {/* Sliding circle */}
+                <div
+                  className={`w-6 h-6 bg-white rounded-full shadow-md transition-transform duration-300 ${
+                    dark ? "translate-x-12" : "translate-x-0"
+                  }`}
+                ></div>
               </button>
             </div>
           </div>

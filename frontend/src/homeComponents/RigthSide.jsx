@@ -85,7 +85,7 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-md:ml-14">
       {/* EVENTS */}
       <div className="border rounded-lg p-5 bg-white">
         <h2 className="font-bold mb-3 text-lg">Events</h2>

@@ -81,7 +81,7 @@ const Profile = () => {
   return (
     <div>
       <Nav />
-      <div className="flex gap-5 justify-center mt-6">
+      <div className="flex gap-5 justify-center mt-6 max-md:flex-col">
         <Left user={user} tasks={tasks} cameras={cameras} refresh={fetchAll} />
         <div className="w-3/4">
           <Right
