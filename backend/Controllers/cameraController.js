@@ -46,7 +46,20 @@ exports.getCameras = async (req, res) => {
         .json({ success: false, message: "User not found." });
 
     const cameras = await Camera.find({ user: user._id }).lean();
-    return res.json({ success: true, cameras, userEmail: user.email });
+
+    const camerasWithDetails = await Promise.all(
+      cameras.map(async (camera) => {
+        const tasks = await Task.find({ cameraName: camera.name }).lean();
+        const staff = await Staff.find({ cameraName: camera.name }).lean();
+        return { ...camera, tasks, staff };
+      })
+    );
+
+    return res.json({
+      success: true,
+      cameras: camerasWithDetails,
+      userEmail: user.email,
+    });
   } catch (err) {
     return sendServerError(res, err);
   }

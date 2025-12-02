@@ -8,6 +8,7 @@ import HomeFooter from "../homeComponents/homeFooter";
 import HomeSection3 from "../homeComponents/homeSection3";
 import Nav from "../homeComponents/Nav";
 import ConfirmBox from "../homeComponents/ConfirmBox";
+import ChatBox from "../homeComponents/Chat_bot";
 
 const Home = () => {
   const [confirmBox, setConfirmBox] = useState(null);
@@ -142,6 +143,8 @@ const Home = () => {
           }}
         />
       )}
+
+      <ChatBox />
     </div>
   );
 };

@@ -87,7 +87,7 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
   return (
     <div className="space-y-8">
       {/* EVENTS */}
-      <div className="border rounded-lg p-5 bg-white">
+      <div className="border rounded-lg p-5 bg-white max-md:w-full">
         <h2 className="font-bold mb-3 text-lg">Events</h2>
 
         <input

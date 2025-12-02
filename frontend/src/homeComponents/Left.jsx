@@ -2,6 +2,46 @@ import React, { useState } from "react";
 import axios from "axios";
 
 const Left = ({ user, tasks, cameras, refresh }) => {
+  const [editing, setEditing] = useState(false);
+
+  const [profileForm, setProfileForm] = useState({
+    name: user?.name,
+    email: user?.email,
+    password: "",
+    photo: null,
+  });
+
+  const handleProfileChange = (e) => {
+    const { name, value, files } = e.target;
+    setProfileForm({
+      ...profileForm,
+      [name]: files ? files[0] : value,
+    });
+  };
+
+  const submitProfile = async () => {
+    try {
+      console.log("Sending profile update:", profileForm);
+
+      const res = await axios.put("http://localhost:8000/auth/update", {
+        name: profileForm.name,
+        password: profileForm.password,
+        email: user.email,
+      });
+
+      console.log("Profile update response:", res.data);
+
+      // update localStorage
+      localStorage.setItem("loggedInUser", profileForm.name);
+
+      alert("Profile updated successfully ✔");
+      setEditing(false);
+      refresh();
+    } catch (err) {
+      console.log("Update error:", err.response?.data || err.message);
+    }
+  };
+
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({
     cameraName: "",
@@ -18,6 +58,23 @@ const Left = ({ user, tasks, cameras, refresh }) => {
         data: { email: user.email },
       });
 
+      refresh();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const finishTask = async (id) => {
+    try {
+      const res = await axios.put(
+        `http://localhost:8000/profile/updatetask/${id}`,
+        {
+          email: user.email,
+          status: "Finished",
+        }
+      );
+
+      console.log("API RESPONSE:", res.data); // <-- add this
       refresh();
     } catch (err) {
       console.log(err);
@@ -47,18 +104,101 @@ const Left = ({ user, tasks, cameras, refresh }) => {
   };
 
   return (
-    <div className="border rounded-lg p-4 space-y-6 w-[360px]">
+    <div className="border rounded-lg p-4 space-y-6 w-[400px]">
       {/* PROFILE */}
-      <div className="border p-6 rounded-lg bg-gray-50 flex flex-col items-center">
-        <img
-          src="/imgs/userImg.avif"
-          alt="User"
-          className="w-20 h-20 rounded-full border-2 border-blue-600 mb-3"
-        />
-
-        <h2 className="text-xl font-bold">{user?.name}</h2>
-        <p className="text-gray-500">{user?.email}</p>
+      <div className="w-full max-w-sm mx-auto p-5 rounded-2xl bg-white shadow-lg flex flex-col gap-3">
+        {/* Profile image + icon */}
+        <div className="relative">
+          <img
+            src="/imgs/userImg.avif"
+            alt="User"
+            className="w-24 h-24 rounded-full shadow"
+          />
+          <button
+            onClick={() => setEditing(true)}
+            className="absolute top-16 left-16 bg-blue-600 w-7 h-7 rounded-full shadow flex items-center justify-center text-white text-xs border-2 border-white"
+          >
+            ✏️
+          </button>
+        </div>
+        {/* User Info */}
+        <p className="text-sm font-semibold">
+          <span className="font-bold">Name:</span> {user?.name}
+        </p>
+        <p className="text-sm font-semibold">
+          <span className="font-bold">Email Id:</span> {user?.email}
+        </p>
+        {/* button */}
+        <div className="flex gap-6">
+          <button
+            onClick={() => setEditing(true)}
+            className="mt-2 bg-teal-500 hover:bg-teal-600 text-white w-[140px] px-6 py-2 rounded-lg text-sm font-medium shadow-md"
+          >
+            EDIT PROFILE
+          </button>
+          <button
+            onClick={() => setEditing(true)}
+            className="mt-2 bg-red-500 hover:bg-red-800 text-white w-[140px] px-6 py-2 rounded-lg text-sm font-medium shadow-md"
+          >
+            Advance
+          </button>
+        </div>
       </div>
+
+      {/* MODAL */}
+      {editing && (
+        <div className="fixed inset-0 flex justify-center items-center bg-black/40 backdrop-blur-sm z-50">
+          <div className="bg-white w-96 p-6 rounded-lg shadow-xl space-y-4">
+            <h2 className="text-xl font-semibold">Edit Profile</h2>
+
+            <input
+              name="name"
+              value={profileForm.name}
+              onChange={handleProfileChange}
+              placeholder="Edit Username"
+              className="w-full p-2 border rounded-md"
+            />
+            <input
+              name="email"
+              value={profileForm.email}
+              disabled
+              className="w-full p-2 border rounded-md bg-gray-200 cursor-not-allowed"
+            />
+
+            <input
+              type="password"
+              name="password"
+              value={profileForm.password}
+              onChange={handleProfileChange}
+              placeholder="New Password"
+              className="w-full p-2 border rounded-md"
+            />
+
+            <input
+              type="file"
+              name="photo"
+              onChange={handleProfileChange}
+              className="w-full text-sm"
+            />
+
+            <div className="flex gap-3 mt-2">
+              <button
+                onClick={submitProfile}
+                className="w-full bg-blue-600 text-white py-2 rounded-md"
+              >
+                Submit
+              </button>
+
+              <button
+                onClick={() => setEditing(false)}
+                className="w-full bg-red-500 text-white py-2 rounded-md"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* TASKS */}
       <div className="border p-5 rounded-lg bg-gray-50">
@@ -92,12 +232,19 @@ const Left = ({ user, tasks, cameras, refresh }) => {
               <p>Status : {t.status || "Pending"}</p>
             </div>
 
-            {t.status !== "Pending" && (
+            {t.status === "Pending" ? (
               <input
                 type="checkbox"
                 className="w-5 h-5 cursor-pointer"
-                onChange={() => deleteTask(t._id)}
+                onChange={() => finishTask(t._id)}
               />
+            ) : (
+              <button
+                className="bg-red-500 text-white px-2 py-1 rounded"
+                onClick={() => deleteTask(t._id)}
+              >
+                Delete
+              </button>
             )}
           </div>
         ))}
