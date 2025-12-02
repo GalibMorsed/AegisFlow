@@ -23,7 +23,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
     try {
       console.log("Sending profile update:", profileForm);
 
-      const res = await axios.put("http://localhost:8000/auth/update", {
+      const res = await axios.post("http://localhost:8000/auth/update", {
         name: profileForm.name,
         password: profileForm.password,
         email: user.email,
@@ -39,6 +39,29 @@ const Left = ({ user, tasks, cameras, refresh }) => {
       refresh();
     } catch (err) {
       console.log("Update error:", err.response?.data || err.message);
+    }
+  };
+
+  const deleteAccount = async () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete your account? This action is irreversible and will delete all your data."
+    );
+
+    if (confirmDelete) {
+      try {
+        await axios.delete("http://localhost:8000/auth/delete", {
+          data: { email: user.email },
+        });
+        alert("Account deleted successfully.");
+        localStorage.clear();
+        window.location.href = "/login";
+      } catch (err) {
+        console.error(
+          "Delete account error:",
+          err.response?.data || err.message
+        );
+        alert("Failed to delete account. Please try again.");
+      }
     }
   };
 
@@ -194,6 +217,14 @@ const Left = ({ user, tasks, cameras, refresh }) => {
                 className="w-full bg-red-500 text-white py-2 rounded-md"
               >
                 Cancel
+              </button>
+            </div>
+            <div className="border-t pt-4 mt-4">
+              <button
+                onClick={deleteAccount}
+                className="w-full bg-red-700 text-white py-2 rounded-md hover:bg-red-800"
+              >
+                Delete Account
               </button>
             </div>
           </div>

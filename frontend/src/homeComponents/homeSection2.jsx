@@ -64,7 +64,7 @@ const CameraCard = ({ cam, index, onDisconnect, onEdit, isEditing }) => {
           <h4 className="font-semibold text-sm text-slate-700">Tasks</h4>
           <ul className="mt-1 text-xs text-slate-600 list-disc list-inside">
             {cam.tasks.map((task) => (
-              <li key={task._id}>{task.name}</li>
+              <li key={task.taskType}>{task.cameraName}</li>
             ))}
           </ul>
         </div>
