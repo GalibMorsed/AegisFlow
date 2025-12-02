@@ -90,7 +90,7 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
   return (
     <div className="space-y-8">
       {/* EVENTS */}
-      <div className="border rounded-lg p-5 bg-white max-md:w-full">
+      <div className="border rounded-lg p-5 bg-white max-md:w-full max-h-[40vh] overflow-y-auto overflow-x-hidden ">
         <div className="flex justify-center">
           <h2 className="font-bold mb-3 mr-auto text-lg">Events</h2>
 
@@ -136,13 +136,13 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
           </>
         )}
 
-        <div className="mt-4 flex flex-wrap gap-4">
+        <div className="mt-4 flex flex-wrap gap-3">
           {events?.length === 0 && <p>No events yet...</p>}
 
           {events?.map((ev) => (
             <div
               key={ev._id}
-              className="h-[200px] w-[300px] rounded-lg p-5 shadow-md bg-gradient-to-br from-purple-100 to-purple-200 flex flex-col justify-between"
+              className="h-[200px] w-[280px] rounded-lg p-5 shadow-md bg-gradient-to-br from-purple-100 to-purple-200 flex flex-col justify-between overflow-y-auto overflow-x-hidden"
             >
               <div>
                 <p className="font-bold text-xl mb-5">{ev.title}</p>
@@ -161,7 +161,7 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
       </div>
 
       {/* STAFF */}
-      <div className="border rounded-lg p-5 bg-white">
+      <div className="border rounded-lg p-5 bg-white overflow-y-auto overflow-x-hidden max-h-[50vh]">
         <h2 className="font-bold mb-3 text-lg">Staffs</h2>
 
         {/* Camera select → auto-fill location */}

@@ -201,12 +201,12 @@ const Left = ({ user, tasks, cameras, refresh }) => {
       )}
 
       {/* TASKS */}
-      <div className="border p-5 rounded-lg bg-gray-50">
+      <div className="border p-5 rounded-lg bg-gray-50 overflow-y-auto overflow-x-hidden max-h-[60vh]">
         <div className="flex justify-between">
           <h2 className="font-bold">Tasks</h2>
           <button
             onClick={() => setShowAdd(true)}
-            className="bg-green-200 px-4 py-2 rounded-xl"
+            className="bg-green-200 rounded-xl text-center text-4xl w-12 h-12 flex items-center justify-center"
           >
             +
           </button>
