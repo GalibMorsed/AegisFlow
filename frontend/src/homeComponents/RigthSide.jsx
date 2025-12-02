@@ -145,7 +145,7 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
           {events?.map((ev) => (
             <div
               key={ev._id}
-              className="h-[200px] w-[280px] rounded-lg p-5 shadow-md bg-gradient-to-br from-purple-100 to-purple-200 flex flex-col justify-between overflow-y-auto overflow-x-hidden"
+              className="relative h-[200px] w-[280px] rounded-lg p-5 shadow-md bg-gradient-to-br from-purple-100 to-purple-200 flex flex-col justify-between overflow-y-auto overflow-x-hidden"
             >
               <div>
                 <p className="font-bold text-xl mb-5">{ev.title}</p>
@@ -154,7 +154,7 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
 
               <button
                 onClick={() => deleteEvent(ev._id)}
-                className="text-red-600 h-5 w-5 relative right-0 top-auto hover:text-red-800 font-bold text-lg"
+                className="text-red-600 h-5 w-5 absolute top-2 right-2  hover:text-red-800 font-bold text-lg"
               >
                 ✕
               </button>
@@ -235,15 +235,15 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
         <div className="space-y-2">
           {staffs?.length === 0 && <p>No staff added yet…</p>}
           <div className="bg-white rounded-2xl shadow-m p-4">
-            <div className="grid grid-cols-4 w-auto text-bold text-xl">
+            <div className="grid grid-cols-4 w-auto text-bold text-xl max-md:grid-cols-3">
               <h1>Name</h1>
               <h1 className="text-gray-600 text-bold text-xl">Camera Name</h1>
-              <h1 className="text-gray-500 text-bold text-xl">
+              <h1 className="text-gray-500 text-bold text-xl hidden md:block">
                 Camera_Location
               </h1>
               <button
                 onClick={() => deleteStaff(s._id)}
-                className="text-gray-500 text-bold ml-auto text-xl"
+                className="text-gray-500 text-bold ml-auto text-xl max-md:ml-0"
               >
                 Manage
               </button>
@@ -251,12 +251,14 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
           </div>
           {staffs?.map((s) => (
             <div key={s._id} className="bg-white rounded-full shadow-sm p-4">
-              <div className="grid grid-cols-4 w-auto">
+              <div className="grid grid-cols-4 w-auto max-md:grid-cols-3">
                 <h1>
                   {s.staffName} ({s.staffId})
                 </h1>
                 <h1 className="text-gray-600 text-sm">{s.cameraName}</h1>
-                <h1 className="text-gray-500 text-xs">{s.location}</h1>
+                <h1 className="text-gray-500 text-xs  hidden md:block max-md:ml-5">
+                  {s.location}
+                </h1>
                 <button
                   onClick={() => deleteStaff(s._id)}
                   className="text-red-500 hover:text-red-700 ml-auto font-bold text-lg"

@@ -86,6 +86,11 @@ const Left = ({ user, tasks, cameras, refresh }) => {
       console.log(err);
     }
   };
+  const handleDelete = () => {
+    if (window.confirm("Are you sure you want to delete your account?")) {
+      deleteAccount(); // your existing function
+    }
+  };
 
   const finishTask = async (id) => {
     try {
@@ -103,6 +108,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
       console.log(err);
     }
   };
+  const [showAdvance, setShowAdvance] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -154,13 +160,13 @@ const Left = ({ user, tasks, cameras, refresh }) => {
         {/* button */}
         <div className="flex gap-6">
           <button
-            onClick={() => setEditing(true)}
+            onClick={() => setEditing(!editing)}
             className="mt-2 bg-teal-500 hover:bg-teal-600 text-white w-[140px] px-6 py-2 rounded-lg text-sm font-medium shadow-md"
           >
             EDIT PROFILE
           </button>
           <button
-            onClick={() => setEditing(true)}
+            onClick={() => setShowAdvance(!showAdvance)}
             className="mt-2 bg-red-500 hover:bg-red-800 text-white w-[140px] px-6 py-2 rounded-lg text-sm font-medium shadow-md"
           >
             Advance
@@ -219,13 +225,38 @@ const Left = ({ user, tasks, cameras, refresh }) => {
                 Cancel
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {showAdvance && (
+        <div className="fixed inset-0 flex justify-center items-center bg-black/40 backdrop-blur-sm z-50">
+          <div className="bg-white w-96 p-6 rounded-lg shadow-xl space-y-4">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-semibold">Advance Option</h2>
+              <span
+                className="text-2xl cursor-pointer"
+                onClick={() => setShowAdvance(false)}
+              >
+                X
+              </span>
+            </div>
+
             <div className="border-t pt-4 mt-4">
               <button
                 onClick={deleteAccount}
-                className="w-full bg-red-700 text-white py-2 rounded-md hover:bg-red-800"
+                className="w-full bg-green-300 text-white py-2 rounded-md hover:bg-green-100"
               >
-                Delete Account
+                Privacy
               </button>
+
+              <div className="border-t pt-4 mt-4">
+                <button
+                  onClick={handleDelete}
+                  className="w-full bg-red-700 text-white py-2 rounded-md hover:bg-red-800"
+                >
+                  Delete Account
+                </button>
+              </div>
             </div>
           </div>
         </div>
