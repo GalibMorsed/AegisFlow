@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { FaTrash } from "react-icons/fa";
 import { FiChevronDown } from "react-icons/fi";
 
 const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
@@ -7,6 +8,8 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
     title: "",
     description: "",
   });
+
+  const [showStaff, setShowStaff] = useState(false);
 
   const [showForm, setShowForm] = useState(false);
 
@@ -151,7 +154,7 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
 
               <button
                 onClick={() => deleteEvent(ev._id)}
-                className="text-red-600 h-5 w-5 hover:text-red-800 font-bold text-lg"
+                className="text-red-600 h-5 w-5 relative right-0 top-auto hover:text-red-800 font-bold text-lg"
               >
                 ✕
               </button>
@@ -161,84 +164,106 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
       </div>
 
       {/* STAFF */}
-      <div className="border rounded-lg p-5 bg-white overflow-y-auto overflow-x-hidden max-h-[50vh]">
-        <h2 className="font-bold mb-3 text-lg">Staffs</h2>
+      <div className="border rounded-xl p-5  bg-gray-100 overflow-y-auto overflow-x-hidden max-h-[50vh]">
+        <div className="flex justify-between items-center">
+          <h2 className="font-bold mb-2 text-lg">Staffs</h2>
+          <button
+            className="bg- rounded-xl text-center text-4xl w-12 h-12 mb-5 flex items-center justify-center"
+            onClick={() => setShowStaff(!showStaff)}
+          >
+            +
+          </button>
+        </div>
 
         {/* Camera select → auto-fill location */}
-        <select
-          className="border p-2 w-full mb-2"
-          value={staffForm.cameraName}
-          onChange={(e) => {
-            const selectedName = e.target.value;
-            const cam = cameras.find((c) => c.name === selectedName);
+        {showStaff && (
+          <>
+            <select
+              className="border p-2 w-full"
+              value={staffForm.cameraName}
+              onChange={(e) => {
+                const selectedName = e.target.value;
+                const cam = cameras.find((c) => c.name === selectedName);
 
-            setStaffForm({
-              ...staffForm,
-              cameraName: selectedName,
-              location: cam ? cam.location : "",
-            });
-          }}
-        >
-          <option>Select Camera</option>
-          {cameras?.map((cam) => (
-            <option key={cam._id}>{cam.name}</option>
-          ))}
-        </select>
-
-        <input
-          placeholder="Location (auto-filled)"
-          className="border p-2 w-full mb-2 bg-gray-100"
-          value={staffForm.location}
-          readOnly
-        />
-
-        <input
-          placeholder="Staff ID"
-          className="border p-2 w-full mb-2"
-          value={staffForm.staffId}
-          onChange={(e) =>
-            setStaffForm({ ...staffForm, staffId: e.target.value })
-          }
-        />
-
-        <input
-          placeholder="Staff Name"
-          className="border p-2 w-full mb-2"
-          value={staffForm.staffName}
-          onChange={(e) =>
-            setStaffForm({ ...staffForm, staffName: e.target.value })
-          }
-        />
-
-        <button
-          onClick={addStaff}
-          className="bg-blue-500 px-4 py-2 text-white rounded w-full"
-        >
-          Save Staff
-        </button>
-
-        <div className="mt-4 space-y-2">
-          {staffs?.length === 0 && <p>No staff added yet…</p>}
-
-          {staffs?.map((s) => (
-            <div
-              key={s._id}
-              className="border p-2 rounded flex justify-between items-center"
+                setStaffForm({
+                  ...staffForm,
+                  cameraName: selectedName,
+                  location: cam ? cam.location : "",
+                });
+              }}
             >
-              <div>
-                <p>
-                  {s.staffName} ({s.staffId})
-                </p>
-                <p className="text-gray-600 text-sm">{s.cameraName}</p>
-                <p className="text-gray-500 text-xs">{s.location}</p>
-              </div>
+              <option>Select Camera</option>
+              {cameras?.map((cam) => (
+                <option key={cam._id}>{cam.name}</option>
+              ))}
+            </select>
 
+            <input
+              placeholder="Location (auto-filled)"
+              className="border p-2 w-full mb-2 bg-gray-100"
+              value={staffForm.location}
+              readOnly
+            />
+
+            <input
+              placeholder="Staff ID"
+              className="border p-2 w-full mb-2"
+              value={staffForm.staffId}
+              onChange={(e) =>
+                setStaffForm({ ...staffForm, staffId: e.target.value })
+              }
+            />
+
+            <input
+              placeholder="Staff Name"
+              className="border p-2 w-full mb-2"
+              value={staffForm.staffName}
+              onChange={(e) =>
+                setStaffForm({ ...staffForm, staffName: e.target.value })
+              }
+            />
+
+            <button
+              onClick={addStaff}
+              className="bg-blue-500 px-4 py-2 text-white rounded w-full"
+            >
+              Save Staff
+            </button>
+          </>
+        )}
+
+        <div className="space-y-2">
+          {staffs?.length === 0 && <p>No staff added yet…</p>}
+          <div className="bg-white rounded-2xl shadow-m p-4">
+            <div className="grid grid-cols-4 w-auto text-bold text-xl">
+              <h1>Name</h1>
+              <h1 className="text-gray-600 text-bold text-xl">Camera Name</h1>
+              <h1 className="text-gray-500 text-bold text-xl">
+                Camera_Location
+              </h1>
               <button
                 onClick={() => deleteStaff(s._id)}
-                className="text-red-500 hover:text-red-700 font-bold text-lg"
+                className="text-gray-500 text-bold ml-auto text-xl"
               >
-                ✕
+                Manage
               </button>
+            </div>
+          </div>
+          {staffs?.map((s) => (
+            <div key={s._id} className="bg-white rounded-full shadow-sm p-4">
+              <div className="grid grid-cols-4 w-auto">
+                <h1>
+                  {s.staffName} ({s.staffId})
+                </h1>
+                <h1 className="text-gray-600 text-sm">{s.cameraName}</h1>
+                <h1 className="text-gray-500 text-xs">{s.location}</h1>
+                <button
+                  onClick={() => deleteStaff(s._id)}
+                  className="text-red-500 hover:text-red-700 ml-auto font-bold text-lg"
+                >
+                  <FaTrash />
+                </button>
+              </div>
             </div>
           ))}
         </div>
