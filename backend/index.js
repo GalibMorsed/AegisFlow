@@ -17,7 +17,12 @@ app.get("/hii", (req, res) => {
 
 app.use(cookieParser());
 app.use(bodyParser.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Allow requests from your frontend
+    credentials: true, // Allow cookies to be sent
+  })
+);
 app.use("/auth", authRoutes);
 app.use("/camera", cameraRoutes);
 app.use("/profile", profileRoutes);

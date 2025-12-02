@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { FiChevronDown } from "react-icons/fi";
 
 const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
   const [eventForm, setEventForm] = useState({
     title: "",
     description: "",
   });
+
+  const [showForm, setShowForm] = useState(false);
 
   const [staffForm, setStaffForm] = useState({
     location: "",
@@ -88,49 +91,67 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
     <div className="space-y-8">
       {/* EVENTS */}
       <div className="border rounded-lg p-5 bg-white max-md:w-full">
-        <h2 className="font-bold mb-3 text-lg">Events</h2>
+        <div className="flex justify-center">
+          <h2 className="font-bold mb-3 mr-auto text-lg">Events</h2>
 
-        <input
-          className="border p-2 w-full mb-2"
-          placeholder="Title"
-          value={eventForm.title}
-          onChange={(e) =>
-            setEventForm({ ...eventForm, title: e.target.value })
-          }
-        />
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="bg-purple-500 text-white px-3 py-2 rounded flex items-center gap-2"
+          >
+            Add
+            <FiChevronDown
+              className={`hidden lg:block text-blue-200 transition-transform duration-200 ${
+                showForm ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+        </div>
 
-        <textarea
-          className="border p-2 w-full mb-2"
-          placeholder="Description"
-          value={eventForm.description}
-          onChange={(e) =>
-            setEventForm({ ...eventForm, description: e.target.value })
-          }
-        />
+        {showForm && (
+          <>
+            <input
+              className="border p-2 w-full mb-2 mt-3"
+              placeholder="Title"
+              value={eventForm.title}
+              onChange={(e) =>
+                setEventForm({ ...eventForm, title: e.target.value })
+              }
+            />
 
-        <button
-          onClick={addEvent}
-          className="bg-purple-500 px-4 py-2 text-white rounded w-full"
-        >
-          Save Event
-        </button>
+            <textarea
+              className="border p-2 w-full mb-2"
+              placeholder="Description"
+              value={eventForm.description}
+              onChange={(e) =>
+                setEventForm({ ...eventForm, description: e.target.value })
+              }
+            />
 
-        <div className="mt-4 space-y-2">
+            <button
+              onClick={addEvent}
+              className="bg-purple-500 px-4 py-2 text-white rounded w-full"
+            >
+              Save Event
+            </button>
+          </>
+        )}
+
+        <div className="mt-4 flex flex-wrap gap-4">
           {events?.length === 0 && <p>No events yet...</p>}
 
           {events?.map((ev) => (
             <div
               key={ev._id}
-              className="border p-2 rounded flex justify-between items-start"
+              className="h-[200px] w-[300px] rounded-lg p-5 shadow-md bg-gradient-to-br from-purple-100 to-purple-200 flex flex-col justify-between"
             >
               <div>
-                <p className="font-bold">{ev.title}</p>
+                <p className="font-bold text-xl mb-5">{ev.title}</p>
                 <p className="text-gray-600 text-sm">{ev.description}</p>
               </div>
 
               <button
                 onClick={() => deleteEvent(ev._id)}
-                className="text-red-600 hover:text-red-800 font-bold text-lg"
+                className="text-red-600 h-5 w-5 hover:text-red-800 font-bold text-lg"
               >
                 ✕
               </button>
