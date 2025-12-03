@@ -60,25 +60,75 @@ const CameraCard = ({ cam, index, onDisconnect, onEdit, isEditing }) => {
       </div>
 
       {cam.tasks && cam.tasks.length > 0 && (
-        <div className="mt-4">
-          <h4 className="font-semibold text-sm text-slate-700">Tasks</h4>
-          <ul className="mt-1 text-xs text-slate-600 list-disc list-inside">
-            {cam.tasks.map((task) => (
-              <li key={task.taskType}>{task.cameraName}</li>
+        <div className="mt-5 p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-white shadow-sm border border-indigo-100">
+          <h4 className="font-semibold text-slate-800 text-base mb-3 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
+            Tasks Assigned
+          </h4>
+
+          <ul className="space-y-3">
+            {cam.tasks.map((task, i) => (
+              <li
+                key={i}
+                className="p-3 rounded-lg bg-white shadow-sm border border-slate-200 hover:shadow-md hover:scale-[1.01] transition-all"
+              >
+                <div className="flex justify-between items-center">
+                  <span className="font-medium text-slate-800">
+                    {task.taskType}
+                  </span>
+
+                  {/* Status Badge */}
+                  <span
+                    className={`px-2 py-1 text-xs rounded-md font-semibold
+                ${
+                  task.status === "Pending"
+                    ? "bg-yellow-100 text-yellow-700"
+                    : task.status === "Completed"
+                    ? "bg-green-100 text-green-700"
+                    : "bg-blue-100 text-blue-700"
+                }
+              `}
+                  >
+                    {task.status}
+                  </span>
+                </div>
+
+                <p className="text-xs text-slate-500 mt-1">
+                  ⏱ {task.startTime || "N/A"} — {task.endTime || "N/A"}
+                </p>
+              </li>
             ))}
           </ul>
         </div>
       )}
 
       {cam.staff && cam.staff.length > 0 && (
-        <div className="mt-4">
-          <h4 className="font-semibold text-sm text-slate-700">
+        <div className="mt-6 p-4 rounded-xl bg-gradient-to-br from-emerald-50 to-white shadow-sm border border-emerald-100">
+          <h4 className="font-semibold text-slate-800 text-base mb-3 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
             Assigned Staff
           </h4>
-          <ul className="mt-1 text-xs text-slate-600 list-disc list-inside">
+
+          <ul className="space-y-3">
             {cam.staff.map((person) => (
-              <li key={person._id}>
-                {person.staffName} ({person.staffId})
+              <li
+                key={person._id}
+                className="p-3 rounded-lg bg-white shadow-sm border border-slate-200 hover:shadow-md hover:scale-[1.01] transition-all"
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="text-sm font-medium text-slate-800">
+                      {person.staffName}
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      ID: {person.staffId}
+                    </p>
+                  </div>
+
+                  <div className="px-2 py-1 text-xs rounded-md bg-emerald-100 text-emerald-700 font-semibold">
+                    Staff
+                  </div>
+                </div>
               </li>
             ))}
           </ul>

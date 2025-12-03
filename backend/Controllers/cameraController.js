@@ -10,6 +10,7 @@ const sendServerError = (res, err) => {
     .json({ success: false, message: err.message || "Server error" });
 };
 
+// ADD CAMERA
 exports.addCamera = async (req, res) => {
   try {
     const { email, ...cam } = req.body;
@@ -31,6 +32,7 @@ exports.addCamera = async (req, res) => {
   }
 };
 
+// GET CAMERAS + ATTACH TASKS & STAFF
 exports.getCameras = async (req, res) => {
   try {
     const { email } = req.body;
@@ -45,15 +47,42 @@ exports.getCameras = async (req, res) => {
         .status(404)
         .json({ success: false, message: "User not found." });
 
+    // All cameras of this user
     const cameras = await Camera.find({ user: user._id }).lean();
 
-    const camerasWithDetails = await Promise.all(
-      cameras.map(async (camera) => {
-        const tasks = await Task.find({ cameraName: camera.name }).lean();
-        const staff = await Staff.find({ cameraName: camera.name }).lean();
-        return { ...camera, tasks, staff };
-      })
-    );
+    // All task docs for this user (remember: tasks are stored in an array inside each doc)
+    const taskDocs = await Task.find({ userId: user._id }).lean();
+
+    // Flatten tasks by cameraName
+    const tasksByCameraName = {};
+    taskDocs.forEach((doc) => {
+      (doc.tasks || []).forEach((t) => {
+        if (!tasksByCameraName[t.cameraName]) {
+          tasksByCameraName[t.cameraName] = [];
+        }
+        tasksByCameraName[t.cameraName].push(t);
+      });
+    });
+
+    // All staff docs for this user
+    const staffDocs = await Staff.find({ userId: user._id }).lean();
+    const staffByCameraName = {};
+    staffDocs.forEach((s) => {
+      if (!staffByCameraName[s.cameraName]) {
+        staffByCameraName[s.cameraName] = [];
+      }
+      staffByCameraName[s.cameraName].push(s);
+    });
+
+    // Attach tasks + staff to each camera by camera.name
+    const camerasWithDetails = cameras.map((camera) => {
+      const camName = camera.name;
+      return {
+        ...camera,
+        tasks: tasksByCameraName[camName] || [],
+        staff: staffByCameraName[camName] || [],
+      };
+    });
 
     return res.json({
       success: true,
@@ -65,6 +94,7 @@ exports.getCameras = async (req, res) => {
   }
 };
 
+// DELETE CAMERA + RELATED TASKS & STAFF
 exports.deleteCamera = async (req, res) => {
   try {
     const { email } = req.body;
@@ -93,18 +123,31 @@ exports.deleteCamera = async (req, res) => {
       });
     }
 
-    // Delete associated tasks and staff
-    await Task.deleteMany({ cameraName: camera.name });
-    await Staff.deleteMany({ cameraName: camera.name });
+    const cameraName = camera.name;
 
-    // Delete the camera
+    // 1) Remove all tasks (subdocuments) that belong to this cameraName
+    //    from all Task docs of this user
+    await Task.updateMany(
+      { userId: user._id },
+      { $pull: { tasks: { cameraName: cameraName } } }
+    );
+
+    // 2) Remove all Staff docs assigned to this camera for this user
+    await Staff.deleteMany({
+      userId: user._id,
+      cameraName: cameraName,
+    });
+
+    // 3) Delete the camera itself
     await Camera.findByIdAndDelete(req.params.id);
+
     return res.json({ success: true, userEmail: user.email });
   } catch (err) {
     return sendServerError(res, err);
   }
 };
 
+// UPDATE CAMERA + KEEP TASKS & STAFF IN SYNC IF NAME CHANGES
 exports.updateCamera = async (req, res) => {
   try {
     const { email, ...updateData } = req.body;
@@ -135,11 +178,38 @@ exports.updateCamera = async (req, res) => {
       });
     }
 
+    const oldName = cameraToUpdate.name;
+
     const updatedCamera = await Camera.findByIdAndUpdate(
       req.params.id,
       updateData,
       { new: true }
     );
+
+    // If camera name changed, also update related tasks & staff
+    if (updateData.name && updateData.name !== oldName) {
+      const newName = updateData.name;
+
+      // Update cameraName inside tasks subdocuments
+      await Task.updateMany(
+        { userId: user._id },
+        {
+          $set: {
+            "tasks.$[elem].cameraName": newName,
+          },
+        },
+        {
+          arrayFilters: [{ "elem.cameraName": oldName }],
+        }
+      );
+
+      // Update cameraName for staff assigned to this camera
+      await Staff.updateMany(
+        { userId: user._id, cameraName: oldName },
+        { cameraName: newName }
+      );
+    }
+
     return res.json({
       success: true,
       camera: updatedCamera,
@@ -150,6 +220,7 @@ exports.updateCamera = async (req, res) => {
   }
 };
 
+// GET CAMERA NAMES
 exports.getCameraNames = async (req, res) => {
   try {
     const { email } = req.body;
@@ -161,11 +232,12 @@ exports.getCameraNames = async (req, res) => {
     const user = await User.findOne({ email }).select("_id email");
     if (!user)
       return res
-        .status(44)
+        .status(404)
         .json({ success: false, message: "User not found." });
 
     const cameras = await Camera.find({ user: user._id }).select("name");
     const cameraNames = cameras.map((camera) => camera.name);
+
     return res.json({ success: true, cameraNames, userEmail: user.email });
   } catch (err) {
     return sendServerError(res, err);
