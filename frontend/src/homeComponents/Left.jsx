@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Left = ({ user, tasks, cameras, refresh }) => {
   const [editing, setEditing] = useState(false);
+  const navigate = useNavigate();
 
   const [profileForm, setProfileForm] = useState({
     name: user?.name,
@@ -243,7 +245,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
 
             <div className="border-t pt-4 mt-4">
               <button
-                onClick={deleteAccount}
+                onClick={() => navigate("/privacy")}
                 className="w-full bg-green-300 text-white py-2 rounded-md hover:bg-green-100"
               >
                 Privacy
@@ -314,7 +316,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
 
       {/* POPUP */}
       {showAdd && (
-        <div className="fixed inset-0 bg-black/30 flex justify-center items-center">
+        <div className="fixed inset-0 bg-black/30 flex justify-center items-center z-10">
           <div className="bg-white p-6 rounded space-y-3">
             <h3 className="font-bold text-lg">Add Task</h3>
 
