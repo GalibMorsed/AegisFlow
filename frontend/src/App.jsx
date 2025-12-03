@@ -8,6 +8,7 @@ import Body from "./homeComponents/bodyComponents/Body";
 import Home from "./sourcePages/Home";
 import Suggest from "./sourcePages/Suggestion";
 import Profile from "./sourcePages/Profile";
+import PrivacyPage from "./sourcePages/Privacy";
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return localStorage.getItem("user") ? true : false;
@@ -37,6 +38,10 @@ function App() {
         <Route
           path="/profile"
           element={<PrivateRoute element={<Profile />} />}
+        />
+        <Route
+          path="/privacy"
+          element={<PrivateRoute element={<PrivacyPage />} />}
         />
       </Routes>
     </BrowserRouter>

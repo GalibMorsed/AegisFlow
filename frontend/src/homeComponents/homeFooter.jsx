@@ -13,7 +13,7 @@ const HomeFooter = () => {
           <Link to="/" className="hover:text-white transition-colors">
             Contact
           </Link>
-          <Link to="/" className="hover:text-white transition-colors">
+          <Link to="/privacy" className="hover:text-white transition-colors">
             Privacy
           </Link>
         </div>
