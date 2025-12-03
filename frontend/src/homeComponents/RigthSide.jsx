@@ -166,7 +166,7 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
       </div>
 
       {/* STAFF */}
-      <div className="border rounded-xl p-5  bg-gray-100 overflow-y-auto overflow-x-hidden max-h-[50vh]">
+      <div className="border rounded-xl p-5 max-md:mt-0 bg-gray-100 overflow-y-auto overflow-x-hidden max-h-[50vh]">
         <div className="flex justify-between items-center">
           <h2 className="font-bold mb-2 text-lg">Staffs</h2>
           <button
