@@ -7,6 +7,8 @@ const {
   signup,
   login,
   resetPassword,
+  updateUserDetails,
+  deleteAccount,
 } = require("../Controllers/authController");
 const {
   signupValidation,
@@ -19,6 +21,7 @@ router.get("/me", auth, async (req, res) => {
 router.post("/signup", signupValidation, signup);
 router.post("/login", loginValidation, login);
 router.post("/reset-password", resetPasswordValidation, resetPassword);
-router.put("/update", authController.updateUser);
+router.post("/update", updateUserDetails);
+router.delete("/delete", deleteAccount);
 
 module.exports = router;

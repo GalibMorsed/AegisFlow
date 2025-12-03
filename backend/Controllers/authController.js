@@ -2,6 +2,9 @@ const UserModel = require("../Models/Users");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const Camera = require("../Models/camera");
+const Event = require("../Models/Event");
+const Task = require("../Models/Task");
+const Staff = require("../Models/Staff");
 
 const signup = async (req, res) => {
   try {
@@ -148,28 +151,45 @@ const updateUserDetails = async (req, res) => {
 const deleteAccount = async (req, res) => {
   try {
     const { email } = req.body;
+
     if (!email) {
       return res
         .status(400)
-        .json({ message: "Email is required to delete an account." });
+        .json({ message: "User email is required.", success: false });
     }
 
     const user = await UserModel.findOne({ email });
     if (!user) {
-      return res.status(404).json({ message: "User not found." });
+      return res.status(404).json({
+        message: "User not found.",
+        success: false,
+      });
+    }
+    await Camera.deleteMany({ userId: user._id });
+    await Event.deleteMany({ userId: user._id });
+    await Task.deleteMany({ userId: user._id });
+    await Staff.deleteMany({ userId: user._id });
+
+    const userDeletion = await UserModel.deleteOne({ _id: user._id });
+
+    if (userDeletion.deletedCount === 0) {
+      return res.status(404).json({
+        message: "User not found during deletion.",
+        success: false,
+      });
     }
 
-    // Delete all cameras associated with the user
-    await Camera.deleteMany({ user: user._id });
-
-    // Delete the user
-    await UserModel.findByIdAndDelete(user._id);
-
-    res.clearCookie("token");
-    res.status(200).json({ message: "Account deleted successfully." });
+    res.status(200).json({
+      message: "User and associated data deleted successfully",
+      success: true,
+    });
   } catch (err) {
     console.error("Delete account error:", err);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({
+      message: "Internal server error",
+      error: err.message,
+      success: false,
+    });
   }
 };
 

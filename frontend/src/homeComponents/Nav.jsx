@@ -192,7 +192,7 @@ const Nav = () => {
           </div>
           <div className="mt-3 px-2 space-y-1">
             <Link
-              to="/"
+              to="/profile"
               className="flex items-center gap-3 text-blue-100 hover:bg-blue-900 hover:text-white px-3 py-2 rounded-md text-base font-medium"
             >
               <FiUser />

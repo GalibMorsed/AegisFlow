@@ -23,7 +23,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
     try {
       console.log("Sending profile update:", profileForm);
 
-      const res = await axios.put("http://localhost:8000/auth/update", {
+      const res = await axios.post("http://localhost:8000/auth/update", {
         name: profileForm.name,
         password: profileForm.password,
         email: user.email,
@@ -39,6 +39,29 @@ const Left = ({ user, tasks, cameras, refresh }) => {
       refresh();
     } catch (err) {
       console.log("Update error:", err.response?.data || err.message);
+    }
+  };
+
+  const deleteAccount = async () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete your account? This action is irreversible and will delete all your data."
+    );
+
+    if (confirmDelete) {
+      try {
+        await axios.delete("http://localhost:8000/auth/delete", {
+          data: { email: user.email },
+        });
+        alert("Account deleted successfully.");
+        localStorage.clear();
+        window.location.href = "/login";
+      } catch (err) {
+        console.error(
+          "Delete account error:",
+          err.response?.data || err.message
+        );
+        alert("Failed to delete account. Please try again.");
+      }
     }
   };
 
@@ -63,6 +86,11 @@ const Left = ({ user, tasks, cameras, refresh }) => {
       console.log(err);
     }
   };
+  const handleDelete = () => {
+    if (window.confirm("Are you sure you want to delete your account?")) {
+      deleteAccount(); // your existing function
+    }
+  };
 
   const finishTask = async (id) => {
     try {
@@ -80,6 +108,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
       console.log(err);
     }
   };
+  const [showAdvance, setShowAdvance] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -131,13 +160,13 @@ const Left = ({ user, tasks, cameras, refresh }) => {
         {/* button */}
         <div className="flex gap-6">
           <button
-            onClick={() => setEditing(true)}
+            onClick={() => setEditing(!editing)}
             className="mt-2 bg-teal-500 hover:bg-teal-600 text-white w-[140px] px-6 py-2 rounded-lg text-sm font-medium shadow-md"
           >
             EDIT PROFILE
           </button>
           <button
-            onClick={() => setEditing(true)}
+            onClick={() => setShowAdvance(!showAdvance)}
             className="mt-2 bg-red-500 hover:bg-red-800 text-white w-[140px] px-6 py-2 rounded-lg text-sm font-medium shadow-md"
           >
             Advance
@@ -199,14 +228,47 @@ const Left = ({ user, tasks, cameras, refresh }) => {
           </div>
         </div>
       )}
+      {showAdvance && (
+        <div className="fixed inset-0 flex justify-center items-center bg-black/40 backdrop-blur-sm z-50">
+          <div className="bg-white w-96 p-6 rounded-lg shadow-xl space-y-4">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-semibold">Advance Option</h2>
+              <span
+                className="text-2xl cursor-pointer"
+                onClick={() => setShowAdvance(false)}
+              >
+                X
+              </span>
+            </div>
+
+            <div className="border-t pt-4 mt-4">
+              <button
+                onClick={deleteAccount}
+                className="w-full bg-green-300 text-white py-2 rounded-md hover:bg-green-100"
+              >
+                Privacy
+              </button>
+
+              <div className="border-t pt-4 mt-4">
+                <button
+                  onClick={handleDelete}
+                  className="w-full bg-red-700 text-white py-2 rounded-md hover:bg-red-800"
+                >
+                  Delete Account
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* TASKS */}
-      <div className="border p-5 rounded-lg bg-gray-50">
+      <div className="border p-5 rounded-lg bg-gray-50 overflow-y-auto overflow-x-hidden max-h-[60vh]">
         <div className="flex justify-between">
           <h2 className="font-bold">Tasks</h2>
           <button
             onClick={() => setShowAdd(true)}
-            className="bg-green-200 px-4 py-2 rounded-xl"
+            className="bg-green-200 rounded-xl text-center text-4xl w-12 h-12 flex items-center justify-center"
           >
             +
           </button>
