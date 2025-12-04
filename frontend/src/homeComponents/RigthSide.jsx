@@ -252,10 +252,10 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
         <div className="space-y-2">
           {staffs?.length === 0 && <p>No staff added yet…</p>}
           <div className="bg-white rounded-2xl shadow-m p-4">
-            <div className="grid grid-cols-4 w-auto text-bold text-xl max-md:grid-cols-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-[0.5rem] w-full font-bold text-xl">
               <h1>Name</h1>
               <h1 className="text-gray-600 text-bold text-xl">Camera Name</h1>
-              <h1 className="text-gray-500 text-bold text-xl hidden md:block">
+              <h1 className="text-gray-500 text-bold text-xl hidden xl:block">
                 Camera_Location
               </h1>
               <button
@@ -271,12 +271,12 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
               key={s._id}
               className="bg-white rounded-2xl shadow-md p-4 border hover:shadow-lg transition duration-200"
             >
-              <div className="grid grid-cols-4 max-md:grid-cols-3 items-center gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-[0.5rem] w-full font-bold text-xl">
                 <div className="flex flex-col leading-tight">
                   <span className="font-semibold text-gray-800">
                     {s.staffName}
                   </span>
-                  <span className="text-gray-500 text-xs hidden md:block">
+                  <span className="text-gray-500 text-xs hidden xl:block">
                     ({s.staffId})
                   </span>
                 </div>
