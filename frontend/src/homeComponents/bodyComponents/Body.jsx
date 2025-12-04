@@ -156,7 +156,7 @@ const Body = () => {
             Get Started in 3 Simple Steps
           </motion.h2>
 
-          <div className="flex flex-col lg:flex-row justify-center items-center gap-12 md:gap-16">
+          <div className="flex flex-col lg:flex-row justify-center text-center items-center gap-12 md:gap-16">
             {[
               {
                 num: 1,
