@@ -46,7 +46,7 @@ const Nav = () => {
   const navLinks = [
     { name: "Dashboard", link: "/dashboard", icon: FiHome },
     { name: "Suggestions", link: "/suggest", icon: FiGrid },
-    { name: "About Us", link: "/", icon: FiInfo },
+    { name: "About Us", link: "/about", icon: FiInfo },
   ];
 
   return (

@@ -1,8 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaInstagram, FaLinkedin, FaGithub } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 const BodyFooter = () => {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+    if (!email) return; // Prevent submission if email is empty
+
+    console.log("Subscribed with:", email);
+    setSubmitted(true);
+
+    window.alert(
+      "Thanks for subscribing! You will receive updates at " + email
+    );
+    setEmail("");
+
+    setTimeout(() => setSubmitted(false), 3000); // Hide message after 3 seconds
+  };
+
   return (
     <footer className="bg-gray-900 text-gray-300 py-12 px-6">
       <div className="container mx-auto">
@@ -16,23 +34,32 @@ const BodyFooter = () => {
             alerts.
           </p>
 
-          <div className="flex justify-center">
-            <form
-              onSubmit={(e) => e.preventDefault()}
-              className="flex flex-col sm:flex-row items-center gap-3"
-            >
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="w-72 sm:w-96 px-4 py-3 rounded-full bg-gray-800 border border-gray-700 text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-              />
-              <button
-                type="submit"
-                className="bg-blue-600 text-white font-semibold px-6 py-3 rounded-full hover:bg-blue-700 transition-all"
+          <div className="relative flex justify-center">
+            {submitted ? (
+              <div className="rounded-full bg-emerald-500/20 border border-emerald-500 text-emerald-300 px-6 py-3 text-sm font-medium">
+                Thanks for subscribing!
+              </div>
+            ) : (
+              <form
+                onSubmit={handleSubscribe}
+                className="flex flex-col sm:flex-row items-center gap-3"
               >
-                Subscribe
-              </button>
-            </form>
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-72 sm:w-96 px-4 py-3 rounded-full bg-gray-800 border border-gray-700 text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                />
+                <button
+                  type="submit"
+                  className="bg-blue-600 text-white font-semibold px-6 py-3 rounded-full hover:bg-blue-700 transition-all"
+                >
+                  Subscribe
+                </button>
+              </form>
+            )}
           </div>
         </div>
 
@@ -61,10 +88,16 @@ const BodyFooter = () => {
             <a href="#" className="hover:text-white transition-colors">
               <FaInstagram />
             </a>
-            <a href="#" className="hover:text-white transition-colors">
+            <a
+              href="https://www.linkedin.com/in/galib-morsed"
+              className="hover:text-white transition-colors"
+            >
               <FaLinkedin />
             </a>
-            <a href="#" className="hover:text-white transition-colors">
+            <a
+              href="https://github.com/GalibMorsed"
+              className="hover:text-white transition-colors"
+            >
               <FaGithub />
             </a>
           </div>
