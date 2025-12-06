@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { MdSpaceDashboard } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import {
   FiMenu,
@@ -14,27 +15,12 @@ import {
 
 const Nav = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [hasSuggestion, setHasSuggestion] = useState(true);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     setLoggedInUser(localStorage.getItem("loggedInUser"));
-
-    const checkUpdates = async () => {
-      const res = await fetch("http://localhost:8000/suggestions/unread");
-      const data = await res.json();
-
-      if (data.unread === true) {
-        setHasSuggestion(true);
-      }
-    };
-
-    checkUpdates();
-
-    const interval = setInterval(checkUpdates, 8000);
-    return () => clearInterval(interval);
   }, []);
 
   const handleLogout = () => {
@@ -46,8 +32,6 @@ const Nav = () => {
   const navLinks = [
     { name: "Dashboard", link: "/dashboard", icon: FiHome },
     { name: "Suggestions", link: "/suggest", icon: FiGrid },
-    { name: "Analysis", link: "/analysis", icon: FiShield },
-    { name: "About Us", link: "/about", icon: FiInfo },
   ];
 
   return (
@@ -67,19 +51,12 @@ const Nav = () => {
             </div>
 
             {/* Improved Logo */}
-            <Link to="/home" className="flex items-center gap-2 group relative">
-              <div className="relative flex items-center justify-center">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-yellow-400 to-orange-500 blur-md opacity-40 group-hover:opacity-70 transition-all duration-300" />
-                <FiShield className="h-9 w-9 text-yellow-400 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" />
-              </div>
-              <div className="flex flex-col leading-tight">
-                <span className="text-2xl tracking-wide font-extrabold bg-gradient-to-r from-yellow-300 to-white bg-clip-text text-transparent">
-                  AegisFlow
-                </span>
-                <span className="text-[0.7rem] font-light text-blue-200 italic tracking-widest">
-                  Empower • Secure • Simplify
-                </span>
-              </div>
+            <Link
+              to="/home"
+              className="flex items-center gap-2 px-3 py-2 text-white hover:text-blue-400 transition-all duration-200 font-semibold"
+            >
+              <MdSpaceDashboard className="text-xl" />
+              Home
             </Link>
           </div>
 
@@ -89,16 +66,9 @@ const Nav = () => {
               <Link
                 key={item.name}
                 to={item.link}
-                onClick={() => {
-                  if (item.name === "Suggestions") setHasSuggestion(false);
-                }}
-                className="relative text-blue-100 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className="text-blue-100 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 {item.name}
-
-                {item.name === "Suggestions" && hasSuggestion && (
-                  <span className="absolute top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
-                )}
               </Link>
             ))}
           </div>
@@ -167,14 +137,10 @@ const Nav = () => {
               key={item.name}
               to={item.link}
               onClick={() => setMenuOpen(false)}
-              className="relative flex items-center gap-3 text-blue-100 hover:bg-blue-900 hover:text-white px-3 py-2 rounded-md text-base font-medium"
+              className="flex items-center gap-3 text-blue-100 hover:bg-blue-900 hover:text-white px-3 py-2 rounded-md text-base font-medium"
             >
               <item.icon />
               {item.name}
-
-              {item.name === "Suggestions" && hasSuggestion && (
-                <span className="absolute right-2 top-2 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
-              )}
             </Link>
           ))}
         </div>
@@ -193,7 +159,7 @@ const Nav = () => {
           </div>
           <div className="mt-3 px-2 space-y-1">
             <Link
-              to="/profile"
+              to="/"
               className="flex items-center gap-3 text-blue-100 hover:bg-blue-900 hover:text-white px-3 py-2 rounded-md text-base font-medium"
             >
               <FiUser />

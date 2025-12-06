@@ -9,6 +9,7 @@ import HomeSection3 from "../homeComponents/homeSection3";
 import Nav from "../homeComponents/Nav";
 import ConfirmBox from "../homeComponents/ConfirmBox";
 import ChatBox from "../homeComponents/Chat_bot";
+import SuggestionsSection from "../homeComponents/solution";
 
 const Home = () => {
   const [confirmBox, setConfirmBox] = useState(null);
@@ -20,6 +21,7 @@ const Home = () => {
     });
   };
 
+  <SuggestionsSection />;
   const [cameras, setCameras] = useState([]);
   const [selectedCoords, setSelectedCoords] = useState(null);
   const [editingIndex, setEditingIndex] = useState(null);
@@ -95,7 +97,7 @@ const Home = () => {
   };
 
   return (
-    <div className="flex flex-col w-full overflow-x-hidden gap-10">
+    <div className="flex flex-col w-full overflow-x-hidden">
       <Nav />
 
       <HomeSection1

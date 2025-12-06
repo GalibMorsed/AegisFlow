@@ -17,29 +17,35 @@ const Profile = () => {
 
   useEffect(() => {
     fetchAll();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchAll = async () => {
     const email = localStorage.getItem("userEmail");
 
+    // USER
     try {
       const resUser = await axios.get("http://localhost:8000/auth/me");
       setUser(resUser.data);
-    } catch (err) {}
+    } catch (err) {
+      console.log("USER FETCH ERROR:", err.response?.data || err.message);
+    }
 
     // CAMERAS
     try {
       const camRes = await axios.post("http://localhost:8000/camera/get", {
         email,
       });
-      setCameras(camRes.data.cameras);
-    } catch (err) {}
+      setCameras(camRes.data.cameras || []);
+    } catch (err) {
+      console.log("CAMERA FETCH ERROR:", err.response?.data || err.message);
+    }
 
     // TASKS
     try {
       const res = await axios.post(
         "http://localhost:8000/profile/gettasks",
-        { email: email },
+        { email },
         {
           headers: {
             "Content-Type": "application/json",
@@ -48,9 +54,9 @@ const Profile = () => {
       );
 
       console.log("TASK RESPONSE:", res.data);
-      setTasks(res.data.tasks);
+      setTasks(res.data.tasks || []);
     } catch (err) {
-      console.log("TASK ERROR:", err);
+      console.log("TASK ERROR:", err.response?.data || err.message);
     }
 
     // EVENTS
@@ -61,37 +67,63 @@ const Profile = () => {
       );
 
       console.log("📢 EVENTS RESPONSE:", eventRes.data);
-      setEvents(eventRes.data.events);
+      setEvents(eventRes.data.events || []);
     } catch (err) {
-      console.log("❌ EVENTS ERROR:", err.response?.data || err);
+      console.log("❌ EVENTS ERROR:", err.response?.data || err.message);
     }
 
     // STAFF
     try {
       const staffRes = await axios.post(
         "http://localhost:8000/profile/getstaffs",
-        {
-          email,
-        }
+        { email }
       );
-      setStaffs(staffRes.data.staffs);
-    } catch (err) {}
+      setStaffs(staffRes.data.staffs || []);
+    } catch (err) {
+      console.log("STAFF FETCH ERROR:", err.response?.data || err.message);
+    }
   };
 
   return (
-    <div>
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+      {/* Top navigation (your existing component) */}
       <Nav />
-      <div className="flex  gap-5 justify-center mt-6 max-md:flex-col  max-md:justify-center max-md:items-center">
-        <Left user={user} tasks={tasks} cameras={cameras} refresh={fetchAll} />
-        <div className="w-2/4 max-md:w-full">
-          <Right
-            events={events}
-            staffs={staffs}
-            cameras={cameras}
-            refresh={fetchAll}
-          />
+
+      {/* Main content */}
+      <main className="max-w-6xl mx-auto px-4 py-6">
+        {/* Page header */}
+        <div className="mb-4">
+          <h1 className="text-lg font-semibold text-slate-900">
+            Profile & dashboard
+          </h1>
+          <p className="text-xs text-slate-500 mt-1">
+            Manage your profile, tasks, events and staff in one view.
+          </p>
         </div>
-      </div>
+
+        {/* Layout: Left (profile + tasks) | Right (events + staff) */}
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,320px)_minmax(0,1fr)] items-start max-md:flex max-md:flex-col">
+          {/* Left side */}
+          <div className="w-full">
+            <Left
+              user={user}
+              tasks={tasks}
+              cameras={cameras}
+              refresh={fetchAll}
+            />
+          </div>
+
+          {/* Right side */}
+          <div className="w-full">
+            <Right
+              events={events}
+              staffs={staffs}
+              cameras={cameras}
+              refresh={fetchAll}
+            />
+          </div>
+        </div>
+      </main>
     </div>
   );
 };
