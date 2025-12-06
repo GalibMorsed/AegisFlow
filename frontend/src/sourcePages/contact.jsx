@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Nav from "../homeComponents/Nav";
+import ChatBox from "../homeComponents/Chat_bot";
 
 const ContactPage = () => {
   const [form, setForm] = useState({
@@ -179,6 +180,7 @@ const ContactPage = () => {
           </div>
         </main>
       </div>
+      <ChatBox />
     </>
   );
 };

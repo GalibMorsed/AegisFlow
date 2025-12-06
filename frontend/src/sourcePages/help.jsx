@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Nav from "../homeComponents/Nav";
+import ChatBox from "../homeComponents/Chat_bot";
 
 const HelpPage = () => {
   const currentYear = new Date().getFullYear();
@@ -143,6 +144,7 @@ const HelpPage = () => {
           </div>
         </main>
       </div>
+      <ChatBox />
     </>
   );
 };

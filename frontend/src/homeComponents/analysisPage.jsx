@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import axios from "axios";
+import { FaTimes } from "react-icons/fa";
 import {
   FaVideo,
   FaBell,
@@ -40,6 +41,94 @@ const cardVariants = {
 
 const timeFilters = ["Today", "Week", "Month", "Range"];
 
+const LogModal = ({ content, onClose }) => {
+  if (!content) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-50"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ y: "100%" }}
+        animate={{ y: 0 }}
+        exit={{ y: "100%" }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl w-full max-w-lg border-t border-slate-200 sm:border"
+        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
+      >
+        <header className="flex items-center justify-between p-4 border-b border-slate-200">
+          <h3 className="font-semibold text-slate-800">{content.title}</h3>
+          <button
+            onClick={onClose}
+            className="p-1 rounded-full hover:bg-slate-100"
+          >
+            <FaTimes className="text-slate-500" />
+          </button>
+        </header>
+        <div className="p-5 text-sm text-slate-600 space-y-3 max-h-[70vh] overflow-y-auto">
+          {content.body}
+        </div>
+        <footer className="px-5 py-3 border-t border-slate-200 text-right">
+          <button
+            onClick={onClose}
+            className="px-4 py-1.5 text-xs font-medium bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 border border-slate-200"
+          >
+            Close
+          </button>
+        </footer>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+const mockLogs = {
+  timeline: {
+    title: "Timeline for July 18th, 2024",
+    body: (
+      <p>
+        This is where a detailed event timeline for the selected day would
+        appear, showing alerts, crowd spikes, and other logged activities in
+        chronological order.
+      </p>
+    ),
+  },
+  alerts: {
+    title: "Weekly Alert Log",
+    body: (
+      <p>
+        A comprehensive list of all <strong>4,365 alerts</strong> from this week
+        would be displayed here. Users could filter by type (Safety,
+        Crowd-risk), severity (Critical, Warning), and camera location.
+      </p>
+    ),
+  },
+  manage: {
+    title: "Manage Cameras",
+    body: (
+      <p>
+        This action would typically navigate to a dedicated camera management
+        page where users can add, edit, or remove cameras, view their live
+        feeds, and configure alert settings for each device.
+      </p>
+    ),
+  },
+  export: {
+    title: "Export Region Data",
+    body: (
+      <p>
+        Clicking 'Export' would generate and download a CSV or PDF file
+        containing the 'People counted by region' data. The file would include
+        camera names, locations, and their corresponding activity counts for the
+        selected time range.
+      </p>
+    ),
+  },
+};
+
 const Analysis = () => {
   const [activeTime, setActiveTime] = useState("Month");
 
@@ -69,6 +158,7 @@ const Analysis = () => {
 
   // cameras loaded from DB (via backend /camera/get)
   const [cameras, setCameras] = useState([]);
+  const [modalContent, setModalContent] = useState(null);
 
   useEffect(() => {
     const fetchCameras = async () => {
@@ -142,6 +232,7 @@ const Analysis = () => {
 
   return (
     <>
+      <LogModal content={modalContent} onClose={() => setModalContent(null)} />
       {/* light gradient background to match About page */}
       <div className="min-h-screen w-full bg-gradient-to-b from-slate-50 via-slate-50 to-emerald-50/40 text-slate-900 px-5 py-4 md:px-8 md:py-6">
         {/* Top bar */}
@@ -352,7 +443,10 @@ const Analysis = () => {
                     18.4k people • 21 alerts
                   </p>
                 </div>
-                <button className="flex items-center gap-1 text-[11px] text-slate-800 bg-white rounded-full px-3 py-1 border border-slate-200 hover:bg-slate-100">
+                <button
+                  onClick={() => setModalContent(mockLogs.timeline)}
+                  className="flex items-center gap-1 text-[11px] text-slate-800 bg-white rounded-full px-3 py-1 border border-slate-200 hover:bg-slate-100"
+                >
                   Open timeline
                   <FaChevronRight className="text-[9px]" />
                 </button>
@@ -424,7 +518,10 @@ const Analysis = () => {
                   Critical alerts
                 </span>
               </div>
-              <button className="underline underline-offset-2 hover:text-slate-700">
+              <button
+                onClick={() => setModalContent(mockLogs.alerts)}
+                className="underline underline-offset-2 hover:text-slate-700"
+              >
                 View alert log
               </button>
             </div>
@@ -432,14 +529,17 @@ const Analysis = () => {
 
           {/* --- Bottom left: Busy cameras list --- */}
           <motion.section
-            className="col-span-12 md:col-span-5 lg:col-span-4 bg-white/90 border border-slate-200/80 rounded-3xl p-4 md:p-5 flex flex-col gap-3 shadow-sm"
+            className="col-span-12 md:col-span-5 bg-white/90 border border-slate-200/80 rounded-3xl p-4 md:p-5 flex flex-col gap-3 shadow-sm"
             variants={cardVariants}
           >
             <header className="flex items-center justify-between">
               <h2 className="text-sm md:text-base font-semibold">
                 Busiest cameras
               </h2>
-              <button className="text-[11px] text-slate-500 hover:text-slate-700 flex items-center gap-1">
+              <button
+                onClick={() => setModalContent(mockLogs.manage)}
+                className="text-[11px] text-slate-500 hover:text-slate-700 flex items-center gap-1"
+              >
                 Manage cameras
                 <FaChevronRight className="text-[9px]" />
               </button>
@@ -473,72 +573,29 @@ const Analysis = () => {
             </div>
           </motion.section>
 
-          {/* --- Bottom middle: Occupancy breakdown --- */}
-          <motion.section
-            className="col-span-12 md:col-span-4 lg:col-span-4 bg-white/90 border border-slate-200/80 rounded-3xl p-4 md:p-5 flex items-center gap-4 md:gap-6 shadow-sm"
-            variants={cardVariants}
-          >
-            <div className="relative mx-auto">
-              {/* donut using conic gradient */}
-              <div className="relative h-32 w-32 md:h-36 md:w-36 rounded-full bg-[conic-gradient(var(--tw-gradient-stops))] from-emerald-400 via-amber-300 to-rose-500">
-                <div className="absolute inset-4 bg-white rounded-full flex flex-col items-center justify-center text-center">
-                  <span className="text-[11px] text-slate-500">Avg load</span>
-                  <span className="text-xl font-semibold">62%</span>
-                  <span className="text-[11px] text-emerald-500 mt-0.5">
-                    Stable
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex-1">
-              <h2 className="text-sm md:text-base font-semibold">
-                Occupancy levels
-              </h2>
-              <p className="text-xs text-slate-500 mt-1 mb-3">
-                Overall distribution of monitored areas in the last{" "}
-                {activeTime.toLowerCase()}.
-              </p>
-
-              <div className="space-y-2">
-                {occupancyBreakdown.map((item, idx) => {
-                  const colors = [
-                    "bg-emerald-400",
-                    "bg-amber-300",
-                    "bg-rose-400",
-                  ];
-                  return (
-                    <div key={item.label} className="flex items-center gap-2">
-                      <span
-                        className={`h-2 w-2 rounded-full ${colors[idx]}`}
-                      ></span>
-                      <div className="flex-1 flex items-center justify-between text-xs">
-                        <span className="text-slate-900">{item.label}</span>
-                        <span className="text-slate-500">{item.value}%</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </motion.section>
-
           {/* --- Bottom right: Region coverage --- */}
           <motion.section
-            className="col-span-12 md:col-span-3 lg:col-span-4 bg-white/90 border border-slate-200/80 rounded-3xl p-4 md:p-5 flex flex-col gap-4 shadow-sm"
+            className="col-span-12 md:col-span-7 bg-white/90 border border-slate-200/80 rounded-3xl p-4 md:p-5 flex flex-col gap-4 shadow-sm"
             variants={cardVariants}
           >
             <header className="flex items-center justify-between">
               <h2 className="text-sm md:text-base font-semibold">
                 People counted by region
               </h2>
-              <button className="text-[11px] text-slate-500 hover:text-slate-700">
+              <button
+                onClick={() => setModalContent(mockLogs.export)}
+                className="text-[11px] text-slate-500 hover:text-slate-700"
+              >
                 Export
               </button>
             </header>
 
             {/* map showing DB cameras */}
-            <div className="rounded-2xl overflow-hidden border border-slate-200 h-60 bg-slate-50">
+            <div
+              className={`rounded-2xl overflow-hidden border border-slate-200 h-60 bg-slate-50 transition-all duration-300 ${
+                modalContent ? "pointer-events-none blur-[2px]" : ""
+              }`}
+            >
               <MapContainer
                 center={[25, 30]}
                 zoom={2}
