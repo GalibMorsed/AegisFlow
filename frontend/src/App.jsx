@@ -12,6 +12,7 @@ import PrivacyPage from "./sourcePages/Privacy";
 import ContactPage from "./sourcePages/contact";
 import HelpPage from "./sourcePages/help";
 import AboutUs from "./sourcePages/aboutUs";
+import AnalysisPage from "./sourcePages/analysis";
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return localStorage.getItem("user") ? true : false;
@@ -52,6 +53,10 @@ function App() {
         />
         <Route path="/about" element={<PrivateRoute element={<AboutUs />} />} />
         <Route path="/help" element={<PrivateRoute element={<HelpPage />} />} />
+        <Route
+          path="/analysis"
+          element={<PrivateRoute element={<AnalysisPage />} />}
+        />
       </Routes>
     </BrowserRouter>
   );
