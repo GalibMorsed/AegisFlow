@@ -147,3 +147,158 @@
   transform: translateY(-6px) scale(1.02);
   box-shadow: 0 16px 44px rgba(59, 130, 246, 0.16);
 }
+/* ==========================================================
+   UNIVERSAL DARK MODE FOR ALL CAMERA, MAP, FOOTAGE, ALERTS
+========================================================== */
+
+/* Fix white/gray boxes */
+.dark .bg-white,
+.dark .bg-white\/90,
+.dark .bg-white\/95,
+.dark .bg-white\/80,
+.dark .bg-gray-50,
+.dark .bg-gray-100,
+.dark .bg-gray-200,
+.dark .bg-slate-50,
+.dark .bg-slate-100,
+.dark .bg-slate-200,
+.dark .bg-slate-50\/60,
+.dark .bg-slate-50\/90,
+.dark .bg-emerald-50,
+.dark .bg-indigo-50,
+.dark .bg-red-50,
+.dark .bg-amber-50 {
+  background-color: #1e293b !important; /* dark card */
+  color: #f1f5f9 !important;
+  border-color: #334155 !important;
+}
+
+/* Fix white gradient backgrounds */
+.dark .bg-gradient-to-b,
+.dark .from-slate-50,
+.dark .via-slate-50,
+.dark .to-emerald-50\/30 {
+  background: linear-gradient(#0f172a, #0f172a) !important;
+}
+
+/* Section backgrounds (HomeSection1/2/3/4) */
+.dark section,
+.dark .bg-slate-50\/90,
+.dark .bg-slate-50\/40 {
+  background-color: #0f172a !important;
+}
+
+/* Text colors everywhere */
+.dark .text-slate-900,
+.dark .text-slate-800,
+.dark .text-slate-700,
+.dark .text-slate-600,
+.dark .text-gray-600,
+.dark .text-gray-500,
+.dark .text-gray-400 {
+  color: #e2e8f0 !important;
+}
+
+/* Borders everywhere */
+.dark .border,
+.dark .border-slate-200,
+.dark .border-slate-300,
+.dark .border-gray-200,
+.dark .border-gray-300,
+.dark .border-emerald-100,
+.dark .border-red-100,
+.dark .border-indigo-100,
+.dark .border-amber-100 {
+  border-color: #334155 !important;
+}
+
+/* Input fields */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+  color: #f8fafc !important;
+}
+
+/* Placeholder */
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Buttons */
+.dark button {
+  background-color: #334155 !important;
+  color: #f8fafc !important;
+}
+.dark button:hover {
+  background-color: #475569 !important;
+}
+
+/* Status badges */
+.dark .bg-emerald-50,
+.dark .bg-amber-50,
+.dark .bg-sky-50 {
+  background-color: #334155 !important;
+  color: #f1f5f9 !important;
+  border-color: #475569 !important;
+}
+
+/* Modal overlays (ConfirmBox, Preview modal) */
+.dark .fixed,
+.dark .modal,
+.dark .shadow-xl,
+.dark .shadow-lg {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+/* Map container */
+.dark .leaflet-container,
+.dark #map {
+  background-color: #0f172a !important;
+}
+
+/* Popup text on map */
+.dark .leaflet-popup-content-wrapper {
+  background: #1e293b !important;
+  color: #f1f5f9 !important;
+}
+.dark .leaflet-popup-tip {
+  background: #1e293b !important;
+}
+
+/* Chatbox */
+.dark .chatbox,
+.dark .chat-body,
+.dark .chat-wrapper {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f1f5f9 !important;
+}
+
+/* Camera preview modal */
+.dark .bg-black {
+  background-color: #0f172a !important;
+}
+.dark .mt-4.p-4.rounded-xl {
+  background: #0f172a !important;
+  border-color: #1e293b !important;
+}
+.dark .relative.rounded-lg {
+  background: #0f172a !important;
+  border-color: #1e293b !important;
+}
+.dark a.flex.items-center {
+  color: white !important;
+  background: transparent !important;
+}
+
+.dark a.flex.items-center:hover {
+  background: #1e293b !important; /* dark hover */
+}
+.dark .bg-slate-50\/80 {
+  background-color: #0f172a !important;
+  border-color: #1e293b !important;
+}

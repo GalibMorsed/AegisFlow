@@ -247,15 +247,15 @@ const Analysis = () => {
           </div>
 
           <div className="flex items-center gap-3 self-start sm:self-center">
-            <div className="bg-white/90 border border-slate-200/80 rounded-full px-2 py-1 flex flex-wrap items-center text-xs md:text-sm shadow-sm">
+            <div className="bg-white/90 border border-slate-200/80 dark:bg-slate-800/50 dark:border-slate-700 rounded-full px-2 py-1 flex flex-wrap items-center text-xs md:text-sm shadow-sm">
               {timeFilters.map((item) => (
                 <button
                   key={item}
                   onClick={() => setActiveTime(item)}
                   className={`px-3 py-1 rounded-full transition ${
                     activeTime === item
-                      ? "bg-emerald-500 text-white font-medium shadow"
-                      : "text-slate-500 hover:text-slate-700"
+                      ? "bg-emerald-500 text-white font-medium shadow-sm"
+                      : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
                   }`}
                 >
                   {item}
@@ -263,7 +263,7 @@ const Analysis = () => {
               ))}
             </div>
 
-            <button className="hidden sm:flex items-center gap-1 text-xs md:text-sm bg-white/90 border border-slate-200/80 rounded-full px-3 py-1.5 hover:bg-slate-100 transition shadow-sm">
+            <button className="hidden sm:flex items-center gap-1 text-xs md:text-sm bg-white/90 border border-slate-200/80 dark:bg-slate-800/50 dark:border-slate-700 dark:hover:bg-slate-700/80 rounded-full px-3 py-1.5 hover:bg-slate-100 transition shadow-sm">
               <FaMapMarkerAlt className="text-[10px] text-emerald-500" />
               <span>All locations</span>
               <FaChevronDown className="text-[10px]" />
@@ -281,7 +281,7 @@ const Analysis = () => {
           {/* --- Left: Events & Flow chart --- */}
           <motion.section
             className="col-span-12 lg:col-span-5 bg-white/90 border border-slate-200/80 rounded-3xl p-4 md:p-5 flex flex-col gap-4 shadow-sm"
-            variants={cardVariants}
+            variants={cardVariants} // This should be dark-mode compatible
           >
             <header className="flex items-start justify-between gap-3">
               <div>
@@ -317,6 +317,8 @@ const Analysis = () => {
 
             {/* Simple SVG chart (dummy data) */}
             <div className="mt-1 rounded-2xl bg-white border border-slate-200/80 px-3 py-3">
+              {" "}
+              {/* This should be dark-mode compatible */}
               <svg
                 viewBox="0 0 260 92"
                 className="w-full h-24 md:h-28"
@@ -347,7 +349,6 @@ const Analysis = () => {
                   strokeLinecap="round"
                 />
               </svg>
-
               <div className="flex justify-between items-end text-[11px] text-slate-400 mt-1">
                 <span>00:00</span>
                 <span>06:00</span>
@@ -360,6 +361,8 @@ const Analysis = () => {
             {/* summary row */}
             <div className="grid grid-cols-3 gap-3 mt-1 text-xs">
               <div className="bg-slate-50/80 rounded-2xl border border-slate-200 px-3 py-2">
+                {" "}
+                {/* This should be dark-mode compatible */}
                 <p className="text-slate-500">Avg dwell time</p>
                 <p className="text-sm font-semibold mt-1">07m 24s</p>
                 <p className="text-[11px] text-emerald-500 mt-0.5">
@@ -367,6 +370,8 @@ const Analysis = () => {
                 </p>
               </div>
               <div className="bg-slate-50/80 rounded-2xl border border-slate-200 px-3 py-2">
+                {" "}
+                {/* This should be dark-mode compatible */}
                 <p className="text-slate-500">Peak load</p>
                 <p className="text-sm font-semibold mt-1">3.2k people</p>
                 <p className="text-[11px] text-violet-400 mt-0.5">
@@ -374,6 +379,8 @@ const Analysis = () => {
                 </p>
               </div>
               <div className="bg-slate-50/80 rounded-2xl border border-slate-200 px-3 py-2">
+                {" "}
+                {/* This should be dark-mode compatible */}
                 <p className="text-slate-500 flex items-center gap-1">
                   Active cameras{" "}
                   <FaVideo className="text-[10px] text-emerald-500" />
@@ -386,30 +393,30 @@ const Analysis = () => {
 
           {/* --- Middle: Calendar & occupancy --- */}
           <motion.section
-            className="col-span-12 lg:col-span-3 bg-white/90 border border-slate-200/80 rounded-3xl p-4 md:p-5 flex flex-col gap-4 shadow-sm"
+            className="col-span-12 lg:col-span-3 bg-white/90 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700 rounded-3xl p-4 md:p-5 flex flex-col gap-4 shadow-sm"
             variants={cardVariants}
           >
-            <header className="flex items-start justify-between">
+            <header className="flex flex-wrap items-start justify-between gap-2">
               <div>
-                <h2 className="text-sm md:text-base font-semibold">
+                <h2 className="text-sm md:text-base font-semibold text-slate-800 dark:text-slate-100">
                   Busiest days
                 </h2>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                   Heat based on max detected crowd.
                 </p>
               </div>
-              <button className="flex items-center gap-1 text-[11px] text-slate-500 bg-white/90 border border-slate-200/80 rounded-full px-2 py-1 hover:bg-slate-50 hover:text-slate-700">
+              <button className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400 bg-white/90 dark:bg-slate-700/60 border border-slate-200/80 dark:border-slate-600 rounded-full px-2 py-1 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200">
                 July 2024
                 <FaChevronDown className="text-[9px]" />
               </button>
             </header>
 
             {/* calendar */}
-            <div className="grid grid-cols-7 gap-1.5 text-[10px] mt-1">
+            <div className="grid grid-cols-7 gap-1 sm:gap-1.5 text-xs mt-1">
               {["M", "T", "W", "T", "F", "S", "S"].map((d) => (
                 <span
                   key={d}
-                  className="text-center text-slate-500 mb-1 tracking-wide"
+                  className="text-center text-slate-400 dark:text-slate-500 mb-1 tracking-wide text-[10px] sm:text-xs"
                 >
                   {d}
                 </span>
@@ -420,12 +427,12 @@ const Analysis = () => {
                 return (
                   <button
                     key={day}
-                    className={`aspect-square rounded-full flex items-center justify-center transition text-[10px] ${
+                    className={`aspect-square rounded-full flex items-center justify-center transition text-[10px] sm:text-xs ${
                       isToday
                         ? "bg-emerald-500 text-white font-semibold shadow"
                         : isHigh
-                        ? "bg-violet-100 text-violet-700 border border-violet-200"
-                        : "bg-white text-slate-500 border border-slate-200 hover:border-slate-300"
+                        ? "bg-violet-100 text-violet-700 border border-violet-200 dark:bg-violet-500/20 dark:text-violet-300 dark:border-violet-500/30"
+                        : "bg-white text-slate-500 border border-slate-200 hover:border-slate-300 dark:bg-slate-700/40 dark:text-slate-300 dark:border-slate-600 dark:hover:border-slate-500"
                     }`}
                   >
                     {day}
@@ -434,21 +441,25 @@ const Analysis = () => {
               })}
             </div>
 
-            <div className="mt-3 bg-slate-50/90 rounded-2xl border border-slate-200 px-3 py-3">
-              <p className="text-[11px] text-slate-500 mb-1">Selected day</p>
-              <div className="flex items-end justify-between">
+            <div className="mt-auto bg-slate-50/90 dark:bg-slate-700/50 rounded-2xl border border-slate-200 dark:border-slate-700/80 px-3 py-3">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-1">
+                Selected day
+              </p>
+              <div className="flex flex-wrap items-end justify-between gap-2">
                 <div>
-                  <p className="text-sm font-semibold">18 July · Thursday</p>
-                  <p className="text-[11px] text-violet-500 mt-1">
+                  <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
+                    18 July · Thursday
+                  </p>
+                  <p className="text-[11px] text-violet-500 dark:text-violet-400 mt-1">
                     18.4k people • 21 alerts
                   </p>
                 </div>
                 <button
                   onClick={() => setModalContent(mockLogs.timeline)}
-                  className="flex items-center gap-1 text-[11px] text-slate-800 bg-white rounded-full px-3 py-1 border border-slate-200 hover:bg-slate-100"
+                  className="flex items-center gap-1.5 text-[11px] text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-600/50 rounded-full px-3 py-1 border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600"
                 >
                   Open timeline
-                  <FaChevronRight className="text-[9px]" />
+                  <FaChevronRight className="text-[9px] -mr-0.5" />
                 </button>
               </div>
             </div>
@@ -456,7 +467,7 @@ const Analysis = () => {
 
           {/* --- Right: Alerts bar chart --- */}
           <motion.section
-            className="col-span-12 lg:col-span-4 bg-white/90 border border-slate-200/80 rounded-3xl p-4 md:p-5 flex flex-col gap-4 shadow-sm"
+            className="col-span-12 lg:col-span-4 bg-white/90 border border-slate-200/80 rounded-3xl p-4 md:p-5 flex flex-col gap-4 shadow-sm" // This should be dark-mode compatible
             variants={cardVariants}
           >
             <header className="flex items-start justify-between gap-3">
@@ -491,10 +502,13 @@ const Analysis = () => {
                     className="flex flex-col items-center justify-end gap-1 flex-1"
                   >
                     <div className="relative w-full rounded-xl bg-slate-50 border border-slate-200 flex items-end justify-center overflow-hidden h-32">
+                      {" "}
+                      {/* This should be dark-mode compatible */}
                       <div
                         style={{ height: `${totalHeight}%` }}
                         className="w-3 md:w-4 rounded-t-full bg-slate-200"
-                      />
+                      />{" "}
+                      {/* This should be dark-mode compatible */}
                       <div
                         style={{ height: `${criticalHeight}%` }}
                         className="w-3 md:w-4 rounded-t-full absolute bottom-0 bg-gradient-to-t from-rose-500 to-amber-300"
@@ -529,7 +543,7 @@ const Analysis = () => {
 
           {/* --- Bottom left: Busy cameras list --- */}
           <motion.section
-            className="col-span-12 md:col-span-5 bg-white/90 border border-slate-200/80 rounded-3xl p-4 md:p-5 flex flex-col gap-3 shadow-sm"
+            className="col-span-12 md:col-span-5 bg-white/90 border border-slate-200/80 rounded-3xl p-4 md:p-5 flex flex-col gap-3 shadow-sm" // This should be dark-mode compatible
             variants={cardVariants}
           >
             <header className="flex items-center justify-between">
@@ -549,7 +563,7 @@ const Analysis = () => {
               {busyCameras.map((cam) => (
                 <div
                   key={cam.id}
-                  className="flex items-center justify-between bg-slate-50/90 rounded-2xl border border-slate-200 px-3 py-2.5"
+                  className="flex items-center justify-between bg-slate-50/90 rounded-2xl border border-slate-200 px-3 py-2.5" // This should be dark-mode compatible
                 >
                   <div className="flex items-center gap-3">
                     <div className="h-9 w-9 rounded-2xl bg-gradient-to-br from-emerald-400/60 via-sky-400/60 to-violet-400/60 flex items-center justify-center">
@@ -575,7 +589,7 @@ const Analysis = () => {
 
           {/* --- Bottom right: Region coverage --- */}
           <motion.section
-            className="col-span-12 md:col-span-7 bg-white/90 border border-slate-200/80 rounded-3xl p-4 md:p-5 flex flex-col gap-4 shadow-sm"
+            className="col-span-12 md:col-span-7 bg-white/90 border border-slate-200/80 rounded-3xl p-4 md:p-5 flex flex-col gap-4 shadow-sm" // This should be dark-mode compatible
             variants={cardVariants}
           >
             <header className="flex items-center justify-between">
@@ -593,6 +607,7 @@ const Analysis = () => {
             {/* map showing DB cameras */}
             <div
               className={`rounded-2xl overflow-hidden border border-slate-200 h-60 bg-slate-50 transition-all duration-300 ${
+                // This should be dark-mode compatible
                 modalContent ? "pointer-events-none blur-[2px]" : ""
               }`}
             >
@@ -644,7 +659,7 @@ const Analysis = () => {
                     return (
                       <div
                         key={c._id || c.name}
-                        className="flex items-center justify-between bg-slate-50/90 rounded-2xl border border-slate-200 px-2.5 py-1.5"
+                        className="flex items-center justify-between bg-slate-50/90 rounded-2xl border border-slate-200 px-2.5 py-1.5" // This should be dark-mode compatible
                       >
                         <span className="flex-1 truncate">{c.name}</span>
                         <span className="text-slate-600">

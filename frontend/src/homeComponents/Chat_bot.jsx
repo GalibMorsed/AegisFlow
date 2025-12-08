@@ -25,7 +25,7 @@ function ChatBox() {
       q.includes("add camera") ||
       q.includes("configure")
     ) {
-      return "📹 **Camera Management**: Navigate to the Cameras section on the home page. Click 'Add Camera' to configure a new camera, select between Device Camera or IP Camera, enter location details with GPS coordinates, and start monitoring live feeds instantly.";
+      return "📹 **Adding a Camera**: To add a new camera, first go to the map. You can either click directly on a location or use the search bar to find a specific area. Once you've selected the spot, This will open the configuration panel where you'll need to fill in all the required details. After confirming, your camera will be set up and ready to use!";
     }
 
     if (q.includes("live") || q.includes("stream") || q.includes("monitor")) {
