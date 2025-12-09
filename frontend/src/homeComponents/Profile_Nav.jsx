@@ -1,29 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { FiMenu, FiX, FiLogOut, FiUser, FiChevronDown } from "react-icons/fi";
+import { Link } from "react-router-dom";
 import { MdSpaceDashboard } from "react-icons/md";
 
 const Nav = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [loggedInUser, setLoggedInUser] = useState("");
-  const [dark, setDark] = useState(false);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    setLoggedInUser(localStorage.getItem("loggedInUser"));
-
+  const [dark, setDark] = useState(() => {
+    // Check localStorage for saved theme preference
     if (localStorage.theme === "dark") {
-      document.documentElement.classList.add("dark");
-      setDark(true);
+      return true;
     }
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("loggedInUser");
-    setTimeout(() => navigate("/login"), 1000);
-  };
+    // If no preference, check system preference
+    if (
+      !("theme" in localStorage) &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+    ) {
+      return true;
+    }
+    return false;
+  });
 
   const toggleDark = () => {
     const isDark = !dark;
@@ -31,6 +24,15 @@ const Nav = () => {
     document.documentElement.classList.toggle("dark");
     localStorage.theme = isDark ? "dark" : "light";
   };
+
+  // Apply the dark class on initial component mount
+  useEffect(() => {
+    if (dark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [dark]);
 
   return (
     <header className="relative bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-900 text-white shadow-lg z-30">
@@ -51,7 +53,9 @@ const Nav = () => {
           {/* RIGHT */}
           <div className="flex items-center gap-4 relative">
             <div className="flex items-center gap-3">
-              <span className="text-lg font-semibold">Dark Mode</span>
+              <span className="text-lg font-semibold">
+                {dark ? "Dark Mode" : "Light Mode"}
+              </span>
 
               {/* DARK MODE SWITCH */}
               <button
