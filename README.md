@@ -10,3 +10,8 @@ Currently, two official plugins are available:
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project..
+Added a simple health in index.js to connect it properly to render
+created a dockerfile for containerisation 
+basic commands to check is it working properly:
+docker build -t aegisflow-backend .
+docker run -p 8000:8000 aegisflow-backend

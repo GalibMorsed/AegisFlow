@@ -23,6 +23,7 @@ app.use(
     credentials: true, // Allow cookies to be sent
   })
 );
+app.get("/health", (req, res) => res.sendStatus(200));
 app.use("/auth", authRoutes);
 app.use("/camera", cameraRoutes);
 app.use("/profile", profileRoutes);
