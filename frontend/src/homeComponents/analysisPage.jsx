@@ -165,9 +165,12 @@ const Analysis = () => {
       try {
         const email = localStorage.getItem("userEmail");
         if (!email) return;
-        const res = await axios.post("http://localhost:8000/camera/get", {
-          email,
-        });
+        const res = await axios.post(
+          "https://aegisflow-production.up.railway.app/camera/get",
+          {
+            email,
+          }
+        );
         setCameras(res.data.cameras || []);
       } catch (err) {
         console.error(

@@ -37,7 +37,8 @@ export default function PasswordReset() {
 
     try {
       setLoading(true);
-      const url = "http://localhost:8000/auth/reset-password";
+      const url =
+        "https://aegisflow-production.up.railway.app/auth/reset-password";
       const response = await fetch(url, {
         method: "POST",
         headers: {

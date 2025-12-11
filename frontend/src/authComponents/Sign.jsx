@@ -41,7 +41,7 @@ export default function Signup() {
 
     try {
       setLoading(true);
-      const url = "http://localhost:8000/auth/signup"; // your backend route
+      const url = "https://aegisflow-production.up.railway.app/auth/signup"; // your backend route
       const response = await fetch(url, {
         method: "POST",
         headers: {

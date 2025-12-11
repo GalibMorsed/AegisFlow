@@ -48,9 +48,12 @@ const HomeSection3 = () => {
       }
 
       try {
-        const res = await axios.post("http://localhost:8000/camera/get", {
-          email,
-        });
+        const res = await axios.post(
+          "https://aegisflow-production.up.railway.app/camera/get",
+          {
+            email,
+          }
+        );
 
         const cams = res.data.cameras || [];
 
