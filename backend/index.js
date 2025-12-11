@@ -17,7 +17,8 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin:
+      "https://aegis-flow-91vl1ckqg-morsedgalib982-gmailcoms-projects.vercel.app",
     credentials: true,
   })
 );
