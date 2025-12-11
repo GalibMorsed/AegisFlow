@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { API_BASE } from "../config";
 
 import HomeSection1 from "../homeComponents/homeSection1";
 import HomeSection2 from "../homeComponents/homeSection2";
@@ -32,7 +33,7 @@ const Home = () => {
     if (!userEmail) return;
 
     axios
-      .post("https://aegisflowbackend.vercel.app/camera/get", {
+      .post(`${API_BASE}/camera/get`, {
         email: userEmail,
       })
       .then((res) => {
@@ -52,7 +53,7 @@ const Home = () => {
         const id = cameras[editingIndex]._id;
 
         const res = await axios.put(
-          `https://aegisflowbackend.vercel.app/camera/${id}`,
+          `${API_BASE}/camera/${id}`,
           {
             ...cam,
             email: userEmail,
@@ -69,7 +70,7 @@ const Home = () => {
 
       // ADD CAMERA
       const res = await axios.post(
-        "https://aegisflowbackend.vercel.app/camera/add",
+        `${API_BASE}/camera/add`,
         {
           ...cam,
           email: userEmail,
@@ -91,7 +92,7 @@ const Home = () => {
       const id = cameras[index]._id;
 
       await axios.delete(
-        `https://aegisflowbackend.vercel.app/camera/${id}`,
+        `${API_BASE}/camera/${id}`,
         {
           data: { email: userEmail },
         }

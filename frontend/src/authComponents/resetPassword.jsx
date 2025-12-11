@@ -4,6 +4,7 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { handleError, handleSuccess } from "../utils";
+import { API_BASE } from "../config";
 
 export default function PasswordReset() {
   const [showPassword, setShowPassword] = useState(false);
@@ -37,9 +38,7 @@ export default function PasswordReset() {
 
     try {
       setLoading(true);
-      const url =
-        "https://aegisflowbackend.vercel.app/auth/reset-password";
-      const response = await fetch(url, {
+      const response = await fetch(`${API_BASE}/auth/reset-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

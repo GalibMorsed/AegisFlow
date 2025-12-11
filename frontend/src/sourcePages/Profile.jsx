@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { API_BASE } from "../config";
 import Left from "../homeComponents/Left";
 import Right from "../homeComponents/RigthSide";
 import Nav from "../homeComponents/Profile_Nav";
@@ -25,9 +26,7 @@ const Profile = () => {
 
     // USER
     try {
-      const resUser = await axios.get(
-        "https://aegisflowbackend.vercel.app/auth/me"
-      );
+      const resUser = await axios.get(`${API_BASE}/auth/me`);
       setUser(resUser.data);
     } catch (err) {
       console.log("USER FETCH ERROR:", err.response?.data || err.message);
@@ -35,12 +34,7 @@ const Profile = () => {
 
     // CAMERAS
     try {
-      const camRes = await axios.post(
-        "https://aegisflowbackend.vercel.app/camera/get",
-        {
-          email,
-        }
-      );
+      const camRes = await axios.post(`${API_BASE}/camera/get`, { email });
       setCameras(camRes.data.cameras || []);
     } catch (err) {
       console.log("CAMERA FETCH ERROR:", err.response?.data || err.message);
@@ -49,7 +43,7 @@ const Profile = () => {
     // TASKS
     try {
       const res = await axios.post(
-        "https://aegisflowbackend.vercel.app/profile/gettasks",
+        `${API_BASE}/profile/gettasks`,
         { email },
         {
           headers: {
@@ -66,10 +60,9 @@ const Profile = () => {
 
     // EVENTS
     try {
-      const eventRes = await axios.post(
-        "https://aegisflowbackend.vercel.app/profile/getevents",
-        { email }
-      );
+      const eventRes = await axios.post(`${API_BASE}/profile/getevents`, {
+        email,
+      });
 
       console.log("📢 EVENTS RESPONSE:", eventRes.data);
       setEvents(eventRes.data.events || []);
@@ -79,10 +72,9 @@ const Profile = () => {
 
     // STAFF
     try {
-      const staffRes = await axios.post(
-        "https://aegisflowbackend.vercel.app/profile/getstaffs",
-        { email }
-      );
+      const staffRes = await axios.post(`${API_BASE}/profile/getstaffs`, {
+        email,
+      });
       setStaffs(staffRes.data.staffs || []);
     } catch (err) {
       console.log("STAFF FETCH ERROR:", err.response?.data || err.message);

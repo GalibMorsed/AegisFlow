@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../config";
 import { Link, useNavigate } from "react-router-dom";
 import {
   FiMenu,
@@ -23,13 +24,15 @@ const Nav = () => {
     setLoggedInUser(localStorage.getItem("loggedInUser"));
 
     const checkUpdates = async () => {
-      const res = await fetch(
-        "https://aegisflowbackend.vercel.app/suggestions/unread"
-      );
-      const data = await res.json();
+      try {
+        const res = await fetch(`${API_BASE}/suggestions/unread`);
+        const data = await res.json();
 
-      if (data.unread === true) {
-        setHasSuggestion(true);
+        if (data.unread === true) {
+          setHasSuggestion(true);
+        }
+      } catch (err) {
+        // ignore network errors silently, leave suggestion state unchanged
       }
     };
 

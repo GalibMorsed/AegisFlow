@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { API_BASE } from "../config";
 import { FaTrash } from "react-icons/fa";
 import { FiChevronDown } from "react-icons/fi";
 import { motion } from "framer-motion";
@@ -49,8 +50,7 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
     }
 
     try {
-      await axios.post(
-        "https://aegisflowbackend.vercel.app/profile/addevents",
+      await axios.post(`${API_BASE}/profile/addevents`,
         {
           email: userEmail,
           title: eventForm.title,
@@ -72,8 +72,7 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
     if (!ok) return;
 
     try {
-      await axios.delete(
-        `https://aegisflowbackend.vercel.app/profile/deleteevent/${id}`,
+      await axios.delete(`${API_BASE}/profile/deleteevent/${id}`,
         {
           data: { email: userEmail },
         }
@@ -99,8 +98,7 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
     }
 
     try {
-      await axios.post(
-        "https://aegisflowbackend.vercel.app/profile/addstaffs",
+      await axios.post(`${API_BASE}/profile/addstaffs`,
         {
           email: userEmail,
           ...staffForm,
@@ -127,8 +125,7 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
     if (!ok) return;
 
     try {
-      await axios.delete(
-        `https://aegisflowbackend.vercel.app/profile/deletestaff/${id}`,
+      await axios.delete(`${API_BASE}/profile/deletestaff/${id}`,
         {
           data: { email: userEmail },
         }

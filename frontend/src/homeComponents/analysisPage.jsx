@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import axios from "axios";
+import { API_BASE } from "../config";
 import { FaTimes } from "react-icons/fa";
 import {
   FaVideo,
@@ -165,12 +166,7 @@ const Analysis = () => {
       try {
         const email = localStorage.getItem("userEmail");
         if (!email) return;
-        const res = await axios.post(
-          "https://aegisflowbackend.vercel.app/camera/get",
-          {
-            email,
-          }
-        );
+        const res = await axios.post(`${API_BASE}/camera/get`, { email });
         setCameras(res.data.cameras || []);
       } catch (err) {
         console.error(

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaBell, FaVideo, FaMapMarkerAlt } from "react-icons/fa";
 import axios from "axios";
+import { API_BASE } from "../config";
 
 const HomeSection3 = () => {
   const [alerts, setAlerts] = useState([]);
@@ -48,12 +49,7 @@ const HomeSection3 = () => {
       }
 
       try {
-        const res = await axios.post(
-          "https://aegisflowbackend.vercel.app/camera/get",
-          {
-            email,
-          }
-        );
+        const res = await axios.post(`${API_BASE}/camera/get`, { email });
 
         const cams = res.data.cameras || [];
 

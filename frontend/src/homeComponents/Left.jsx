@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { API_BASE } from "../config";
 import { motion } from "framer-motion";
 
 const containerVariants = {
@@ -60,7 +61,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
   const submitProfile = async () => {
     try {
       const res = await axios.post(
-        "https://aegisflowbackend.vercel.app/auth/update",
+        `${API_BASE}/auth/update`,
         {
           name: profileForm.name,
           password: profileForm.password,
@@ -83,7 +84,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
   const deleteAccount = async () => {
     try {
       await axios.delete(
-        "https://aegisflowbackend.vercel.app/auth/delete",
+        `${API_BASE}/auth/delete`,
         {
           data: { email: user.email },
         }
@@ -108,7 +109,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
 
     try {
       await axios.delete(
-        `https://aegisflowbackend.vercel.app/profile/deletetask/${id}`,
+        `${API_BASE}/profile/deletetask/${id}`,
         {
           data: { email: user.email },
         }
@@ -122,7 +123,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
   const finishTask = async (id) => {
     try {
       const res = await axios.put(
-        `https://aegisflowbackend.vercel.app/profile/updatetask/${id}`,
+        `${API_BASE}/profile/updatetask/${id}`,
         {
           email: user.email,
           status: "Finished",
@@ -152,7 +153,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
 
     try {
       await axios.post(
-        "https://aegisflowbackend.vercel.app/profile/addtasks",
+        `${API_BASE}/profile/addtasks`,
         {
           email: user.email,
           cameraName: form.cameraName,

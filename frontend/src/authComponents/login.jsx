@@ -8,6 +8,7 @@ import {
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { handleError, handleSuccess } from "../utils";
+import { API_BASE } from "../config";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -37,8 +38,7 @@ export default function Login() {
 
     try {
       setLoading(true);
-      const url = "https://aegisflowbackend.vercel.app/auth/login";
-      const response = await fetch(url, {
+      const response = await fetch(`${API_BASE}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
