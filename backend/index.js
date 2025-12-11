@@ -17,7 +17,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://aegis-flow-dier-1x9xtgg5s-morsedgalib982-gmailcoms-projects.vercel.app",
+  "https://aegis-flow-dier-fidz43ohz-morsedgalib982-gmailcoms-projects.vercel.app",
 ];
 
 app.use(
