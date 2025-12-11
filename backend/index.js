@@ -10,6 +10,10 @@ const profileRoutes = require("./Routes/profileRoutes");
 require("dotenv").config();
 require("./Models/db.js");
 const PORT = process.env.PORT || 8000;
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server is running on ${PORT}`);
+});
+
 
 app.get("/hii", (req, res) => {
   res.send("Hello World");
