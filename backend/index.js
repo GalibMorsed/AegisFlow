@@ -20,7 +20,7 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: "https://aegisflow.vercel.app",
+  origin: "https://aegisflowfrontend.vercel.app",
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
