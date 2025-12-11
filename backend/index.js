@@ -15,10 +15,7 @@ require("./Models/db.js");
 // Middleware: register BEFORE routes
 app.use(cookieParser());
 app.use(bodyParser.json());
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://aegis-flow-gk2u6zy5e-morsedgalib982-gmailcoms-projects.vercel.app",
-];
+const allowedOrigins = ["http://localhost:5173", "aegis-flow-dier.vercel.app"];
 
 app.use(
   cors({
