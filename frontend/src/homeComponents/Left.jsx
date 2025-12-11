@@ -59,11 +59,14 @@ const Left = ({ user, tasks, cameras, refresh }) => {
 
   const submitProfile = async () => {
     try {
-      const res = await axios.post("http://localhost:8000/auth/update", {
-        name: profileForm.name,
-        password: profileForm.password,
-        email: user.email,
-      });
+      const res = await axios.post(
+        "https://aegisflow-production.up.railway.app/auth/update",
+        {
+          name: profileForm.name,
+          password: profileForm.password,
+          email: user.email,
+        }
+      );
 
       console.log("Profile update response:", res.data);
       localStorage.setItem("loggedInUser", profileForm.name);
@@ -79,9 +82,12 @@ const Left = ({ user, tasks, cameras, refresh }) => {
 
   const deleteAccount = async () => {
     try {
-      await axios.delete("http://localhost:8000/auth/delete", {
-        data: { email: user.email },
-      });
+      await axios.delete(
+        "https://aegisflow-production.up.railway.app/auth/delete",
+        {
+          data: { email: user.email },
+        }
+      );
       alert("Account deleted successfully.");
       localStorage.clear();
       window.location.href = "/login";
@@ -101,9 +107,12 @@ const Left = ({ user, tasks, cameras, refresh }) => {
     if (!ok) return;
 
     try {
-      await axios.delete(`http://localhost:8000/profile/deletetask/${id}`, {
-        data: { email: user.email },
-      });
+      await axios.delete(
+        `https://aegisflow-production.up.railway.app/profile/deletetask/${id}`,
+        {
+          data: { email: user.email },
+        }
+      );
       refresh();
     } catch (err) {
       console.log(err);
@@ -113,7 +122,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
   const finishTask = async (id) => {
     try {
       const res = await axios.put(
-        `http://localhost:8000/profile/updatetask/${id}`,
+        `https://aegisflow-production.up.railway.app/profile/updatetask/${id}`,
         {
           email: user.email,
           status: "Finished",
@@ -142,14 +151,17 @@ const Left = ({ user, tasks, cameras, refresh }) => {
     }
 
     try {
-      await axios.post("http://localhost:8000/profile/addtasks", {
-        email: user.email,
-        cameraName: form.cameraName,
-        taskType: form.taskType,
-        startTime: form.startTime,
-        endTime: form.endTime,
-        status: "Pending",
-      });
+      await axios.post(
+        "https://aegisflow-production.up.railway.app/profile/addtasks",
+        {
+          email: user.email,
+          cameraName: form.cameraName,
+          taskType: form.taskType,
+          startTime: form.startTime,
+          endTime: form.endTime,
+          status: "Pending",
+        }
+      );
 
       setShowAdd(false);
       setForm({

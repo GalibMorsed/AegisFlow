@@ -25,7 +25,9 @@ const Profile = () => {
 
     // USER
     try {
-      const resUser = await axios.get("http://localhost:8000/auth/me");
+      const resUser = await axios.get(
+        "https://aegisflow-production.up.railway.app/auth/me"
+      );
       setUser(resUser.data);
     } catch (err) {
       console.log("USER FETCH ERROR:", err.response?.data || err.message);
@@ -33,9 +35,12 @@ const Profile = () => {
 
     // CAMERAS
     try {
-      const camRes = await axios.post("http://localhost:8000/camera/get", {
-        email,
-      });
+      const camRes = await axios.post(
+        "https://aegisflow-production.up.railway.app/camera/get",
+        {
+          email,
+        }
+      );
       setCameras(camRes.data.cameras || []);
     } catch (err) {
       console.log("CAMERA FETCH ERROR:", err.response?.data || err.message);
@@ -44,7 +49,7 @@ const Profile = () => {
     // TASKS
     try {
       const res = await axios.post(
-        "http://localhost:8000/profile/gettasks",
+        "https://aegisflow-production.up.railway.app/profile/gettasks",
         { email },
         {
           headers: {
@@ -62,7 +67,7 @@ const Profile = () => {
     // EVENTS
     try {
       const eventRes = await axios.post(
-        "http://localhost:8000/profile/getevents",
+        "https://aegisflow-production.up.railway.app/profile/getevents",
         { email }
       );
 
@@ -75,7 +80,7 @@ const Profile = () => {
     // STAFF
     try {
       const staffRes = await axios.post(
-        "http://localhost:8000/profile/getstaffs",
+        "https://aegisflow-production.up.railway.app/profile/getstaffs",
         { email }
       );
       setStaffs(staffRes.data.staffs || []);

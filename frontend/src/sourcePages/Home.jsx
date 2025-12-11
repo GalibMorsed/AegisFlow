@@ -32,7 +32,9 @@ const Home = () => {
     if (!userEmail) return;
 
     axios
-      .post("http://localhost:8000/camera/get", { email: userEmail })
+      .post("https://aegisflow-production.up.railway.app/camera/get", {
+        email: userEmail,
+      })
       .then((res) => {
         console.log("CAMERAS:", res.data);
         setCameras(res.data.cameras);
@@ -49,10 +51,13 @@ const Home = () => {
       if (editingIndex !== null) {
         const id = cameras[editingIndex]._id;
 
-        const res = await axios.put(`http://localhost:8000/camera/${id}`, {
-          ...cam,
-          email: userEmail,
-        });
+        const res = await axios.put(
+          `https://aegisflow-production.up.railway.app/camera/${id}`,
+          {
+            ...cam,
+            email: userEmail,
+          }
+        );
 
         const updatedList = [...cameras];
         updatedList[editingIndex] = res.data.camera;
@@ -63,10 +68,13 @@ const Home = () => {
       }
 
       // ADD CAMERA
-      const res = await axios.post("http://localhost:8000/camera/add", {
-        ...cam,
-        email: userEmail,
-      });
+      const res = await axios.post(
+        "https://aegisflow-production.up.railway.app/camera/add",
+        {
+          ...cam,
+          email: userEmail,
+        }
+      );
 
       setCameras((prev) => [...prev, res.data.camera]);
     } catch (err) {
@@ -82,9 +90,12 @@ const Home = () => {
 
       const id = cameras[index]._id;
 
-      await axios.delete(`http://localhost:8000/camera/${id}`, {
-        data: { email: userEmail },
-      });
+      await axios.delete(
+        `https://aegisflow-production.up.railway.app/camera/${id}`,
+        {
+          data: { email: userEmail },
+        }
+      );
 
       if (cameras[index]?.stream) {
         cameras[index].stream.getTracks().forEach((t) => t.stop());

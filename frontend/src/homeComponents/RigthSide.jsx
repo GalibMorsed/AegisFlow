@@ -49,11 +49,14 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
     }
 
     try {
-      await axios.post("http://localhost:8000/profile/addevents", {
-        email: userEmail,
-        title: eventForm.title,
-        description: eventForm.description,
-      });
+      await axios.post(
+        "https://aegisflow-production.up.railway.app/profile/addevents",
+        {
+          email: userEmail,
+          title: eventForm.title,
+          description: eventForm.description,
+        }
+      );
 
       setEventForm({ title: "", description: "" });
       setShowEventForm(false);
@@ -69,9 +72,12 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
     if (!ok) return;
 
     try {
-      await axios.delete(`http://localhost:8000/profile/deleteevent/${id}`, {
-        data: { email: userEmail },
-      });
+      await axios.delete(
+        `https://aegisflow-production.up.railway.app/profile/deleteevent/${id}`,
+        {
+          data: { email: userEmail },
+        }
+      );
       refresh();
     } catch (err) {
       console.log("EVENT DELETE ERROR:", err.response?.data || err.message);
@@ -93,10 +99,13 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
     }
 
     try {
-      await axios.post("http://localhost:8000/profile/addstaffs", {
-        email: userEmail,
-        ...staffForm,
-      });
+      await axios.post(
+        "https://aegisflow-production.up.railway.app/profile/addstaffs",
+        {
+          email: userEmail,
+          ...staffForm,
+        }
+      );
 
       setStaffForm({
         location: "",
@@ -118,9 +127,12 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
     if (!ok) return;
 
     try {
-      await axios.delete(`http://localhost:8000/profile/deletestaff/${id}`, {
-        data: { email: userEmail },
-      });
+      await axios.delete(
+        `https://aegisflow-production.up.railway.app/profile/deletestaff/${id}`,
+        {
+          data: { email: userEmail },
+        }
+      );
 
       refresh();
     } catch (err) {

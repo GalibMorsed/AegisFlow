@@ -15,10 +15,20 @@ require("./Models/db.js");
 // Middleware: register BEFORE routes
 app.use(cookieParser());
 app.use(bodyParser.json());
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://aegis-flow-dier-1x9xtgg5s-morsedgalib982-gmailcoms-projects.vercel.app",
+];
+
 app.use(
   cors({
-    origin:
-      "https://aegis-flow-91vl1ckqg-morsedgalib982-gmailcoms-projects.vercel.app",
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); // allow mobile apps & curl
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   })
 );
