@@ -24,7 +24,7 @@ const Nav = () => {
 
     const checkUpdates = async () => {
       const res = await fetch(
-        "https://aegisflow-production.up.railway.app/suggestions/unread"
+        "https://aegisflowbackend.vercel.app/suggestions/unread"
       );
       const data = await res.json();
 

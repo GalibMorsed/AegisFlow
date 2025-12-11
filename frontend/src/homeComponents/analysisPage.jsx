@@ -166,7 +166,7 @@ const Analysis = () => {
         const email = localStorage.getItem("userEmail");
         if (!email) return;
         const res = await axios.post(
-          "https://aegisflow-production.up.railway.app/camera/get",
+          "https://aegisflowbackend.vercel.app/camera/get",
           {
             email,
           }

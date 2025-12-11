@@ -50,7 +50,7 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
 
     try {
       await axios.post(
-        "https://aegisflow-production.up.railway.app/profile/addevents",
+        "https://aegisflowbackend.vercel.app/profile/addevents",
         {
           email: userEmail,
           title: eventForm.title,
@@ -73,7 +73,7 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
 
     try {
       await axios.delete(
-        `https://aegisflow-production.up.railway.app/profile/deleteevent/${id}`,
+        `https://aegisflowbackend.vercel.app/profile/deleteevent/${id}`,
         {
           data: { email: userEmail },
         }
@@ -100,7 +100,7 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
 
     try {
       await axios.post(
-        "https://aegisflow-production.up.railway.app/profile/addstaffs",
+        "https://aegisflowbackend.vercel.app/profile/addstaffs",
         {
           email: userEmail,
           ...staffForm,
@@ -128,7 +128,7 @@ const RightSide = ({ events = [], staffs = [], cameras = [], refresh }) => {
 
     try {
       await axios.delete(
-        `https://aegisflow-production.up.railway.app/profile/deletestaff/${id}`,
+        `https://aegisflowbackend.vercel.app/profile/deletestaff/${id}`,
         {
           data: { email: userEmail },
         }

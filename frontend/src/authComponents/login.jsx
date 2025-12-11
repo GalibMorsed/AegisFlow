@@ -37,7 +37,7 @@ export default function Login() {
 
     try {
       setLoading(true);
-      const url = "https://aegisflow-production.up.railway.app/auth/login";
+      const url = "https://aegisflowbackend.vercel.app/auth/login";
       const response = await fetch(url, {
         method: "POST",
         headers: {

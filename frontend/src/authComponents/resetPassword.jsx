@@ -38,7 +38,7 @@ export default function PasswordReset() {
     try {
       setLoading(true);
       const url =
-        "https://aegisflow-production.up.railway.app/auth/reset-password";
+        "https://aegisflowbackend.vercel.app/auth/reset-password";
       const response = await fetch(url, {
         method: "POST",
         headers: {

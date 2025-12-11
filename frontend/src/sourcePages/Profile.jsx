@@ -26,7 +26,7 @@ const Profile = () => {
     // USER
     try {
       const resUser = await axios.get(
-        "https://aegisflow-production.up.railway.app/auth/me"
+        "https://aegisflowbackend.vercel.app/auth/me"
       );
       setUser(resUser.data);
     } catch (err) {
@@ -36,7 +36,7 @@ const Profile = () => {
     // CAMERAS
     try {
       const camRes = await axios.post(
-        "https://aegisflow-production.up.railway.app/camera/get",
+        "https://aegisflowbackend.vercel.app/camera/get",
         {
           email,
         }
@@ -49,7 +49,7 @@ const Profile = () => {
     // TASKS
     try {
       const res = await axios.post(
-        "https://aegisflow-production.up.railway.app/profile/gettasks",
+        "https://aegisflowbackend.vercel.app/profile/gettasks",
         { email },
         {
           headers: {
@@ -67,7 +67,7 @@ const Profile = () => {
     // EVENTS
     try {
       const eventRes = await axios.post(
-        "https://aegisflow-production.up.railway.app/profile/getevents",
+        "https://aegisflowbackend.vercel.app/profile/getevents",
         { email }
       );
 
@@ -80,7 +80,7 @@ const Profile = () => {
     // STAFF
     try {
       const staffRes = await axios.post(
-        "https://aegisflow-production.up.railway.app/profile/getstaffs",
+        "https://aegisflowbackend.vercel.app/profile/getstaffs",
         { email }
       );
       setStaffs(staffRes.data.staffs || []);

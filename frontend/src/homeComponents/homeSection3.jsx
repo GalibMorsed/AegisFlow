@@ -49,7 +49,7 @@ const HomeSection3 = () => {
 
       try {
         const res = await axios.post(
-          "https://aegisflow-production.up.railway.app/camera/get",
+          "https://aegisflowbackend.vercel.app/camera/get",
           {
             email,
           }

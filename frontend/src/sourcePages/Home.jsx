@@ -32,7 +32,7 @@ const Home = () => {
     if (!userEmail) return;
 
     axios
-      .post("https://aegisflow-production.up.railway.app/camera/get", {
+      .post("https://aegisflowbackend.vercel.app/camera/get", {
         email: userEmail,
       })
       .then((res) => {
@@ -52,7 +52,7 @@ const Home = () => {
         const id = cameras[editingIndex]._id;
 
         const res = await axios.put(
-          `https://aegisflow-production.up.railway.app/camera/${id}`,
+          `https://aegisflowbackend.vercel.app/camera/${id}`,
           {
             ...cam,
             email: userEmail,
@@ -69,7 +69,7 @@ const Home = () => {
 
       // ADD CAMERA
       const res = await axios.post(
-        "https://aegisflow-production.up.railway.app/camera/add",
+        "https://aegisflowbackend.vercel.app/camera/add",
         {
           ...cam,
           email: userEmail,
@@ -91,7 +91,7 @@ const Home = () => {
       const id = cameras[index]._id;
 
       await axios.delete(
-        `https://aegisflow-production.up.railway.app/camera/${id}`,
+        `https://aegisflowbackend.vercel.app/camera/${id}`,
         {
           data: { email: userEmail },
         }

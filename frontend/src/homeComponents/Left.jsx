@@ -60,7 +60,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
   const submitProfile = async () => {
     try {
       const res = await axios.post(
-        "https://aegisflow-production.up.railway.app/auth/update",
+        "https://aegisflowbackend.vercel.app/auth/update",
         {
           name: profileForm.name,
           password: profileForm.password,
@@ -83,7 +83,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
   const deleteAccount = async () => {
     try {
       await axios.delete(
-        "https://aegisflow-production.up.railway.app/auth/delete",
+        "https://aegisflowbackend.vercel.app/auth/delete",
         {
           data: { email: user.email },
         }
@@ -108,7 +108,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
 
     try {
       await axios.delete(
-        `https://aegisflow-production.up.railway.app/profile/deletetask/${id}`,
+        `https://aegisflowbackend.vercel.app/profile/deletetask/${id}`,
         {
           data: { email: user.email },
         }
@@ -122,7 +122,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
   const finishTask = async (id) => {
     try {
       const res = await axios.put(
-        `https://aegisflow-production.up.railway.app/profile/updatetask/${id}`,
+        `https://aegisflowbackend.vercel.app/profile/updatetask/${id}`,
         {
           email: user.email,
           status: "Finished",
@@ -152,7 +152,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
 
     try {
       await axios.post(
-        "https://aegisflow-production.up.railway.app/profile/addtasks",
+        "https://aegisflowbackend.vercel.app/profile/addtasks",
         {
           email: user.email,
           cameraName: form.cameraName,
