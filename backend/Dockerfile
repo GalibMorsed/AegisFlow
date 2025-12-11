@@ -1,14 +1,14 @@
-# backend/Dockerfile
 FROM node:20-alpine
 WORKDIR /app
-# Copy package files & install dependencies
-COPY package*.json ./
+
+# copy manifests from backend folder (so they are found when context = repo root)
+COPY backend/package*.json ./
+
 RUN npm ci --production
-# Copy application code
-COPY . .
-# Set environment variable inside container
+
+# copy application code from backend into image
+COPY backend/ ./
+
 ENV NODE_ENV=production
-# Expose backend port
 EXPOSE 8000
-# Start backend
 CMD ["node", "index.js"]
