@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaBell, FaVideo, FaMapMarkerAlt } from "react-icons/fa";
+import { FaBell, FaVideo, FaMapMarkerAlt, FaTasks } from "react-icons/fa";
 import axios from "axios";
 import { API_BASE } from "../config";
 
@@ -49,14 +49,21 @@ const HomeSection3 = () => {
       }
 
       try {
-        const res = await axios.post(`${API_BASE}/camera/get`, { email });
+        // Fetch cameras and tasks concurrently
+        const [camRes, taskRes] = await Promise.all([
+          axios.post(`${API_BASE}/camera/get`, { email }),
+          axios.post(`${API_BASE}/profile/gettasks`, { email }), // Assuming this endpoint exists
+        ]);
 
-        const cams = res.data.cameras || [];
+        const cams = camRes.data.cameras || [];
+        const tasks = taskRes.data.tasks || [];
 
+        // 1. Generate alerts from cameras (existing logic)
         let generatedAlerts = cams.map((cam, idx) => {
           const severity = buildSeverity(idx);
           return {
             cameraName: cam.name,
+            isTask: false,
             location: cam.location,
             severity,
             type:
@@ -77,11 +84,40 @@ const HomeSection3 = () => {
           };
         });
 
+        // 2. Generate alerts from pending tasks
+        const taskAlerts = tasks
+          .filter((task) => task.status === "Pending")
+          .map((task) => {
+            const cam = cams.find((c) => c.name === task.cameraName);
+            let severity = "low";
+            if (task.taskType === "High Alert") severity = "high";
+            if (task.taskType === "Maintenance") severity = "medium";
+
+            return {
+              cameraName: task.cameraName,
+              isTask: true,
+              location: cam?.location || "N/A",
+              severity,
+              type: `Task: ${task.taskType}`,
+              message: `A task is scheduled for this camera from ${task.startTime} to ${task.endTime}.`,
+              time: `Scheduled for ${task.startTime}`,
+            };
+          });
+
+        let allAlerts = [...generatedAlerts, ...taskAlerts];
+
+        // Sort all alerts by severity (high > medium > low)
+        const severityOrder = { high: 0, medium: 1, low: 2 };
+        allAlerts.sort(
+          (a, b) => severityOrder[a.severity] - severityOrder[b.severity]
+        );
+
         // If no cameras / alerts yet, show some dummy examples
-        if (generatedAlerts.length === 0) {
-          generatedAlerts = [
+        if (allAlerts.length === 0) {
+          allAlerts = [
             {
               cameraName: "Gate A – Main Entrance",
+              isTask: false,
               location: "North Gate",
               severity: "high",
               type: "High crowd density",
@@ -91,6 +127,7 @@ const HomeSection3 = () => {
             },
             {
               cameraName: "Food Court – Block C",
+              isTask: true,
               location: "Central Atrium",
               severity: "medium",
               type: "Unusual motion",
@@ -100,6 +137,7 @@ const HomeSection3 = () => {
             },
             {
               cameraName: "Parking – Level 2",
+              isTask: false,
               location: "East Parking",
               severity: "low",
               type: "Normal motion",
@@ -110,7 +148,7 @@ const HomeSection3 = () => {
           ];
         }
 
-        setAlerts(generatedAlerts);
+        setAlerts(allAlerts);
       } catch (err) {
         console.log(err);
       } finally {
@@ -175,14 +213,16 @@ const HomeSection3 = () => {
                   <div className="mt-1">
                     <div
                       className={`h-10 w-10 rounded-full flex items-center justify-center text-xl border ${
-                        alert.severity === "high"
+                        alert.isTask
+                          ? "bg-blue-100 text-blue-600 border-blue-200"
+                          : alert.severity === "high"
                           ? "bg-red-100 text-red-600 border-red-300"
                           : alert.severity === "medium"
                           ? "bg-amber-100 text-amber-600 border-amber-200"
                           : "bg-emerald-100 text-emerald-600 border-emerald-200"
                       }`}
                     >
-                      <FaBell />
+                      {alert.isTask ? <FaTasks /> : <FaBell />}
                     </div>
                   </div>
 

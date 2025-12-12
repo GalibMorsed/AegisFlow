@@ -132,6 +132,21 @@ const HomeSection1 = ({
   //
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Validation
+    if (!camera.name.trim() || !camera.location.trim()) {
+      alert("Camera Name is required.");
+      return;
+    }
+    if (camera.type === "IP Camera" && !camera.ip.trim()) {
+      alert("Camera IP URL is required for IP Cameras.");
+      return;
+    }
+    if (camera.type === "Device Camera" && !camera.deviceId) {
+      alert("A device camera must be selected.");
+      return;
+    }
+
     camera.stream?.getTracks().forEach((t) => t.stop());
     onAddCamera(camera);
     setShowForm(false);

@@ -1,6 +1,6 @@
 // src/components/SuggestionsSection.jsx (or wherever you keep it)
 import React, { useState, useEffect } from "react";
-import { FaLightbulb, FaVideo, FaMapMarkerAlt } from "react-icons/fa";
+import { FaLightbulb, FaVideo, FaMapMarkerAlt, FaUser } from "react-icons/fa";
 import axios from "axios";
 
 const SuggestionsSection = () => {
@@ -19,11 +19,12 @@ const SuggestionsSection = () => {
     {
       _id: "dummy-2",
       message:
-        "Loitering detected near loading dock. Suggest notifying on-site staff.",
+        "Loitering detected near loading dock. Suggest notifying assigned staff, Jane Doe, to investigate.",
       alertType: "Loitering",
       severity: "Medium",
       cameraName: "Loading Dock - Cam 1",
       location: "South Yard",
+      staffName: "Jane Doe",
       createdAt: new Date().toISOString(),
     },
     {
@@ -195,6 +196,14 @@ const SuggestionsSection = () => {
                           <FaMapMarkerAlt className="text-[10px] text-emerald-500" />
                           <span className="truncate max-w-[9rem]">
                             {sug.location}
+                          </span>
+                        </span>
+                      )}
+                      {sug.staffName && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-slate-50 border border-slate-200 px-2 py-0.5">
+                          <FaUser className="text-[10px] text-slate-400" />
+                          <span className="truncate max-w-[9rem]">
+                            {sug.staffName}
                           </span>
                         </span>
                       )}

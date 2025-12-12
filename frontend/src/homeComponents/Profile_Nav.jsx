@@ -5,17 +5,9 @@ import { MdSpaceDashboard } from "react-icons/md";
 const Nav = () => {
   const [dark, setDark] = useState(() => {
     // Check localStorage for saved theme preference
-    if (localStorage.theme === "dark") {
-      return true;
-    }
-    // If no preference, check system preference
-    if (
-      !("theme" in localStorage) &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches
-    ) {
-      return true;
-    }
-    return false;
+    // If 'theme' is explicitly 'dark' in localStorage, set dark mode.
+    // Otherwise, default to light mode (false).
+    return localStorage.theme === "dark";
   });
 
   const toggleDark = () => {

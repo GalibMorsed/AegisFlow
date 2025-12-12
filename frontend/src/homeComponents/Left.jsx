@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { API_BASE } from "../config";
 import { motion } from "framer-motion";
+import { FiChevronDown, FiSettings } from "react-icons/fi";
 
 const containerVariants = {
   hidden: { opacity: 0, y: 12 },
@@ -22,32 +23,36 @@ const cardVariants = {
 };
 
 const modalVariants = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } },
-  exit: { opacity: 0, y: 30, transition: { duration: 0.25, ease: "easeIn" } },
+  hidden: { opacity: 0, y: 50, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.25, ease: "easeOut" },
+  },
+  exit: {
+    opacity: 0,
+    y: 50,
+    scale: 0.95,
+    transition: { duration: 0.2, ease: "easeIn" },
+  },
 };
 
 const Left = ({ user, tasks, cameras, refresh }) => {
-  const [editing, setEditing] = useState(false);
-  const [showPrivacy, setShowPrivacy] = useState(false);
-  const [showTerms, setShowTerms] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-
-  const [profileForm, setProfileForm] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
-    password: "",
-    photo: null,
-  });
-
-  const [showAdd, setShowAdd] = useState(false);
-  const [showAdvance, setShowAdvance] = useState(false);
+  const [activeModal, setActiveModal] = useState(null); // null, 'edit', 'settings', 'privacy', 'terms', 'delete', 'add-task'
 
   const [form, setForm] = useState({
     cameraName: "",
     taskType: "",
     startTime: "",
     endTime: "",
+  });
+
+  const [profileForm, setProfileForm] = useState({
+    name: user?.name || "",
+    email: user?.email || "",
+    password: "",
+    photo: null,
   });
 
   const handleProfileChange = (e) => {
@@ -59,36 +64,31 @@ const Left = ({ user, tasks, cameras, refresh }) => {
   };
 
   const submitProfile = async () => {
+    // Basic validation
     try {
-      const res = await axios.post(
-        `${API_BASE}/auth/update`,
-        {
-          name: profileForm.name,
-          password: profileForm.password,
-          email: user.email,
-        }
-      );
+      const res = await axios.post(`${API_BASE}/auth/update`, {
+        name: profileForm.name,
+        password: profileForm.password,
+        email: user.email,
+      });
 
       console.log("Profile update response:", res.data);
       localStorage.setItem("loggedInUser", profileForm.name);
 
-      alert("Profile updated successfully.");
-      setEditing(false);
+      toast.success("Profile updated successfully.");
+      setActiveModal(null);
       refresh();
     } catch (err) {
       console.log("Update error:", err.response?.data || err.message);
-      alert("Failed to update profile. Please try again.");
+      toast.error("Failed to update profile. Please try again.");
     }
   };
 
   const deleteAccount = async () => {
     try {
-      await axios.delete(
-        `${API_BASE}/auth/delete`,
-        {
-          data: { email: user.email },
-        }
-      );
+      await axios.delete(`${API_BASE}/auth/delete`, {
+        data: { email: user.email },
+      });
       alert("Account deleted successfully.");
       localStorage.clear();
       window.location.href = "/login";
@@ -108,31 +108,29 @@ const Left = ({ user, tasks, cameras, refresh }) => {
     if (!ok) return;
 
     try {
-      await axios.delete(
-        `${API_BASE}/profile/deletetask/${id}`,
-        {
-          data: { email: user.email },
-        }
-      );
+      await axios.delete(`${API_BASE}/profile/deletetask/${id}`, {
+        data: { email: user.email },
+      });
+      toast.success("Task deleted successfully!");
       refresh();
     } catch (err) {
-      console.log(err);
+      console.log("TASK DELETE ERROR:", err.response?.data || err.message);
+      toast.error("Failed to delete task.");
     }
   };
 
   const finishTask = async (id) => {
     try {
-      const res = await axios.put(
-        `${API_BASE}/profile/updatetask/${id}`,
-        {
-          email: user.email,
-          status: "Finished",
-        }
-      );
+      const res = await axios.put(`${API_BASE}/profile/updatetask/${id}`, {
+        email: user.email,
+        status: "Finished",
+      });
       console.log("API RESPONSE:", res.data);
+      toast.success("Task marked as finished!");
       refresh();
     } catch (err) {
-      console.log(err);
+      console.log("TASK FINISH ERROR:", err.response?.data || err.message);
+      toast.error("Could not update task status.");
     }
   };
 
@@ -147,24 +145,21 @@ const Left = ({ user, tasks, cameras, refresh }) => {
       !form.startTime ||
       !form.endTime
     ) {
-      alert("Please fill all fields.");
+      toast.error("Please fill all fields.");
       return;
     }
 
     try {
-      await axios.post(
-        `${API_BASE}/profile/addtasks`,
-        {
-          email: user.email,
-          cameraName: form.cameraName,
-          taskType: form.taskType,
-          startTime: form.startTime,
-          endTime: form.endTime,
-          status: "Pending",
-        }
-      );
+      await axios.post(`${API_BASE}/profile/addtasks`, {
+        email: user.email,
+        cameraName: form.cameraName,
+        taskType: form.taskType,
+        startTime: form.startTime,
+        endTime: form.endTime,
+        status: "Pending",
+      });
 
-      setShowAdd(false);
+      setActiveModal(null);
       setForm({
         cameraName: "",
         taskType: "",
@@ -172,9 +167,10 @@ const Left = ({ user, tasks, cameras, refresh }) => {
         endTime: "",
       });
       refresh();
+      toast.success("Task added successfully!");
     } catch (err) {
-      console.log(err);
-      alert("Failed to add task. Please try again.");
+      console.log("TASK ADD ERROR:", err.response?.data || err.message);
+      toast.error("Failed to add task. Please try again.");
     }
   };
 
@@ -195,7 +191,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
 
   return (
     <motion.div
-      className="w-full max-w-sm space-y-4 sm:space-y-6 px-4 sm:px-0"
+      className="w-full max-w-sm space-y-6 sm:space-y-8 px-4 sm:px-0"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
@@ -205,7 +201,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
         variants={cardVariants}
         whileHover={{ y: -2 }}
         transition={{ type: "spring", stiffness: 220, damping: 20 }}
-        className="w-full rounded-lg sm:rounded-2xl bg-white border border-slate-200 shadow-sm p-4 sm:p-5 flex flex-col gap-3 sm:gap-4"
+        className="w-full rounded-xl bg-white border border-slate-200 shadow-sm p-4 sm:p-5 flex flex-col gap-3 sm:gap-4"
       >
         {/* Profile image + basic info */}
         <div className="flex items-center gap-3 sm:gap-4">
@@ -229,15 +225,16 @@ const Left = ({ user, tasks, cameras, refresh }) => {
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-1">
           <button
-            onClick={() => setEditing(true)}
-            className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-2 sm:py-2.5 text-xs sm:text-xs font-medium text-slate-800 hover:bg-slate-50 transition"
+            onClick={() => setActiveModal("edit")}
+            className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-md border border-slate-300 bg-white px-3 py-2 text-xs sm:text-sm font-medium text-slate-700 hover:bg-slate-50 transition"
           >
             <span>Edit profile</span>
           </button>
           <button
-            onClick={() => setShowAdvance(true)}
-            className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg bg-slate-900 px-3 py-2 sm:py-2.5 text-xs sm:text-xs font-medium text-white hover:bg-slate-800 transition"
+            onClick={() => setActiveModal("settings")}
+            className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-md bg-slate-800 px-3 py-2 text-xs sm:text-sm font-medium text-white hover:bg-slate-900 transition"
           >
+            <FiSettings className="text-sm" />
             <span>Settings</span>
           </button>
         </div>
@@ -248,7 +245,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
         variants={cardVariants}
         whileHover={{ y: -2 }}
         transition={{ type: "spring", stiffness: 220, damping: 20 }}
-        className="rounded-lg sm:rounded-2xl bg-white border border-slate-200 shadow-sm p-4 sm:p-5 flex flex-col h-[55vh] sm:h-[60vh]"
+        className="rounded-xl bg-white border border-slate-200 shadow-sm p-4 sm:p-5 flex flex-col h-[55vh] sm:h-[60vh]"
       >
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 mb-3 sm:mb-4">
           <div className="flex-1">
@@ -260,18 +257,25 @@ const Left = ({ user, tasks, cameras, refresh }) => {
             </p>
           </div>
           <button
-            onClick={() => setShowAdd(true)}
-            className="inline-flex items-center justify-center rounded-full bg-emerald-600 text-white text-lg sm:text-xl w-9 h-9 hover:bg-emerald-700 transition flex-shrink-0"
-            aria-label="Add task"
+            onClick={() => setActiveModal("add-task")}
+            className="w-full sm:w-auto inline-flex items-center justify-center sm:justify-start gap-1.5 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs sm:text-sm font-medium text-slate-700 hover:bg-slate-50 transition whitespace-nowrap"
           >
-            +
+            <span>Add task</span>
+            <FiChevronDown
+              className={`text-slate-400 transition-transform duration-200 ${
+                activeModal === "add-task" ? "rotate-180" : ""
+              }`}
+            />
           </button>
         </div>
 
         <div className="flex-1 overflow-y-auto space-y-2 pr-1">
           {tasks.length === 0 && (
-            <p className="text-xs sm:text-sm text-slate-400 mt-1">
-              No tasks created yet. Click the + button to add one.
+            <p className="text-xs sm:text-sm text-slate-400 w-full flex flex-col items-center justify-center py-8">
+              <span className="text-4xl mb-2 text-slate-300">📝</span>
+              <span>
+                No tasks created yet. Use &quot;Add task&quot; to log one.
+              </span>
             </p>
           )}
 
@@ -280,7 +284,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
               key={t._id}
               whileHover={{ y: -2 }}
               transition={{ type: "spring", stiffness: 230, damping: 18 }}
-              className="border border-slate-200 rounded-lg p-3 flex flex-col sm:flex-row items-start justify-between gap-2 sm:gap-3 bg-slate-50/60 hover:bg-slate-50/90 transition"
+              className="border border-slate-200 rounded-lg p-3 flex flex-col sm:flex-row items-start justify-between gap-2 sm:gap-3 bg-slate-50/60 hover:bg-slate-50/90 transition-colors"
             >
               <div className="space-y-1 flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
@@ -299,7 +303,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
                 </p>
               </div>
 
-              <div className="flex flex-col sm:items-end gap-2 w-full sm:w-auto">
+              <div className="flex items-center justify-end gap-2 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-200/80">
                 {t.status === "Pending" ? (
                   <label className="flex items-center gap-1 text-xs text-slate-600 cursor-pointer hover:text-slate-800 transition">
                     <input
@@ -311,7 +315,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
                   </label>
                 ) : (
                   <button
-                    className="text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-md border border-red-200 text-red-700 hover:bg-red-50 transition whitespace-nowrap"
+                    className="text-xs px-2 py-1 rounded-md border border-red-200 text-red-700 hover:bg-red-50 transition whitespace-nowrap"
                     onClick={() => deleteTask(t._id)}
                   >
                     Delete
@@ -324,22 +328,22 @@ const Left = ({ user, tasks, cameras, refresh }) => {
       </motion.div>
 
       {/* EDIT PROFILE MODAL */}
-      {editing && (
+      {activeModal === "edit" && (
         <div className="fixed inset-0 flex justify-center items-end sm:items-center bg-black/40 backdrop-blur-sm z-50">
           <motion.div
             variants={modalVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="bg-white w-full sm:max-w-md p-4 sm:p-6 rounded-t-2xl sm:rounded-xl shadow-xl space-y-4 border border-slate-200 max-h-[90vh] sm:max-h-auto overflow-y-auto"
+            className="bg-white w-full sm:max-w-md p-4 sm:p-6 rounded-t-2xl sm:rounded-xl shadow-xl space-y-4 border border-slate-200 max-h-[90vh] overflow-y-auto"
           >
             <div className="flex items-center justify-between mb-1">
               <h2 className="text-lg sm:text-xl font-semibold text-slate-900">
                 Edit profile
               </h2>
               <button
-                onClick={() => setEditing(false)}
-                className="text-slate-400 hover:text-slate-600 text-2xl leading-none"
+                onClick={() => setActiveModal(null)}
+                className="text-slate-400 hover:text-slate-600 text-2xl leading-none p-1"
               >
                 ×
               </button>
@@ -354,8 +358,8 @@ const Left = ({ user, tasks, cameras, refresh }) => {
                   name="name"
                   value={profileForm.name}
                   onChange={handleProfileChange}
-                  placeholder="Your name"
-                  className="w-full p-2 sm:p-3 text-xs sm:text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-500"
+                  placeholder="Your full name"
+                  className="border border-slate-300 rounded-md p-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
                 />
               </div>
 
@@ -367,7 +371,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
                   name="email"
                   value={profileForm.email}
                   disabled
-                  className="w-full p-2 sm:p-3 text-xs sm:text-sm border border-slate-200 rounded-lg bg-slate-50 cursor-not-allowed text-slate-500"
+                  className="border border-slate-200 rounded-md p-2 w-full text-sm bg-slate-100 text-slate-600 cursor-not-allowed"
                 />
               </div>
 
@@ -381,7 +385,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
                   value={profileForm.password}
                   onChange={handleProfileChange}
                   placeholder="Leave blank to keep current password"
-                  className="w-full p-2 sm:p-3 text-xs sm:text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-500"
+                  className="border border-slate-300 rounded-md p-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
                 />
               </div>
 
@@ -393,21 +397,21 @@ const Left = ({ user, tasks, cameras, refresh }) => {
                   type="file"
                   name="photo"
                   onChange={handleProfileChange}
-                  className="w-full text-xs sm:text-sm text-slate-600"
+                  className="w-full text-xs sm:text-sm text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200"
                 />
               </div>
             </div>
 
             <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2">
               <button
-                onClick={() => setEditing(false)}
-                className="flex-1 bg-slate-100 text-slate-800 py-2 sm:py-3 rounded-lg text-xs sm:text-sm font-medium hover:bg-slate-200 transition"
+                onClick={() => setActiveModal(null)}
+                className="flex-1 bg-slate-100 text-slate-800 py-2.5 rounded-md text-sm font-medium hover:bg-slate-200 transition"
               >
                 Cancel
               </button>
               <button
                 onClick={submitProfile}
-                className="flex-1 bg-slate-900 text-white py-2 sm:py-3 rounded-lg text-xs sm:text-sm font-medium hover:bg-slate-800 transition"
+                className="flex-1 bg-slate-800 text-white py-2.5 rounded-md text-sm font-medium hover:bg-slate-900 transition"
               >
                 Save changes
               </button>
@@ -417,22 +421,22 @@ const Left = ({ user, tasks, cameras, refresh }) => {
       )}
 
       {/* SETTINGS MODAL */}
-      {showAdvance && (
+      {activeModal === "settings" && (
         <div className="fixed inset-0 flex justify-center items-end sm:items-center bg-black/40 backdrop-blur-sm z-50">
           <motion.div
             variants={modalVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="bg-white w-full sm:max-w-md p-4 sm:p-6 rounded-t-2xl sm:rounded-xl shadow-xl border border-slate-200 max-h-[90vh] sm:max-h-auto overflow-y-auto"
+            className="bg-white w-full sm:max-w-md p-4 sm:p-6 rounded-t-2xl sm:rounded-xl shadow-xl border border-slate-200 max-h-[90vh] overflow-y-auto"
           >
             <div className="flex justify-between items-center border-b border-slate-100 pb-3 sm:pb-4 mb-4">
               <h2 className="text-lg sm:text-xl font-semibold text-slate-900">
                 Account & policies
               </h2>
               <button
-                onClick={() => setShowAdvance(false)}
-                className="text-slate-400 hover:text-slate-600 text-2xl leading-none"
+                onClick={() => setActiveModal(null)}
+                className="text-slate-400 hover:text-slate-600 text-2xl leading-none p-1"
               >
                 ×
               </button>
@@ -442,11 +446,8 @@ const Left = ({ user, tasks, cameras, refresh }) => {
               {/* Privacy */}
               <div className="space-y-1">
                 <button
-                  onClick={() => {
-                    setShowPrivacy(true);
-                    setShowAdvance(false);
-                  }}
-                  className="w-full inline-flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-slate-800 hover:bg-slate-100 transition"
+                  onClick={() => setActiveModal("privacy")}
+                  className="w-full inline-flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-3 sm:px-4 py-2 text-sm font-medium text-slate-800 hover:bg-slate-100 transition"
                 >
                   <span>Privacy policy</span>
                   <span className="text-[10px] sm:text-[11px] text-slate-500">
@@ -462,11 +463,8 @@ const Left = ({ user, tasks, cameras, refresh }) => {
               {/* Terms */}
               <div className="space-y-1">
                 <button
-                  onClick={() => {
-                    setShowTerms(true);
-                    setShowAdvance(false);
-                  }}
-                  className="w-full inline-flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-slate-800 hover:bg-slate-100 transition"
+                  onClick={() => setActiveModal("terms")}
+                  className="w-full inline-flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-3 sm:px-4 py-2 text-sm font-medium text-slate-800 hover:bg-slate-100 transition"
                 >
                   <span>Terms & conditions</span>
                   <span className="text-[10px] sm:text-[11px] text-slate-500">
@@ -482,11 +480,8 @@ const Left = ({ user, tasks, cameras, refresh }) => {
               {/* Delete account */}
               <div className="space-y-1">
                 <button
-                  onClick={() => {
-                    handleDeleteClick();
-                    setShowAdvance(false);
-                  }}
-                  className="w-full inline-flex items-center justify-between rounded-lg border border-red-200 bg-red-50 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-red-700 hover:bg-red-100 transition"
+                  onClick={() => setActiveModal("delete")}
+                  className="w-full inline-flex items-center justify-between rounded-md border border-red-200 bg-red-50 px-3 sm:px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100 transition"
                 >
                   <span>Delete account</span>
                   <span className="text-[10px] sm:text-[11px] text-red-500">
@@ -504,22 +499,22 @@ const Left = ({ user, tasks, cameras, refresh }) => {
       )}
 
       {/* ADD TASK MODAL */}
-      {showAdd && (
+      {activeModal === "add-task" && (
         <div className="fixed inset-0 bg-black/40 flex justify-center items-end sm:items-center z-50">
           <motion.div
             variants={modalVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="bg-white w-full sm:max-w-md p-4 sm:p-6 rounded-t-2xl sm:rounded-xl shadow-xl border border-slate-200 max-h-[90vh] sm:max-h-auto overflow-y-auto"
+            className="bg-white w-full sm:max-w-md p-4 sm:p-6 rounded-t-2xl sm:rounded-xl shadow-xl border border-slate-200 max-h-[90vh] overflow-y-auto"
           >
             <div className="flex items-center justify-between mb-3 sm:mb-4">
               <h3 className="text-lg sm:text-xl font-semibold text-slate-900">
                 Add task
               </h3>
               <button
-                onClick={() => setShowAdd(false)}
-                className="text-slate-400 hover:text-slate-600 text-2xl leading-none"
+                onClick={() => setActiveModal(null)}
+                className="text-slate-400 hover:text-slate-600 text-2xl leading-none p-1"
               >
                 ×
               </button>
@@ -534,7 +529,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
                   name="cameraName"
                   value={form.cameraName}
                   onChange={handleChange}
-                  className="border border-slate-300 w-full p-2 sm:p-3 text-xs sm:text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-500 bg-white"
+                  className="border border-slate-300 rounded-md p-2 w-full text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-400"
                 >
                   <option value="">Select camera</option>
                   {cameras?.map((cam) => (
@@ -553,7 +548,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
                   name="taskType"
                   value={form.taskType}
                   onChange={handleChange}
-                  className="border border-slate-300 w-full p-2 sm:p-3 text-xs sm:text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-500 bg-white"
+                  className="border border-slate-300 rounded-md p-2 w-full text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-400"
                 >
                   <option value="">Select type</option>
                   <option value="High Alert">High alert</option>
@@ -568,11 +563,12 @@ const Left = ({ user, tasks, cameras, refresh }) => {
                     Start time
                   </label>
                   <input
+                    type="time"
                     name="startTime"
                     value={form.startTime}
                     onChange={handleChange}
                     placeholder="e.g. 10:00"
-                    className="border border-slate-300 w-full p-2 sm:p-3 text-xs sm:text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-500"
+                    className="border border-slate-300 rounded-md p-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
                   />
                 </div>
                 <div>
@@ -580,11 +576,12 @@ const Left = ({ user, tasks, cameras, refresh }) => {
                     End time
                   </label>
                   <input
+                    type="time"
                     name="endTime"
                     value={form.endTime}
                     onChange={handleChange}
                     placeholder="e.g. 12:30"
-                    className="border border-slate-300 w-full p-2 sm:p-3 text-xs sm:text-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-500"
+                    className="border border-slate-300 rounded-md p-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
                   />
                 </div>
               </div>
@@ -592,14 +589,14 @@ const Left = ({ user, tasks, cameras, refresh }) => {
 
             <div className="flex flex-col-reverse sm:flex-row gap-3 mt-4 sm:mt-5">
               <button
-                onClick={() => setShowAdd(false)}
-                className="flex-1 bg-slate-100 text-slate-800 py-2 sm:py-3 rounded-lg text-xs sm:text-sm font-medium hover:bg-slate-200 transition"
+                onClick={() => setActiveModal(null)}
+                className="flex-1 bg-slate-100 text-slate-800 py-2.5 rounded-md text-sm font-medium hover:bg-slate-200 transition"
               >
                 Cancel
               </button>
               <button
                 onClick={addTask}
-                className="flex-1 bg-emerald-600 text-white py-2 sm:py-3 rounded-lg text-xs sm:text-sm font-medium hover:bg-emerald-700 transition"
+                className="flex-1 bg-slate-800 text-white py-2.5 rounded-md text-sm font-medium hover:bg-slate-900 transition"
               >
                 Save task
               </button>
@@ -609,7 +606,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
       )}
 
       {/* PRIVACY POLICY MODAL */}
-      {showPrivacy && (
+      {activeModal === "privacy" && (
         <div className="fixed inset-0 flex justify-center items-end sm:items-center bg-black/40 backdrop-blur-sm z-50">
           <motion.div
             variants={modalVariants}
@@ -623,7 +620,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
                 Privacy policy
               </h2>
               <button
-                onClick={() => setShowPrivacy(false)}
+                onClick={() => setActiveModal("settings")}
                 className="text-slate-400 hover:text-slate-600 text-2xl leading-none flex-shrink-0"
               >
                 ×
@@ -688,8 +685,8 @@ const Left = ({ user, tasks, cameras, refresh }) => {
 
             <div className="mt-4 sm:mt-6 flex justify-end">
               <button
-                onClick={() => setShowPrivacy(false)}
-                className="px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium bg-slate-900 text-white hover:bg-slate-800 transition"
+                onClick={() => setActiveModal("settings")}
+                className="px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium bg-emerald-600 text-white hover:bg-emerald-700 transition"
               >
                 I understand
               </button>
@@ -699,7 +696,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
       )}
 
       {/* TERMS & CONDITIONS MODAL */}
-      {showTerms && (
+      {activeModal === "terms" && (
         <div className="fixed inset-0 flex justify-center items-end sm:items-center bg-black/40 backdrop-blur-sm z-50">
           <motion.div
             variants={modalVariants}
@@ -713,7 +710,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
                 Terms & conditions
               </h2>
               <button
-                onClick={() => setShowTerms(false)}
+                onClick={() => setActiveModal("settings")}
                 className="text-slate-400 hover:text-slate-600 text-2xl leading-none flex-shrink-0"
               >
                 ×
@@ -782,7 +779,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
 
             <div className="mt-4 sm:mt-6 flex justify-end">
               <button
-                onClick={() => setShowTerms(false)}
+                onClick={() => setActiveModal("settings")}
                 className="px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium bg-emerald-600 text-white hover:bg-emerald-700 transition"
               >
                 I agree
@@ -793,7 +790,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
       )}
 
       {/* DELETE ACCOUNT CONFIRMATION MODAL */}
-      {showDeleteConfirm && (
+      {activeModal === "delete" && (
         <div className="fixed inset-0 flex justify-center items-end sm:items-center bg-black/40 backdrop-blur-sm z-50">
           <motion.div
             variants={modalVariants}
@@ -836,7 +833,7 @@ const Left = ({ user, tasks, cameras, refresh }) => {
 
             <div className="flex flex-col-reverse sm:flex-row gap-3">
               <button
-                onClick={() => setShowDeleteConfirm(false)}
+                onClick={() => setActiveModal("settings")}
                 className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 py-2 sm:py-2.5 px-4 rounded-lg text-xs sm:text-sm font-medium transition"
               >
                 Cancel
