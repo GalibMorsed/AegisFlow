@@ -17,13 +17,22 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 const allowedOrigins = [
   "http://localhost:5173",
+  "https://aegisflowfrontend.vercel.app",
 ];
 
-app.use(cors({
-  origin: "https://aegisflowfrontend.vercel.app",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
 // Health and root routes
 app.get("/health", (req, res) => res.sendStatus(200));

@@ -25,7 +25,7 @@ const Nav = () => {
 
     const checkUpdates = async () => {
       try {
-        const res = await fetch(`${API_BASE}/suggestions/unread`);
+        const res = await fetch(`/`);
         const data = await res.json();
 
         if (data.unread === true) {
